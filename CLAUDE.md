@@ -19,13 +19,20 @@ This is a university coursework repository for third-year computer science cours
 │   ├── 作业/
 │   └── 课件/
 ├── 软件系统设计/           # Software System Design course
-│   └── 课件/
+│   ├── 课件/               # Current semester course materials
+│   ├── 旧课件/             # Past course materials from different instructors
+│   │   └── pmx/            # Materials from Professor PMX
+│   └── 复习资料/           # Review materials for this course
+│       ├── 笔记/           # Student notes from senior students
+│       ├── 机试/           # Past practical exams (hands-on coding tests)
+│       ├── 往年题/         # Past written exam questions
+│       └── 作业/           # Past homework assignments
 ├── 软件质量与管理/         # Software Quality Management course
 │   └── 课件/
 ├── 软工三/                 # Software Engineering III course
 │   ├── 大作业/             # Major assignments
 │   └── 课件/
-└── 复习资料/               # Review materials (for graduate school prep)
+└── 复习资料/               # Cross-course review materials (for graduate school prep)
     ├── 【保研】软件系统设计/
     ├── 【保研】软件工程与计算III/
     └── 【保研】软件质量管理/
@@ -41,9 +48,20 @@ This is a university coursework repository for third-year computer science cours
 ## Working with This Repository
 
 ### File Organization
-- Course materials (课件) are typically PDFs stored in course-specific directories
-- Assignments (作业) and lab reports (实验报告) are stored in dedicated subdirectories
-- Review materials (复习资料) include past exams, reference documents, and student notes
+- **Current course materials (课件)**: PDFs stored in course-specific `课件/` directories
+- **Assignments (作业)**: Stored in dedicated `作业/` subdirectories
+- **Cross-course review materials (复习资料/)**: Graduate school prep materials at repository root
+  - Contains `【保研】` prefixed directories for comprehensive review across courses
+- **In-course review materials**: Some courses have local `复习资料/` subdirectories for course-specific materials
+  - **软件系统设计/复习资料/**: Contains four types of materials:
+    - `笔记/`: Lecture notes compiled by senior students (学长学姐)
+    - `机试/`: Past practical exams (hands-on coding tests, 往年上机考试)
+    - `往年题/`: Past written exam questions (往年笔试题)
+    - `作业/`: Past homework assignments (往年作业)
+- **Historical course materials (旧课件/)**:
+  - Past semester materials when taught by different instructors
+  - Example: `软件系统设计/旧课件/pmx/` contains Professor PMX's materials
+  - Other instructors' materials stored directly in `旧课件/`
 
 ### When Assisting with Tasks
 
@@ -51,6 +69,13 @@ This is a university coursework repository for third-year computer science cours
 2. **Assignment Help**: Course content is theoretical (software architecture, design patterns, quality management, Linux programming, cloud computing)
 3. **File Management**: Respect the `.gitignore` patterns - do not track PPT directories or zip files
 4. **Language**: Respond in the language the user uses (likely Chinese for course-specific questions, English for technical discussions)
+5. **Resource Location Strategy**:
+   - **Current materials**: Check course-specific `课件/` directories first
+   - **Review materials**: For exam prep, check both:
+     - In-course resources: `[课程名]/复习资料/` (笔记/机试/往年题/作业)
+     - Cross-course resources: `复习资料/【保研】[课程名]/` (comprehensive review)
+   - **Historical materials**: Check `旧课件/` for different instructor perspectives
+   - **Instructor-specific content**: Look in subdirectories like `旧课件/pmx/` for specific professor's teaching style
 
 ### Repository Philosophy
 
@@ -59,6 +84,30 @@ Per the README, this repository follows an "AI-assisted learning" approach where
 - Help organize and structure assignments based on course requirements
 - Assist with creating reports, documentation, and theoretical analyses
 - Do not create unnecessary files; work with existing course structure
+
+### 🔄 Dual Resource System (重要)
+
+This repository uses a **two-level resource organization** for certain courses:
+
+#### Level 1: Course-Local Resources (课程目录内)
+Located within each course directory (e.g., `软件系统设计/`)
+- **Purpose**: Quick access to current and past materials specific to this course
+- **Structure**:
+  - `课件/`: Current semester materials
+  - `旧课件/`: Past instructor materials (with subdirectories by instructor name)
+  - `复习资料/`: In-course review resources (笔记/机试/往年题/作业)
+
+#### Level 2: Cross-Course Resources (仓库根目录)
+Located in `复习资料/【保研】[课程名]/` at repository root
+- **Purpose**: Comprehensive review for graduate school entrance exams (保研)
+- **Structure**: Consolidated materials from multiple sources and semesters
+- **Curator**: Organized by senior students (学长学姐) like lxc, yhgg, zhy
+
+#### When to Use Which?
+- **Completing homework**: Use Level 1 (`课程目录/复习资料/作业/`)
+- **Daily study**: Use Level 1 (`课程目录/课件/` and `课程目录/复习资料/笔记/`)
+- **Exam preparation**: Use **both levels** - Level 1 for past exams, Level 2 for comprehensive review
+- **Graduate school prep**: Use Level 2 (`复习资料/【保研】xxx/`)
 
 ---
 
@@ -259,6 +308,26 @@ prompt: "生成迭代一项目报告,参考学长文档结构,
 
 ### 🛠️ 自定义技能 (Skills)
 
+#### course-resource-locator (NEW - 通用)
+**用途**: 全课程智能资源定位器
+**触发**: 当需要查找任何课程的资料、跨课程资源比较、或不确定资料具体位置时
+**位置**: `.claude/skills/course-resource-locator.md`
+**适用范围**: 所有6门第三学年课程
+**核心能力**:
+- 双层级资源系统导航 (课程本地 + 保研综合)
+- 智能推荐最佳资源路径
+- 多课程资源对比和聚合
+
+#### ssd-resource-navigator (NEW - 专用)
+**用途**: 软件系统设计课程资源专项导航
+**触发**: 当明确需要查找软件系统设计课程资料时使用 (更精准和详细)
+**位置**: `.claude/skills/ssd-resource-navigator.md`
+**特色功能**:
+- 智能识别资源类型 (当前课件/旧课件/复习资料/保研资料)
+- 按教师分类查找 (pmx老师 vs 其他老师)
+- 按学长分类查找 (lxc/yhgg/zhy)
+- 按资料类型查找 (笔记/机试/往年题/作业)
+
 #### ragas-code-analyzer
 **用途**: 分析Ragas项目源码结构
 **触发**: 当需要理解Ragas框架实现细节时
@@ -268,11 +337,13 @@ prompt: "生成迭代一项目报告,参考学长文档结构,
 **用途**: 生成软工三课程文档(报告/设计文档/测试文档)
 **触发**: 当需要撰写迭代报告时
 **位置**: `.claude/skills/seciii-doc-generator.md`
+**状态**: ⚠️ 待创建 (占位)
 
 #### agent-experiment-runner
 **用途**: 运行Agent评估实验并生成报告
 **触发**: 在迭代二/三需要执行实验时
 **位置**: `.claude/skills/agent-experiment-runner.md`
+**状态**: ⚠️ 待创建 (占位)
 
 ### 📖 快速开始指南
 
@@ -307,5 +378,92 @@ prompt: "生成迭代一项目报告,参考学长文档结构,
 3. **文档先行**: 先写设计文档再写代码
 4. **实验记录**: 每次实验都要记录详细日志,便于复现
 5. **答辩预演**: 每次迭代结束后模拟答辩,提前发现问题
+
+---
+
+## 软件系统设计 (Software System Design) 专项指引
+
+### 🎯 课程概述
+
+**课程名称**: 软件系统设计
+**课程特点**: 不同老师轮流授课,教学风格和重点有差异
+**核心内容**: 软件架构、设计模式、系统建模、UML
+**考核形式**: 笔试 + 上机考试 + 平时作业
+
+### 📂 资源分布说明
+
+该课程资料分布在**两个位置**:
+
+#### 1. 软件系统设计/ (当前学期资料)
+```
+软件系统设计/
+├── 课件/              # 本学期授课课件
+├── 旧课件/            # 往年不同老师的课件
+│   └── pmx/           # pmx老师的课件
+│       └── (其他老师课件直接放在旧课件/下)
+└── 复习资料/          # 本课程复习资源 (NEW)
+    ├── 笔记/          # 学长学姐课堂笔记
+    ├── 机试/          # 往年上机考试题目和答案
+    ├── 往年题/        # 往年笔试题目
+    └── 作业/          # 往年作业及参考答案
+```
+
+#### 2. 复习资料/【保研】软件系统设计/ (保研综合复习)
+```
+复习资料/【保研】软件系统设计/
+├── lxc资料/           # 李薛成学长整理的复习资料
+├── yhgg资料/          # yhgg学长整理的复习资料
+├── zhy复习资料/       # 赵浩宇学长整理的复习资料
+├── PPT/               # 课程PPT汇总
+├── 机试/              # 机试题目汇总
+├── Assignments/       # 作业汇总
+└── software_design_211850016_体系结构代码作业/  # 往年体系结构作业示例
+```
+
+### 🔍 资源查找策略
+
+#### 场景1: 理解当前学期课程内容
+→ 优先查看 `软件系统设计/课件/`
+
+#### 场景2: 准备考试 (笔试)
+→ 按优先级查看:
+1. `软件系统设计/复习资料/笔记/` - 学长课堂笔记,提炼重点
+2. `软件系统设计/复习资料/往年题/` - 真题练习
+3. `复习资料/【保研】软件系统设计/lxc资料/` - 综合复习资料
+
+#### 场景3: 准备上机考试 (机试)
+→ 按优先级查看:
+1. `软件系统设计/复习资料/机试/` - 往年机试题目
+2. `复习资料/【保研】软件系统设计/机试/` - 机试题汇总
+3. `复习资料/【保研】软件系统设计/Assignments/` - 参考代码作业
+
+#### 场景4: 完成平时作业
+→ 按优先级查看:
+1. `软件系统设计/课件/` - 理解本学期作业要求
+2. `软件系统设计/复习资料/作业/` - 参考往年作业
+3. `复习资料/【保研】软件系统设计/Assignments/` - 更多作业示例
+
+#### 场景5: 对比不同老师的教学风格
+→ 查看:
+1. `软件系统设计/课件/` - 当前老师风格
+2. `软件系统设计/旧课件/pmx/` - pmx老师风格
+3. `软件系统设计/旧课件/` - 其他老师风格
+
+#### 场景6: 保研复习 (综合复习)
+→ 优先使用 `复习资料/【保研】软件系统设计/` 下的资料,已按学长分类整理
+
+### 📝 学长资料说明
+
+- **lxc资料**: 李薛成学长整理,内容全面系统
+- **yhgg资料**: yhgg学长整理,侧重实践和代码
+- **zhy复习资料**: 赵浩宇学长整理,可能侧重考试重点
+- **笔记/**: 多位学长学姐的课堂笔记,记录上课要点
+
+### 🎓 使用建议
+
+1. **避免重复劳动**: 做作业前先查看 `复习资料/作业/`,学习思路而非照搬
+2. **多角度学习**: 对比不同老师课件,理解同一概念的不同讲法
+3. **真题优先**: 备考时务必完成 `往年题/` 和 `机试/` 中的所有题目
+4. **笔记补充**: 阅读学长笔记时,结合当前课件做补充更新
 
 ---
