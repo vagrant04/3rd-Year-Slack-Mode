@@ -1,0 +1,152 @@
+@startuml
+class Main {
++ {static} void main(String[])
+}
+
+class CodeAnswer {
+- String language
+- Path path
+- String name
++ void log()
+}
+
+
+class CodeScoreStrategy {
+- {static} String codePrefix
+- {static} String preprocessorSuffix
+- {static} String executorSuffix
+- {static} Path classPath
++ Long cal(Question,Answer)
+- Long cal(CodeQuestion,CodeAnswer)
+}
+
+
+class Question {
+~ Long id
+~ QuestionType type
+~ String question
+~ Long points
+~ ScoreStrategy scoreStrategy
++ Long cal(Answer)
++ void log()
+}
+
+
+class ThreadPool {
+- {static} ThreadPool instance
+- WorkerThread[] workers
+- BlockingQueue<Runnable> taskQueue
++ void execute(Runnable)
++ Future<T> submit(Callable<T>)
++ ArrayList<Future<T>> submitAll(ArrayList<? extends Callable<T>>)
++ void shutdown()
+}
+
+
+class ThreadPool$WorkerThread {
++ void run()
+}
+
+
+abstract class Preprocessor {
+~ Path src
+~ Path dst
+}
+
+
+class Answer{
+~ Long questionId
+~ String answers
+}
+
+
+class Exam {
+- Long id
+- String title
+- Long startTime
+- Long endTime
+- Question[] questions
++ void log()
+}
+
+
+class Submission {
+~ Long examId
+~ Long stuId
+~ Long submitTime
+~ Answer[] answers
++ void log()
+}
+
+
+class CodeQuestion {
+~ CodeSample[] samples
++ void log()
+}
+
+
+class JavaPreprocessor {
++ Boolean call()
+}
+
+
+class Judger {
+~ String examsPath
+~ String answersPath
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ String parserPrefix
+~ PersistStrategy persistStrategy
+~ SortedMap<Long,SortedMap<Long,Long>> examScores
+- void loadExams()
+- void loadSubmissions()
++ void judge()
+}
+
+
+class CodeSample {
+~ String[] input
+~ String output
+}
+
+
+abstract class Executor {
+~ String[] input
+~ String output
+}
+
+
+abstract class ScoreStrategy {
++ {abstract}Long cal(Question,Answer)
++ Long calWithNoSubmission(Question)
+}
+
+
+class JavaExecutor {
+- Path classPath
+- String className
++ Boolean call()
+}
+
+
+Main --> Judger
+Answer <|-- CodeAnswer
+ScoreStrategy <|-- CodeScoreStrategy
+ThreadPool +.. ThreadPool$WorkerThread
+Question <|-- CodeQuestion
+Preprocessor <|-- JavaPreprocessor
+Executor <|-- JavaExecutor
+CodeScoreStrategy ..> ThreadPool : <<uses>>
+Judger *-- Exam : exams
+Judger *-- Submission : submissions
+Question *-- ScoreStrategy : scoreStrategy
+CodeScoreStrategy *-- Preprocessor
+CodeScoreStrategy *-- Executor
+CodeQuestion *-- CodeSample : samples
+Exam o-- Question : questions
+Submission o-- Answer : answers
+CodeScoreStrategy ..> CodeAnswer : <<uses>>
+JavaExecutor ..> CodeAnswer : <<uses>>
+CodeScoreStrategy ..> CodeQuestion : <<uses>>
+
+@enduml

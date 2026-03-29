@@ -1,0 +1,211 @@
+@startuml
+class Main {
++ {static} void main(String[])
+}
+
+class Judger {
+~ String examsPath
+~ String answersPath
+~ PersistStrategy persistStrategy
+~ SortedMap<Long,SortedMap<Long,Long>> examScores
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ String parserPrefix
+- void loadExams()
+- void loadSubmissions()
++ void judge()
+}
+
+
+abstract class SelectQuestion {
+~ String[] options
++ void log()
+}
+
+
+class CodeScoreStrategy {
++ Long cal(Question,Answer)
++ Long calWithNoSubmission(Question)
+}
+
+class Question {
+~ Long id
+~ QuestionType type
+~ String question
+~ Long points
+~ ScoreStrategy scoreStrategy
++ Long cal(Answer)
++ void log()
+}
+
+
+class SingleSelectQuestion {
+~ Long answer
++ void log()
+}
+
+
+enum MultiSelectScoreMode {
++  nothing
++  fix
++  partial
+~ String mode
+~ ScoreStrategy scoreStrategy
+- {static} Map<String,ScoreStrategy> strategyMap
++ {static} ScoreStrategy getScoreStrategy(String)
+}
+
+
+class PartialScoreStrategy {
++ Long cal(Question,Answer)
++ Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class SelectAnswer {
+~ Long[] options
++ void log()
+}
+
+
+class CodeQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+class CodeQuestion {
+}
+enum QuestionType {
++  SINGLE_SELECT
++  MULTIPLE_SELECT
++  CODE
+~ Long id
+~ QuestionFactory factory
+- {static} Map<Long,QuestionFactory> factoryMap
++ {static} QuestionFactory getFactoryById(Long)
+}
+
+
+abstract class ScoreStrategy {
++ {abstract}Long cal(Question,Answer)
++ Long calWithNoSubmission(Question)
+}
+
+class Exam {
+- Long id
+- String title
+- Long startTime
+- Long endTime
+- Question[] questions
++ void log()
+}
+
+
+class SingleSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+abstract class QuestionFactory {
++ {abstract}Question create(JSONObject)
++ {abstract}Question create(Element)
+}
+
+abstract class PersistStrategy {
++ {abstract}void persist(Long,Long,Long)
+}
+
+abstract class ParserFactory {
++ {abstract}Exam parseExam(String)
++ {abstract}Submission parseSubmission(String)
+}
+
+class CSVPersistStrategy {
+~ File file
++ void persist(Long,Long,Long)
+}
+
+
+class Answer {
+~ Long questionId
+~ String answers
++ void log()
+}
+
+
+class FixScoreStrategy {
++ Long cal(Question,Answer)
++ Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class NothingScoreStrategy {
++ Long cal(Question,Answer)
++ Long cal(MultiSelectQuestion,SelectAnswer)
++ Long cal(SingleSelectQuestion,SelectAnswer)
+}
+
+class MultiSelectQuestion {
+~ Long[] answer
+~ Long fixScore
+~ Long[] partialScores
++ void log()
+}
+
+
+class XMLParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+class JSONParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+class Submission {
+~ Long examId
+~ Long stuId
+~ Long submitTime
+~ Answer[] answers
++ void log()
+}
+
+
+class MultiSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+
+
+Question <|-- SelectQuestion
+ScoreStrategy <|-- CodeScoreStrategy
+SelectQuestion <|-- SingleSelectQuestion
+ScoreStrategy <|-- PartialScoreStrategy
+Answer <|-- SelectAnswer
+QuestionFactory <|-- CodeQuestionFactory
+Question <|-- CodeQuestion
+QuestionFactory <|-- SingleSelectQuestionFactory
+PersistStrategy <|-- CSVPersistStrategy
+ScoreStrategy <|-- FixScoreStrategy
+ScoreStrategy <|-- NothingScoreStrategy
+SelectQuestion <|-- MultiSelectQuestion
+ParserFactory <|-- XMLParserFactory
+ParserFactory <|-- JSONParserFactory
+QuestionFactory <|-- MultiSelectQuestionFactory
+Main --> Judger : uses
+Judger -up-> PersistStrategy : uses
+Judger --> pojo : uses
+Judger --> ParserFactory : uses
+Judger --> ScoreStrategy : uses
+ScoreStrategy -right-> pojo : uses
+ScoreStrategy o-- MultiSelectScoreMode : contains
+parser --> QuestionFactory : uses
+ParserFactory --> Exam : uses
+ParserFactory --> Submission : uses
+Exam o-- Question : contains
+Submission o-- Answer : contains
+Exam --> QuestionFactory : uses
+Question o-- QuestionType : contains
+Question ..> Answer : uses
+
+@enduml

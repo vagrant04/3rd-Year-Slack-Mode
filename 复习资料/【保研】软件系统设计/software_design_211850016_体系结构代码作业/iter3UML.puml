@@ -1,0 +1,354 @@
+@startuml
+class Main {
++ {static} void main(String[])
+}
+
+class CodeAnswer {
+- String language
+- Path path
+- String name
++ void log()
+}
+
+
+abstract class SelectQuestion {
+~ String[] options
++ void log()
+}
+
+
+class CodeScoreStrategy {
+- {static} String codePrefix
+- {static} String preprocessorSuffix
+- {static} String executorSuffix
+- {static} Path classPath
++ Long cal(Question,Answer)
+- Long cal(CodeQuestion,CodeAnswer)
+}
+
+
+class Question {
+~ Long id
+~ QuestionType type
+~ String question
+~ Long points
+~ ScoreStrategy scoreStrategy
++ Long cal(Answer)
++ void log()
+}
+
+
+class SingleSelectQuestion {
+~ Long answer
++ void log()
+}
+
+
+enum MultiSelectScoreMode {
++  nothing
++  fix
++  partial
+- {static} Map<String,ScoreStrategy> strategyMap
+~ String mode
+~ ScoreStrategy scoreStrategy
++ {static} ScoreStrategy getScoreStrategy(String)
+}
+
+
+class ComplexityAnalyst {
+- {static} String ccaPrefix
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ SortedMap<Long,SortedMap<Long,SortedMap<Long,Future<?>>>> codeComplexities
+~ PersistStrategy persistStrategy
++ void update(Subject)
+- void analyze()
+}
+
+
+class ThreadPool {
+- {static} ThreadPool instance
+- WorkerThread[] workers
+- BlockingQueue<Runnable> taskQueue
++ void execute(Runnable)
++ Future<T> submit(Callable<T>)
++ ArrayList<Future<T>> submitAll(ArrayList<? extends Callable<T>>)
++ void shutdown()
+}
+
+
+class ThreadPool$WorkerThread {
++ void run()
+}
+
+abstract class Preprocessor {
+~ Path src
+~ Path dst
+}
+
+class SelectAnswer {
+~ Long[] options
++ void log()
+}
+
+
+class CodeQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+class Loader {
++ String examsPath
++ String answersPath
++ Map<Long,Exam> exams
++ Set<Submission> submissions
+~ String parserPrefix
+~ PersistStrategy persistStrategy
++ void loadExams()
++ void loadSubmissions()
+}
+
+
+class CodeQuestion {
+~ CodeSample[] samples
+~ Long timeLimit
++ void log()
+}
+
+
+class Judger {
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ PersistStrategy persistStrategy
+~ SortedMap<Long,SortedMap<Long,Long>> examScores
++ void update(Subject)
+- void judge()
+}
+
+
+enum QuestionType {
++  SINGLE_SELECT
++  MULTIPLE_SELECT
++  CODE
+- {static} Map<Long,QuestionFactory> factoryMap
+~ Long id
+~ QuestionFactory factory
++ {static} QuestionFactory getFactoryById(Long)
+}
+
+
+class Exam {
+- Long id
+- String title
+- Long startTime
+- Long endTime
+- Question[] questions
++ void log()
+}
+
+
+class SingleSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+abstract class QuestionFactory {
++ {abstract}Question create(JSONObject)
++ {abstract}Question create(Element)
+}
+
+class JavaPreprocessor {
++ Boolean call()
+}
+
+abstract class Executor {
+~ String[] input
+~ String output
+~ Long timeLimit
+}
+
+class JavaCCAnalyst {
++ Long call()
+}
+
+abstract class PersistStrategy {
++ {abstract}void persistTitle(String)
++ {abstract}void persistScore(Long,Long,Long)
++ {abstract}void persistComplexity(Long,Long,Long,Long)
+}
+
+abstract class Subject {
+# Set<Observer> observers
++ void addObserver(Observer)
++ void removeObserver(Observer)
++ void notifyObservers()
+}
+
+
+abstract class ParserFactory {
++ {abstract}Exam parseExam(String)
++ {abstract}Submission parseSubmission(String)
+}
+
+class CSVPersistStrategy {
+- File file
++ void persistTitle(String)
++ void persistScore(Long,Long,Long)
++ void persistComplexity(Long,Long,Long,Long)
+}
+
+
+class JavaExecutor {
+- Path classPath
+- String className
++ Boolean call()
+}
+
+
+class Answer {
+~ Long questionId
+~ String answers
++ void log()
+}
+
+
+class NothingScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+- Long cal(SingleSelectQuestion,SelectAnswer)
+}
+
+class FixScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class PartialScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class MultiSelectQuestion {
+~ Long[] answer
+~ Long fixScore
+~ Long[] partialScores
++ void log()
+}
+
+
+class XMLParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+abstract class ScoreStrategy {
++ {abstract}Long cal(Question,Answer)
++ Long calWithNoSubmission(Question)
+}
+
+abstract class CCAnalyst {
+~ Long ExamId
+~ Long StuId
+~ Path path
+}
+
+class JSONParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+interface Observer {
+~ void update(Subject)
+}
+
+class Submission {
+~ Long examId
+~ Long stuId
+~ Long submitTime
+~ Answer[] answers
++ void log()
+}
+
+class MultiSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+class CodeSample {
+~ String[] input
+~ String output
+}
+
+'主类
+Main ..> Loader : <<create>>
+
+'观察者模式
+Subject <|-- Loader
+Observer <|.. Judger
+Observer <|.. ComplexityAnalyst
+Subject --> Observer : observers
+Judger --> Loader : Subject
+ComplexityAnalyst --> Loader : Subject
+
+'加载器
+Loader ..> PersistStrategy : <<create>>
+Loader --> ParserFactory : <<uses>>
+
+'解析器工厂
+ParserFactory --> QuestionFactory : <<uses>>
+
+'pojo
+Exam o-- Question : <<contains>>
+Submission o-- Answer : <<contains>>
+Question o-- QuestionType : <<contains>>
+Question ..> Answer : <<uses>>
+Judger *-- Exam : exams
+Judger *-- Submission : <<contains>>
+ComplexityAnalyst *-- Exam : exams
+ComplexityAnalyst *-- Submission : submissions
+
+'持久化策略
+Judger --> PersistStrategy : <<uses>>
+ComplexityAnalyst --> PersistStrategy : <<uses>>
+
+'判分策略
+Judger --> ScoreStrategy : <<uses>>
+ScoreStrategy o-- MultiSelectScoreMode : <<contains>>
+Question *-- ScoreStrategy : scoreStrategy
+
+'代码判分
+CodeScoreStrategy ..> ThreadPool : <<uses>>
+CodeScoreStrategy *-- Preprocessor
+CodeScoreStrategy *-- Executor
+CodeScoreStrategy ..> CodeAnswer : <<uses>>
+JavaExecutor ..> CodeAnswer : <<uses>>
+CodeScoreStrategy ..> CodeQuestion : <<uses>>
+CodeQuestion *-- CodeSample : samples
+
+'复杂度分析
+ComplexityAnalyst ..> ThreadPool : <<uses>>
+ComplexityAnalyst o-- CCAnalyst : <<contains>>
+
+Answer <|-- CodeAnswer
+Question <|-- SelectQuestion
+ScoreStrategy <|-- CodeScoreStrategy
+SelectQuestion <|-- SingleSelectQuestion
+ThreadPool +.. ThreadPool$WorkerThread
+Thread <|-- ThreadPool$WorkerThread
+Answer <|-- SelectAnswer
+QuestionFactory <|-- CodeQuestionFactory
+Question <|-- CodeQuestion
+QuestionFactory <|-- SingleSelectQuestionFactory
+Preprocessor <|-- JavaPreprocessor
+CCAnalyst <|-- JavaCCAnalyst
+PersistStrategy <|-- CSVPersistStrategy
+Executor <|-- JavaExecutor
+ScoreStrategy <|-- NothingScoreStrategy
+ScoreStrategy <|-- FixScoreStrategy
+ScoreStrategy <|-- PartialScoreStrategy
+SelectQuestion <|-- MultiSelectQuestion
+ParserFactory <|-- XMLParserFactory
+ParserFactory <|-- JSONParserFactory
+QuestionFactory <|-- MultiSelectQuestionFactory
+
+@enduml

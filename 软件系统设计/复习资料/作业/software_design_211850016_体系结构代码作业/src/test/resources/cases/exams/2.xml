@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<exam>
+    <id>2</id>
+    <title>oj02</title>
+    <startTime>1704902400000</startTime>
+    <endTime>1718035200000</endTime>
+    <questions>
+        <question>
+            <id>1</id>
+            <type>1</type>
+            <question>int类型的最大值是多少？</question>
+            <options>
+                <option>2^31-1</option>
+                <option>2^32-1</option>
+                <option>2^63-1</option>
+                <option>2^64-1</option>
+            </options>
+            <answer>0</answer>
+            <points>10</points>
+        </question>
+        <question>
+            <id>2</id>
+            <type>2</type>
+            <question>下面哪些是c语言中的关键字?</question>
+            <options>
+                <option>char</option>
+                <option>int</option>
+                <option>float</option>
+                <option>BigDecimal</option>
+            </options>
+            <answers>
+                <answer>0</answer>
+                <answer>1</answer>
+                <answer>2</answer>
+            </answers>
+            <points>20</points>
+            <scoreMode>partial</scoreMode>
+            <partialScores>
+                <partialScore>5</partialScore>
+                <partialScore>10</partialScore>
+                <partialScore>5</partialScore>
+            </partialScores>
+        </question>
+        <question>
+            <id>3</id>
+            <type>3</type>
+            <question>给出两个正整数，被除数a和除数b，其中b不为0，求他们的商并以整数int（去尾）的形式返回。</question>
+            <samples>
+                <sample>
+                    <input>7 2</input>
+                    <output>3</output>
+                </sample>
+                <sample>
+                    <input>29 4</input>
+                    <output>7</output>
+                </sample>
+                <sample>
+                    <input>444 21</input>
+                    <output>21</output>
+                </sample>
+                <sample>
+                    <input>3 14</input>
+                    <output>0</output>
+                </sample>
+                <sample>
+                    <input>0 22</input>
+                    <output>0</output>
+                </sample>
+                <sample>
+                    <input>24 24</input>
+                    <output>1</output>
+                </sample>
+                <sample>
+                    <input>96 32</input>
+                    <output>3</output>
+                </sample>
+                <sample>
+                    <input>2048 2</input>
+                    <output>1024</output>
+                </sample>
+                <sample>
+                    <input>1 42</input>
+                    <output>0</output>
+                </sample>
+                <sample>
+                    <input>54 3</input>
+                    <output>18</output>
+                </sample>
+                <sample>
+                    <input>64 62</input>
+                    <output>1</output>
+                </sample>
+                <sample>
+                    <input>63 64</input>
+                    <output>0</output>
+                </sample>
+            </samples>
+            <timeLimit>1000</timeLimit>
+            <points>70</points>
+        </question>
+    </questions>
+</exam>

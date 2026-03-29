@@ -1,0 +1,350 @@
+@startuml
+class org.example.Main {
++ {static} void main(String[])
+}
+
+class org.example.pojo.answer.CodeAnswer {
+- String language
+- Path path
+- String name
++ void log()
+}
+
+
+abstract class org.example.pojo.question.SelectQuestion {
+~ String[] options
++ void log()
+}
+
+
+class org.example.score.CodeScoreStrategy {
+- {static} String codePrefix
+- {static} String preprocessorSuffix
+- {static} String executorSuffix
+- {static} Path classPath
++ Long cal(Question,Answer)
+- Long cal(CodeQuestion,CodeAnswer)
+}
+
+
+class org.example.pojo.question.Question {
+~ Long id
+~ QuestionType type
+~ String question
+~ Long points
+~ ScoreStrategy scoreStrategy
++ Long cal(Answer)
++ void log()
+}
+
+
+class org.example.pojo.question.SingleSelectQuestion {
+~ Long answer
++ void log()
+}
+
+
+'enum org.example._enum.MultiSelectScoreMode {
+'+  nothing
+'+  fix
+'+  partial
+'- {static} Map<String,ScoreStrategy> strategyMap
+'~ String mode
+'~ ScoreStrategy scoreStrategy
+'+ {static} ScoreStrategy getScoreStrategy(String)
+'}
+
+
+class org.example.observer.ComplexityAnalyst {
+- {static} String ccaPrefix
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ SortedMap<Long,SortedMap<Long,SortedMap<Long,Future<?>>>> codeComplexities
+~ PersistStrategy persistStrategy
++ void update(Subject)
+- void analyze()
+}
+
+
+class org.example.utils.ThreadPool {
+- {static} ThreadPool instance
+- WorkerThread[] workers
+- BlockingQueue<Runnable> taskQueue
++ void execute(Runnable)
++ Future<T> submit(Callable<T>)
++ ArrayList<Future<T>> submitAll(ArrayList<? extends Callable<T>>)
++ void shutdown()
+}
+
+
+class org.example.utils.ThreadPool$WorkerThread {
++ void run()
+}
+
+abstract class org.example.code.preprocessor.Preprocessor {
+~ Path src
+~ Path dst
+}
+
+class org.example.pojo.answer.SelectAnswer {
+~ Long[] options
++ void log()
+}
+
+
+class org.example.factory.question.CodeQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+class org.example.subject.Loader {
++ String examsPath
++ String answersPath
++ Map<Long,Exam> exams
++ Set<Submission> submissions
+~ String parserPrefix
+~ PersistStrategy persistStrategy
++ void loadExams()
++ void loadSubmissions()
+}
+
+
+class org.example.pojo.question.CodeQuestion {
+~ CodeSample[] samples
+~ Long timeLimit
++ void log()
+}
+
+
+class org.example.observer.Judger {
+~ Map<Long,Exam> exams
+~ Set<Submission> submissions
+~ PersistStrategy persistStrategy
+~ SortedMap<Long,SortedMap<Long,Long>> examScores
++ void update(Subject)
+- void judge()
+}
+
+
+'enum org.example._enum.QuestionType {
+'+  SINGLE_SELECT
+'+  MULTIPLE_SELECT
+'+  CODE
+'- {static} Map<Long,QuestionFactory> factoryMap
+'~ Long id
+'~ QuestionFactory factory
+'+ {static} QuestionFactory getFactoryById(Long)
+'}
+
+
+class org.example.pojo.Exam {
+- Long id
+- String title
+- Long startTime
+- Long endTime
+- Question[] questions
++ void log()
+}
+
+
+class org.example.factory.question.SingleSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+abstract class org.example.factory.question.QuestionFactory {
++ {abstract}Question create(JSONObject)
++ {abstract}Question create(Element)
+}
+
+class org.example.code.preprocessor.JavaPreprocessor {
++ Boolean call()
+}
+
+abstract class org.example.code.executor.Executor {
+~ String[] input
+~ String output
+~ Long timeLimit
+}
+
+class org.example.code.analyst.JavaCCAnalyst {
++ Long call()
+}
+
+abstract class org.example.persist.PersistStrategy {
++ {abstract}void persistTitle(String)
++ {abstract}void persistScore(Long,Long,Long)
++ {abstract}void persistComplexity(Long,Long,Long,Long)
+}
+
+abstract class org.example.subject.Subject {
+# Set<Observer> observers
++ void addObserver(Observer)
++ void removeObserver(Observer)
++ void notifyObservers()
+}
+
+
+abstract class org.example.factory.parser.ParserFactory {
++ {abstract}Exam parseExam(String)
++ {abstract}Submission parseSubmission(String)
+}
+
+class org.example.persist.CSVPersistStrategy {
+- File file
++ void persistTitle(String)
++ void persistScore(Long,Long,Long)
++ void persistComplexity(Long,Long,Long,Long)
+}
+
+
+class org.example.code.executor.JavaExecutor {
+- Path classPath
+- String className
++ Boolean call()
+}
+
+
+class org.example.pojo.answer.Answer {
+~ Long questionId
+~ String answers
++ void log()
+}
+
+
+class org.example.score.NothingScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+- Long cal(SingleSelectQuestion,SelectAnswer)
+}
+
+class org.example.score.FixScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class org.example.score.PartialScoreStrategy {
++ Long cal(Question,Answer)
+- Long cal(MultiSelectQuestion,SelectAnswer)
+}
+
+class org.example.pojo.question.MultiSelectQuestion {
+~ Long[] answer
+~ Long fixScore
+~ Long[] partialScores
++ void log()
+}
+
+
+class org.example.factory.parser.XMLParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+abstract class org.example.score.ScoreStrategy {
++ {abstract}Long cal(Question,Answer)
++ Long calWithNoSubmission(Question)
+}
+
+abstract class org.example.code.analyst.CCAnalyst {
+~ Long ExamId
+~ Long StuId
+~ Path path
+}
+
+class org.example.pojo.question.CodeSample {
+~ String[] input
+~ String output
+}
+
+class org.example.factory.parser.JSONParserFactory {
++ Exam parseExam(String)
++ Submission parseSubmission(String)
+}
+
+interface org.example.observer.Observer {
+~ void update(Subject)
+}
+
+class org.example.pojo.Submission {
+~ Long examId
+~ Long stuId
+~ Long submitTime
+~ Answer[] answers
++ void log()
+}
+
+
+class org.example.factory.question.MultiSelectQuestionFactory {
++ Question create(JSONObject)
++ Question create(Element)
+}
+
+'主类
+Main ..> Loader : <<create>>
+
+'观察者模式
+Subject --> Observer : observers
+Judger --> Loader : Subject
+ComplexityAnalyst --> Loader : Subject
+
+'加载器
+Loader ..> PersistStrategy : <<create>>
+Loader --> ParserFactory : <<uses>>
+
+'解析器工厂
+ParserFactory --> QuestionFactory : <<uses>>
+
+'pojo
+Exam o-- Question : <<contains>>
+Submission o-- Answer : <<contains>>
+Question ..> Answer : <<uses>>
+observer *-- Exam : <<contains>>
+observer *-- Submission : <<contains>>
+
+'持久化策略
+Judger -right-> PersistStrategy : <<uses>>
+ComplexityAnalyst -right-> PersistStrategy : <<uses>>
+
+'判分策略
+Judger --> ScoreStrategy : <<uses>>
+Question *-- ScoreStrategy : scoreStrategy
+
+'代码判分
+CodeScoreStrategy ..> ThreadPool : <<uses>>
+CodeScoreStrategy *-- Preprocessor
+CodeScoreStrategy *-- Executor
+CodeScoreStrategy ..> CodeAnswer : <<uses>>
+JavaExecutor ..> CodeAnswer : <<uses>>
+CodeScoreStrategy ..> CodeQuestion : <<uses>>
+CodeQuestion *-- CodeSample : samples
+
+'复杂度分析
+ComplexityAnalyst ..> ThreadPool : <<uses>>
+ComplexityAnalyst o-- CCAnalyst : <<contains>>
+
+org.example.pojo.answer.Answer <|-- org.example.pojo.answer.CodeAnswer
+org.example.pojo.question.Question <|-- org.example.pojo.question.SelectQuestion
+org.example.score.ScoreStrategy <|-- org.example.score.CodeScoreStrategy
+org.example.pojo.question.SelectQuestion <|-- org.example.pojo.question.SingleSelectQuestion
+org.example.observer.Observer <|.. org.example.observer.ComplexityAnalyst
+org.example.utils.ThreadPool +.. org.example.utils.ThreadPool$WorkerThread
+org.example.utils.Thread <|-- org.example.utils.ThreadPool$WorkerThread
+org.example.pojo.answer.Answer <|-- org.example.pojo.answer.SelectAnswer
+org.example.factory.question.QuestionFactory <|-- org.example.factory.question.CodeQuestionFactory
+org.example.subject.Subject <|-- org.example.subject.Loader
+org.example.pojo.question.Question <|-- org.example.pojo.question.CodeQuestion
+org.example.observer.Observer <|.. org.example.observer.Judger
+org.example.factory.question.QuestionFactory <|-- org.example.factory.question.SingleSelectQuestionFactory
+org.example.code.preprocessor.Preprocessor <|-- org.example.code.preprocessor.JavaPreprocessor
+org.example.code.analyst.CCAnalyst <|-- org.example.code.analyst.JavaCCAnalyst
+org.example.persist.PersistStrategy <|-- org.example.persist.CSVPersistStrategy
+org.example.code.executor.Executor <|-- org.example.code.executor.JavaExecutor
+org.example.score.ScoreStrategy <|-- org.example.score.NothingScoreStrategy
+org.example.score.ScoreStrategy <|-- org.example.score.FixScoreStrategy
+org.example.score.ScoreStrategy <|-- org.example.score.PartialScoreStrategy
+org.example.pojo.question.SelectQuestion <|-- org.example.pojo.question.MultiSelectQuestion
+org.example.factory.parser.ParserFactory <|-- org.example.factory.parser.XMLParserFactory
+org.example.factory.parser.ParserFactory <|-- org.example.factory.parser.JSONParserFactory
+org.example.factory.question.QuestionFactory <|-- org.example.factory.question.MultiSelectQuestionFactory
+@enduml
