@@ -1,459 +1,561 @@
-# 单一职责原则 (SRP)
+# 02-单一职责原则 SRP（第11-17页）
 
-**页码范围**: 第11-15页
-**核心概念**: 一个类只负责一个职责
-**英文**: Single Responsibility Principle
-**重要性**: ★★★★☆
+> Single Responsibility Principle
+>
+> 一个类只负责一个功能领域的职责
 
 ---
 
-## 📄 第11页 - 单一职责原则定义
+## 第11页 - 定义
 
-### 页面内容
-**单一职责原则 (Single Responsibility Principle, SRP)** 有两种定义方式：
+### 📋 单一职责原则定义
 
-#### 定义方式一
-- **中文**: 一个对象应该只包含单一的职责，并且该职责被完整地封装在一个类中。
-- **英文**: Every object should have a single responsibility, and that responsibility should be entirely encapsulated by the class.
+**定义方式一**（职责角度）：
+- 一个对象应该只包含**单一的职责**，并且该职责被**完整地封装**在一个类中。
+- **英文定义**：
+  > Every object should have a single responsibility, and that responsibility should be entirely encapsulated by the class.
 
-#### 定义方式二 (更常用)
-- **中文**: 就一个类而言，应该仅有一个引起它变化的原因。
-- **英文**: There should never be more than one reason for a class to change.
+**定义方式二**（变化角度）：
+- 就一个类而言，应该**仅有一个引起它变化的原因**。
+- **英文定义**：
+  > There should never be more than one reason for a class to change.
 
-### 重点解析
+### 💡 理解要点
 
-#### 两种定义的理解
-**定义一**: 从**职责的角度**
-- 一个类 = 一个职责
-- 职责要完整封装在类中
+两种定义方式的关联：
 
-**定义二**: 从**变化的角度** (更深刻)
-- 一个类 = 一个变化原因
-- 如果一个类有2个变化原因，说明它承担了2个职责
+```
+职责 ⇄ 变化原因
+  ↓         ↓
+一个职责  =  一个变化原因
+多个职责  =  多个变化原因（违反SRP）
+```
 
-#### 举例说明
-假设有一个`Employee`类：
+**"变化原因"的理解**：
+- 如果一个类有多个职责
+- 当其中一个职责的需求改变时
+- 需要修改这个类
+- 这就是"一个变化原因"
+
+**举例**：
+- ❌ **违反SRP**：User类同时负责用户数据和数据库操作
+  - 变化原因1：用户属性改变（如增加字段）
+  - 变化原因2：数据库技术改变（从MySQL到PostgreSQL）
+
+- ✅ **符合SRP**：User类只负责用户数据，UserRepository负责数据库操作
+  - User类的变化原因：用户属性改变
+  - UserRepository的变化原因：数据库技术改变
+
+### ⚠️ 考点
+
+- 能够背诵两种定义方式（中英文）
+- 理解"职责"与"变化原因"的对应关系
+- 能够识别一个类有几个变化原因
+
+---
+
+## 第12页 - 分析
+
+### 📋 单一职责原则分析
+
+**核心思想**：
+
+一个类（或者大到模块，小到方法）承担的职责越多，它被复用的可能性越小，而且如果一个类承担的职责过多，就相当于将这些职责**耦合**在一起，当其中一个职责变化时，可能会影响其他职责的运作。
+
+### 💡 职责的分类
+
+类的职责主要包括**两个方面**：
+
+1. **数据职责（Data Responsibility）**
+   - 通过**属性**来体现
+   - 例如：`String name`, `int age`
+
+2. **行为职责（Behavior Responsibility）**
+   - 通过**方法**来体现
+   - 例如：`void save()`, `void validate()`
+
+### 💡 为什么职责越多，复用性越低？
+
+**场景示例**：
 ```java
-class Employee {
-    // 职责1: 计算薪水
-    public void calculatePay() { ... }
+// 职责混杂的类（难以复用）
+class User {
+    String name;
+    String email;
 
-    // 职责2: 保存到数据库
-    public void save() { ... }
-
-    // 职责3: 生成报表
-    public void generateReport() { ... }
+    void saveToMySQL() { /* ... */ }      // 职责1：MySQL持久化
+    void sendEmailViaSMTP() { /* ... */ } // 职责2：SMTP邮件发送
+    void renderHTML() { /* ... */ }       // 职责3：HTML渲染
 }
+
+// 问题：如果另一个模块只需要用户数据和邮件发送，
+// 但不需要HTML渲染，还必须依赖整个User类
 ```
 
-**分析**:
-- 这个类有**3个变化原因**:
-  1. 薪水计算规则变化 → 修改calculatePay()
-  2. 数据库结构变化 → 修改save()
-  3. 报表格式变化 → 修改generateReport()
-- **违反SRP**: 一个类不应该有3个变化原因！
-
-#### 正确设计
-应该拆分为3个类:
+**职责分离后（易于复用）**：
 ```java
-class Employee { ... }                    // 员工数据
-class PayrollCalculator { ... }          // 薪水计算
-class EmployeeRepository { ... }         // 数据库操作
-class EmployeeReportGenerator { ... }    // 报表生成
-```
-
-### 关键术语
-- **职责 (Responsibility)**: 类应该做的事情
-- **变化原因 (Reason to change)**: 导致类需要修改的外部因素
-- **内聚 (Cohesion)**: 类内部元素的相关程度
-
-### 考点提示
-⚠️ **高频考点**:
-- 给出一个类的设计，判断是否违反SRP
-- 给出违反SRP的设计，要求重构
-
-### 易混淆点
-💡 **"职责"不是"方法"**:
-- 一个职责可能需要多个方法来实现
-- 多个方法如果是为了同一个职责，可以在同一个类中
-- 关键是看"变化原因"的数量
-
----
-
-## 📄 第12页 - 单一职责原则分析 (第1部分)
-
-### 页面内容
-**职责与复用性的关系**:
-- 一个类（或者大到模块，小到方法）承担的职责越多，它被**复用的可能性越小**
-- 如果一个类承担的职责过多，就相当于将这些职责**耦合在一起**
-- 当其中一个职责变化时，可能会**影响其他职责的运作**
-
-**职责的两个方面**:
-1. **数据职责** - 通过**属性**来体现
-2. **行为职责** - 通过**方法**来体现
-
-### 重点解析
-
-#### 为什么职责多会降低复用性？
-```
-类A: 职责1 + 职责2 + 职责3
-
-如果其他模块只需要职责1:
-→ 也必须把职责2和职责3一起带上
-→ 带来不必要的依赖
-→ 复用性降低
-```
-
-#### 职责耦合的问题
-```
-类A内部:
-职责1 ←→ 职责2 ←→ 职责3
-(相互依赖，牵一发而动全身)
-
-职责1变化 → 可能破坏职责2 → 可能破坏职责3
-```
-
-#### 数据职责 vs 行为职责
-| 职责类型 | 体现方式 | 例子 |
-|---------|---------|------|
-| 数据职责 | 属性 (fields) | `name`, `age`, `address` |
-| 行为职责 | 方法 (methods) | `calculatePay()`, `save()`, `sendEmail()` |
-
-💡 **判断职责**: 如果两个方法操作的是**完全不同的属性集**，它们很可能属于不同职责。
-
-### 设计原则
-✅ **高内聚**: 一个类的方法和属性都是为了同一个职责服务
-✅ **低耦合**: 不同职责的类之间相互独立
-
-### 考点提示
-⚠️ **理解重点**:
-- 职责多 → 耦合高 → 复用性低 → 可维护性差
-- SRP是实现"高内聚、低耦合"的指导方针
-
----
-
-## 📄 第13页 - 单一职责原则分析 (第2部分)
-
-### 页面内容
-**SRP的指导意义**:
-- 单一职责原则是实现**高内聚、低耦合**的指导方针
-- 在很多**代码重构手法**中都能找到它的存在
-- 它是**最简单但又最难运用**的原则
-
-**应用难点**:
-- 需要设计人员发现类的**不同职责**并将其**分离**
-- 发现类的多重职责需要设计人员具有较强的**分析设计能力**和相关**重构经验**
-
-### 重点解析
-
-#### 为什么"最简单"？
-- 概念很直观: 一个类只做一件事
-- 定义很清晰: 一个变化原因
-
-#### 为什么"最难运用"？
-1. **职责边界模糊**
-   - 什么算"一个"职责？
-   - 职责的粒度如何把握？
-
-2. **主观判断**
-   - 不同设计师对"职责"的理解可能不同
-   - 需要结合具体业务场景判断
-
-3. **经验依赖**
-   - 需要多次重构才能形成"职责感"
-   - 需要踩过坑才知道什么是"职责过多"
-
-#### 职责识别技巧
-💡 **如何判断一个类是否违反SRP**:
-1. 列出这个类的所有方法
-2. 将方法按照"为什么会变化"进行分组
-3. 如果有多个变化原因的组，说明违反了SRP
-
-**例子**:
-```
-UserManager类的方法:
-- login()           → 变化原因: 认证规则变化
-- register()        → 变化原因: 认证规则变化
-- updateProfile()   → 变化原因: 用户数据结构变化
-- sendEmail()       → 变化原因: 邮件服务变化
-- exportToExcel()   → 变化原因: 导出格式变化
-
-分析: 这个类有4个变化原因，应该拆分！
-```
-
-### 重构技巧
-常见的SRP重构手法:
-1. **Extract Class** (提取类): 将一个类的部分职责提取到新类
-2. **Move Method** (移动方法): 将方法移到更合适的类
-3. **Extract Interface** (提取接口): 为不同职责提取不同接口
-
-### 考点提示
-⚠️ **重要**:
-- SRP看似简单，实际应用需要经验
-- 考试中常考"识别违反SRP的设计并重构"
-
-### 易混淆点
-💡 **粒度把握**:
-- 职责不能拆得太细 (过度设计)
-- 也不能太粗 (职责不清)
-- 需要根据具体场景判断
-
----
-
-## 📄 第14页 - 单一职责原则实例说明
-
-### 页面内容
-**实例背景**:
-某基于Java的C/S系统的"登录功能"通过如下**登录类 (Login)** 实现。
-
-**问题**: 现使用单一职责原则对其进行重构。
-
-### 隐含信息
-虽然这页没有给出具体的Login类代码，但根据经验，一个违反SRP的Login类通常会包含：
-
-```java
-class Login {
-    // 职责1: 界面显示
-    public void showLoginDialog() { ... }
-
-    // 职责2: 验证用户输入
-    public boolean validateInput(String username, String password) { ... }
-
-    // 职责3: 身份认证
-    public boolean authenticate(String username, String password) { ... }
-
-    // 职责4: 数据库操作
-    public User findUserInDB(String username) { ... }
-
-    // 职责5: 会话管理
-    public void createSession(User user) { ... }
-
-    // 职责6: 日志记录
-    public void logLoginAttempt(String username, boolean success) { ... }
+class User {
+    String name;
+    String email;
 }
+
+class UserRepository {
+    void save(User user) { /* MySQL */ }
+}
+
+class EmailService {
+    void send(User user) { /* SMTP */ }
+}
+
+class UserView {
+    void render(User user) { /* HTML */ }
+}
+
+// 现在可以单独复用任何一个类
 ```
 
-### 问题分析
-这个Login类至少承担了**6个职责**:
-1. 界面显示 (UI层)
-2. 输入验证 (表现层)
-3. 身份认证 (业务层)
-4. 数据库操作 (数据层)
-5. 会话管理 (系统层)
-6. 日志记录 (基础设施层)
+### 💡 职责耦合的问题
 
-**变化原因多达6个**:
-- UI框架变化
-- 验证规则变化
-- 认证策略变化
-- 数据库变化
-- 会话机制变化
-- 日志格式变化
-
-### 设计问题
-❌ **违反SRP的后果**:
-- 修改UI会影响认证逻辑
-- 修改数据库会影响会话管理
-- 类职责不清晰，难以测试
-- 无法复用其中的某个功能
-
-### 考点提示
-⚠️ **这是SRP最经典的反例**:
-- Login类是教科书级别的违反SRP的例子
-- 考试中可能会给出类似的设计要求重构
-
-### 重构思路预告
-应该按照**层次**和**职责**拆分:
-- LoginView - 界面显示
-- InputValidator - 输入验证
-- AuthenticationService - 身份认证
-- UserRepository - 数据库操作
-- SessionManager - 会话管理
-- LoginLogger - 日志记录
-
----
-
-## 📄 第15页 - 单一职责原则实例解析
-
-### 页面内容
-给出了Login类重构后的设计方案 (应该包含UML类图，展示重构前后对比)。
-
-### 重构方案 (基于SRP)
-
-#### 重构后的类结构
+**问题链示意图**：
 ```
-┌─────────────────┐
-│  LoginForm      │  职责: 用户界面显示
-│  - showDialog() │
-│  - getInput()   │
-└────────┬────────┘
-         │ uses
+┌─────────────────────────────────────┐
+│  User类（混合职责）                  │
+├─────────────────────────────────────┤
+│  - 数据职责                          │
+│  - 持久化职责  ← 数据库技术改变      │
+│  - 邮件职责                          │
+│  - 渲染职责                          │
+└─────────────────────────────────────┘
          ↓
-┌─────────────────┐
-│ LoginController │  职责: 协调登录流程
-│ - login()       │
-└────┬─────┬──────┘
-     │     │
-     │     └─────────→ ┌──────────────────┐
-     │                 │ InputValidator   │  职责: 输入验证
-     │                 │ - validate()     │
-     │                 └──────────────────┘
-     │
-     └───────→ ┌──────────────────────┐
-               │ AuthService          │  职责: 身份认证
-               │ - authenticate()     │
-               └──────┬───────────────┘
-                      │ uses
-                      ↓
-               ┌──────────────────┐
-               │ UserDAO          │  职责: 数据访问
-               │ - findUser()     │
-               └──────────────────┘
+   修改持久化代码
+         ↓
+   可能影响 → 邮件职责的运作
+         ↓
+   可能影响 → 渲染职责的运作
 ```
 
-### 职责分离详解
+### 🎯 单一职责原则的作用
 
-#### 1. LoginForm (界面职责)
+SRP是实现**高内聚、低耦合**的指导方针：
+- **高内聚**：一个类的所有方法都围绕同一个职责
+- **低耦合**：不同职责之间通过接口交互，而非混在一起
+
+### ⚠️ 应用难点
+
+单一职责原则是**最简单但又最难运用**的原则，需要设计人员：
+1. **发现**类的不同职责
+2. **分离**这些职责到不同的类
+3. 需要较强的**分析设计能力**和相关**重构经验**
+
+**为什么难？**
+- 职责的粒度难以把握（太粗或太细）
+- 领域知识不足时难以识别职责边界
+- 需要在理想设计和实用性之间平衡
+
+### 💡 职责粒度的把握
+
+**过粗**（违反SRP）：
 ```java
-class LoginForm {
-    private LoginController controller;
-
-    public void showDialog() {
-        // 显示登录对话框
-    }
-
-    public LoginInput getInput() {
-        // 获取用户输入
-        return new LoginInput(username, password);
-    }
+class SystemManager {
+    void manageUsers() { /* ... */ }
+    void manageOrders() { /* ... */ }
+    void generateReports() { /* ... */ }
 }
+// 职责太多，应该拆分
 ```
-**变化原因**: UI框架变化、界面风格变化
 
-#### 2. InputValidator (验证职责)
+**过细**（过度设计）：
 ```java
-class InputValidator {
-    public boolean validate(String username, String password) {
-        // 验证用户名和密码格式
-        if (username == null || username.isEmpty()) return false;
-        if (password == null || password.length() < 6) return false;
-        return true;
-    }
+class UserNameGetter {
+    String getName(User user) { return user.name; }
 }
+class UserNameSetter {
+    void setName(User user, String name) { user.name = name; }
+}
+// 拆分过度，增加复杂度
 ```
-**变化原因**: 验证规则变化 (如密码复杂度要求)
 
-#### 3. AuthService (认证职责)
+**合适**（符合SRP）：
 ```java
-class AuthService {
-    private UserDAO userDAO;
-
-    public boolean authenticate(String username, String password) {
-        User user = userDAO.findUser(username);
-        if (user != null && user.checkPassword(password)) {
-            SessionManager.createSession(user);
-            return true;
-        }
-        return false;
-    }
+class User {
+    private String name;
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 }
+// 职责单一：管理用户数据
 ```
-**变化原因**: 认证策略变化 (如改用OAuth、SSO)
-
-#### 4. UserDAO (数据访问职责)
-```java
-class UserDAO {
-    public User findUser(String username) {
-        // 从数据库查询用户
-        return database.query("SELECT * FROM users WHERE username = ?", username);
-    }
-}
-```
-**变化原因**: 数据库类型变化、ORM框架变化
-
-### 重构效果对比
-
-| 对比维度 | 重构前 (单一Login类) | 重构后 (多个类) |
-|---------|-------------------|----------------|
-| 职责数量 | 6个职责耦合在一起 | 每个类1个职责 |
-| 变化原因 | 6个变化原因 | 每个类1个变化原因 |
-| 内聚性 | 低内聚 | 高内聚 ✅ |
-| 复用性 | 无法单独复用某个功能 | 可以复用任何一个类 ✅ |
-| 可测试性 | 难以单独测试某个功能 | 每个类可独立测试 ✅ |
-| 可维护性 | 修改一处可能影响多处 | 影响范围局限在单个类 ✅ |
-
-### 设计权衡
-⚠️ **不要过度拆分**:
-- 如果职责本身就是紧密相关的，不要强行拆分
-- 如果一个类只有2-3个简单方法，不一定要拆
-
-💡 **判断标准**:
-- 如果修改一个方法，需要理解和测试其他不相关的方法 → 应该拆分
-- 如果一个类的方法经常被不同模块单独使用 → 应该拆分
-
-### 实践建议
-1. **先写代码，再重构**: 不要过早优化
-2. **当类膨胀时警惕**: 如果一个类超过300行，很可能违反了SRP
-3. **从变化出发**: 思考"这个类有几个变化原因"
-
-### 考点提示
-⚠️ **必考**:
-- Login类重构是SRP最经典的案例
-- 理解重构前后的区别
-- 能够画出重构后的类图
-
-### 真实应用
-在MVC架构中，SRP的体现:
-- **Model**: 数据职责
-- **View**: 界面职责
-- **Controller**: 流程控制职责
 
 ---
 
-## 🎯 单一职责原则 (第11-15页) 知识点总结
+## 第13页 - 实例说明
+
+### 📋 实例背景
+
+某基于Java的C/S系统的"登录功能"通过如下登录类（Login）实现。
+
+**问题**：现使用单一职责原则对其进行重构。
+
+---
+
+## 第16页 - UML图（违反SRP）
+
+### 🖼️ Login类结构图
+
+```
+┌─────────────────────────────────────────┐
+│              Login                      │
+├─────────────────────────────────────────┤
+│ + init() : void                         │
+│ + display() : void                      │
+│ + validate() : void                     │
+│ + getConnection() : Connection          │
+│ + findUser(String userName,             │
+│            String userPassword): boolean│
+│ + main(String args[]) : void            │
+└─────────────────────────────────────────┘
+```
+
+### 📊 职责分析
+
+这个Login类违反了SRP，因为它包含了**至少5种职责**：
+
+| 方法 | 职责类型 | 说明 |
+|-----|---------|------|
+| `init()` | 界面初始化 | 初始化登录界面组件 |
+| `display()` | 界面显示 | 显示登录窗口 |
+| `validate()` | 业务逻辑 | 验证用户输入的合法性 |
+| `getConnection()` | 数据库连接 | 获取数据库连接对象 |
+| `findUser(...)` | 数据访问 | 从数据库查询用户 |
+| `main(...)` | 程序入口 | 启动应用程序 |
+
+### 💡 问题识别
+
+**变化原因分析**：
+
+1. **界面改变** → 需要修改`init()`和`display()`
+2. **验证规则改变** → 需要修改`validate()`
+3. **数据库技术改变** → 需要修改`getConnection()`
+4. **数据访问方式改变** → 需要修改`findUser()`
+5. **程序启动方式改变** → 需要修改`main()`
+
+**一个类有5个变化原因** → 严重违反SRP ❌
+
+### 🔴 代码坏味道
+
+```java
+// 违反SRP的Login类（示例代码）
+public class Login {
+    // 界面职责
+    public void init() {
+        // 初始化文本框、按钮等组件
+    }
+
+    public void display() {
+        // 显示登录窗口
+    }
+
+    // 验证职责
+    public void validate() {
+        // 验证用户名密码格式
+    }
+
+    // 数据库连接职责
+    public Connection getConnection() {
+        return DriverManager.getConnection(
+            "jdbc:mysql://localhost:3306/db", "root", "password");
+    }
+
+    // 数据访问职责
+    public boolean findUser(String userName, String userPassword) {
+        Connection conn = getConnection();
+        // SQL查询用户
+        return true; // 简化
+    }
+
+    // 程序入口职责
+    public static void main(String[] args) {
+        Login login = new Login();
+        login.init();
+        login.display();
+    }
+}
+```
+
+### ⚠️ 问题总结
+
+| 问题 | 影响 |
+|-----|------|
+| **低内聚** | 一个类做了太多事情 |
+| **高耦合** | 界面、业务、数据库混在一起 |
+| **难复用** | 想复用数据访问逻辑，却必须带上界面代码 |
+| **难维护** | 修改界面可能影响数据库代码 |
+| **难测试** | 无法单独测试数据访问逻辑 |
+
+---
+
+## 第17页 - UML图（符合SRP）
+
+### 🖼️ 重构后的类结构图
+
+```
+┌────────────────────────────┐
+│       MainClass            │
+├────────────────────────────┤
+│ + main(String args[]): void│
+└────────────────────────────┘
+         │
+         │ (依赖)
+         ↓
+┌────────────────────────────┐
+│       LoginForm            │
+├────────────────────────────┤
+│ - dao : UserDAO            │
+├────────────────────────────┤
+│ + init() : void            │
+│ + display() : void         │
+│ + validate() : void        │
+└────────────────────────────┘
+         │
+         │ (依赖)
+         ↓
+┌────────────────────────────┐
+│       UserDAO              │
+├────────────────────────────┤
+│ - db : DBUtil              │
+├────────────────────────────┤
+│ + findUser(String userName,│
+│   String userPassword)     │
+│   : boolean                │
+└────────────────────────────┘
+         │
+         │ (依赖)
+         ↓
+┌────────────────────────────┐
+│       DBUtil               │
+├────────────────────────────┤
+│ + getConnection()          │
+│   : Connection             │
+└────────────────────────────┘
+```
+
+### 📊 职责分离分析
+
+重构后，原来的Login类被拆分为**4个类**，各司其职：
+
+| 类名 | 职责 | 变化原因 | SRP |
+|-----|------|---------|-----|
+| **MainClass** | 程序入口 | 启动方式改变 | ✅ |
+| **LoginForm** | 界面显示和验证 | 界面或验证规则改变 | ✅ |
+| **UserDAO** | 数据访问 | 数据访问方式改变 | ✅ |
+| **DBUtil** | 数据库连接 | 数据库技术改变 | ✅ |
+
+**依赖链**：
+```
+MainClass → LoginForm → UserDAO → DBUtil
+  (入口)     (界面层)    (数据访问层) (数据库工具层)
+```
+
+### 💡 重构后的代码示例
+
+```java
+// 1. 程序入口类
+public class MainClass {
+    public static void main(String[] args) {
+        LoginForm form = new LoginForm();
+        form.init();
+        form.display();
+    }
+}
+
+// 2. 界面类（单一职责：界面显示和验证）
+public class LoginForm {
+    private UserDAO dao = new UserDAO();
+
+    public void init() {
+        // 初始化界面组件
+    }
+
+    public void display() {
+        // 显示登录窗口
+    }
+
+    public void validate() {
+        // 验证输入格式
+        String username = getUsernameFromUI();
+        String password = getPasswordFromUI();
+
+        if (username.isEmpty() || password.isEmpty()) {
+            showError("用户名或密码不能为空");
+            return;
+        }
+
+        // 调用DAO进行验证
+        boolean success = dao.findUser(username, password);
+        if (success) {
+            showSuccess("登录成功");
+        } else {
+            showError("用户名或密码错误");
+        }
+    }
+}
+
+// 3. 数据访问类（单一职责：用户数据访问）
+public class UserDAO {
+    private DBUtil db = new DBUtil();
+
+    public boolean findUser(String userName, String userPassword) {
+        Connection conn = db.getConnection();
+        try {
+            PreparedStatement stmt = conn.prepareStatement(
+                "SELECT * FROM users WHERE username=? AND password=?");
+            stmt.setString(1, userName);
+            stmt.setString(2, userPassword);
+            ResultSet rs = stmt.executeQuery();
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+}
+
+// 4. 数据库工具类（单一职责：数据库连接管理）
+public class DBUtil {
+    public Connection getConnection() {
+        try {
+            return DriverManager.getConnection(
+                "jdbc:mysql://localhost:3306/db",
+                "root",
+                "password");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
+```
+
+### ✅ 重构效果对比
+
+| 维度 | 重构前（Login类） | 重构后（4个类） |
+|-----|-----------------|---------------|
+| **内聚性** | ❌ 低内聚（5种职责混杂） | ✅ 高内聚（每个类一种职责） |
+| **耦合度** | ❌ 高耦合（所有职责耦合在一起） | ✅ 低耦合（通过依赖关联） |
+| **可复用性** | ❌ 难复用（想用数据访问必须带界面） | ✅ 易复用（DBUtil可独立复用） |
+| **可维护性** | ❌ 修改界面可能影响数据库 | ✅ 修改界面不影响数据库 |
+| **可测试性** | ❌ 难以单独测试某个功能 | ✅ 可以单独测试每个类 |
+| **变化原因** | ❌ 5个变化原因 | ✅ 每个类1个变化原因 |
+
+### 🎯 设计模式体现
+
+重构后的设计体现了几个模式思想：
+
+1. **分层架构（Layered Architecture）**
+   ```
+   表现层：LoginForm
+      ↓
+   业务层：（本例中简化）
+      ↓
+   数据访问层：UserDAO
+      ↓
+   工具层：DBUtil
+   ```
+
+2. **DAO模式（Data Access Object）**
+   - UserDAO封装了所有数据库访问逻辑
+   - LoginForm不需要知道数据如何存储
+
+3. **依赖注入思想**（可进一步改进）
+   ```java
+   // 进一步改进：通过构造函数注入
+   public class LoginForm {
+       private UserDAO dao;
+
+       public LoginForm(UserDAO dao) {
+           this.dao = dao;  // 依赖注入
+       }
+   }
+   ```
+
+### 💡 SRP与其他原则的关系
+
+在这个重构案例中，我们还隐含地应用了其他原则：
+
+1. **与OCP的关系**
+   - 通过职责分离，系统更容易扩展
+   - 例如：可以轻松增加新的DAO（TeacherDAO）
+
+2. **与DIP的关系**（可进一步改进）
+   - 可以让LoginForm依赖抽象的IUserDAO接口
+   - 而不是具体的UserDAO类
+
+3. **与LoD的关系**
+   - LoginForm不直接访问DBUtil
+   - 通过UserDAO作为中介
+
+---
+
+## 🎯 本章总结
 
 ### 核心要点
-1. ✅ **定义**: 一个类应该只有一个引起它变化的原因
-2. ✅ **目的**: 实现高内聚、低耦合
-3. ✅ **判断方法**: 数变化原因的个数
-4. ✅ **经典案例**: Login类重构 (6个职责 → 6个类)
-5. ✅ **职责类型**: 数据职责 (属性) + 行为职责 (方法)
 
-### 必背内容
-- [ ] SRP的两种定义 (中英文)
-- [ ] "一个变化原因"的含义
-- [ ] Login类重构的思路
+1. **SRP定义**
+   - 一个类只有一个职责
+   - 只有一个引起变化的原因
 
-### 应用检验清单
-在设计类时，问自己：
-1. ✅ 这个类有几个职责？
-2. ✅ 这个类有几个变化原因？
-3. ✅ 如果要修改某个方法，会影响其他方法吗？
-4. ✅ 这个类的方法操作的是同一组属性吗？
+2. **职责的识别**
+   - 数据职责（属性）
+   - 行为职责（方法）
+   - 通过"变化原因"来判断
 
-### 常见错误
-❌ **过度拆分**:
-```java
-// 矫枉过正！
-class UsernameValidator { ... }
-class PasswordValidator { ... }
-class EmailValidator { ... }
-// 这三个其实可以合并为一个InputValidator
-```
+3. **违反SRP的后果**
+   - 低内聚、高耦合
+   - 难复用、难维护、难测试
 
-❌ **职责不清**:
-```java
-class UserService {
-    public void login() { ... }        // 认证
-    public void sendEmail() { ... }    // 通知
-    public void exportExcel() { ... }  // 报表
-}
-// 明显的多职责！
-```
+4. **重构手法**
+   - 识别不同的职责
+   - 将职责分离到不同的类
+   - 建立合理的依赖关系
 
-### 下一步
-理解了SRP后，继续学习**开闭原则 (OCP)** - 设计的终极目标！
+### 记忆技巧
+
+**SRP口诀**：
+> **"一类一责，各司其职"**
+
+**判断方法**：
+> **"问自己：这个类有几个变化原因？"**
+> - 1个 → 符合SRP ✅
+> - 多个 → 违反SRP ❌
+
+### 常见误区
+
+❌ **误区1**：类越小越好
+- SRP不是让你无限拆分类
+- 要在单一职责和过度设计之间平衡
+
+❌ **误区2**：一个类只能有一个方法
+- 一个职责可以由多个方法共同完成
+- 例如：LoginForm的init()、display()、validate()都属于"界面职责"
+
+❌ **误区3**：职责等于层次
+- 职责是逻辑概念，层次是架构概念
+- 同一层次中的类也可能有不同职责
+
+### ⚠️ 考点汇总
+
+1. **定义题**：默写SRP的两种定义（中英文）
+2. **识别题**：给出类图，判断是否违反SRP
+3. **重构题**：给出违反SRP的代码，要求重构
+4. **论述题**：说明SRP的重要性和应用难点
+5. **综合题**：SRP与其他原则的关系
+
+### 下一章预告
+
+[03-开闭原则-OCP.md](./03-开闭原则-OCP.md) 将介绍面向对象设计的**终极目标**：
+- 为什么说OCP是最重要的原则？
+- 如何做到"对扩展开放，对修改关闭"？
+- 按钮系统的重构实例（第19、22页UML图）
 
 ---
 
-**提示**: SRP是所有设计原则的基础，如果这个原则没理解，后面的原则会很难懂！
+**返回**: [README.md](./README.md) | **导航**: [00-导航.md](./00-导航.md) | **上一章**: [01-课程引入与基础.md](./01-课程引入与基础.md) | **下一章**: [03-开闭原则-OCP.md](./03-开闭原则-OCP.md)

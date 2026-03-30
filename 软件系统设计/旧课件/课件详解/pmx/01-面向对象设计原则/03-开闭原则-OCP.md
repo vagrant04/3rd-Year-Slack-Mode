@@ -1,599 +1,671 @@
-# 开闭原则 (OCP) 👑
+# 03-开闭原则 OCP（第18-22页）
 
-**页码范围**: 第16-20页
-**核心概念**: 对扩展开放，对修改关闭
-**英文**: Open-Closed Principle
-**重要性**: ★★★★★ (最重要的设计原则！)
-
----
-
-## 📄 第16页 - 开闭原则定义
-
-### 页面内容
-**开闭原则 (Open-Closed Principle, OCP)** 定义如下：
-
-#### 核心定义
-- **中文**: 一个软件实体应当对扩展开放，对修改关闭。也就是说在设计一个模块的时候，应当使这个模块可以在不被修改的前提下被扩展，即实现在不修改源代码的情况下改变这个模块的行为。
-
-- **英文**: Software entities should be open for extension, but closed for modification.
-
-### 重点解析
-
-#### 两个关键词的理解
-**1. 对扩展开放 (Open for Extension)**
-- 含义: 当需求变化时，可以通过**增加新代码**来扩展系统功能
-- 方式: 添加新类、新方法、新模块
-- 例子: 需要支持新的支付方式 → 添加新的支付类
-
-**2. 对修改关闭 (Closed for Modification)**
-- 含义: 扩展系统功能时，**不需要修改已有的代码**
-- 保护: 已有代码不动，已测试通过的代码不会被破坏
-- 例子: 添加新支付方式时，不修改原有的支付类
-
-#### 核心思想
-```
-需求变化 → 不是改旧代码 → 而是加新代码
-```
-
-#### 实现目标
-在不修改源代码的情况下改变模块的行为：
-- **不改**: 不修改已有类的代码
-- **能变**: 系统行为可以改变
-- **怎么做**: 通过**抽象化**和**多态**实现
-
-### 为什么OCP如此重要？
-
-#### 软件开发的痛点
-❌ **传统做法** (违反OCP):
-```
-需求变化 → 修改原有代码 → 可能引入bug → 需要重新测试全部功能
-```
-
-✅ **遵循OCP**:
-```
-需求变化 → 添加新代码 → 原有代码不动 → 只需测试新功能
-```
-
-#### OCP的价值
-1. **降低风险**: 已有功能不会被破坏
-2. **提高效率**: 不需要重新测试所有功能
-3. **便于维护**: 代码职责清晰，不会越改越乱
-4. **支持演进**: 系统可以持续扩展，不会"改不动"
-
-### 关键术语
-- **软件实体 (Software Entity)**: 模块、类、方法等
-- **扩展 (Extension)**: 添加新功能
-- **修改 (Modification)**: 改变已有代码
-
-### 考点提示
-⚠️ **最高频考点**:
-- OCP的定义 (中英文)
-- 给出一个设计，判断是否符合OCP
-- 设计题: 要求设计符合OCP的系统
-
-### 易混淆点
-💡 **"修改"的含义**:
-- ❌ 不是说已有代码完全不能动
-- ✅ 而是说扩展功能时不需要修改已有的业务逻辑代码
-- 可以修改: 配置文件、工厂类的创建逻辑
-- 不能修改: 核心业务类的实现代码
+> Open-Closed Principle
+>
+> 对扩展开放，对修改关闭
 
 ---
 
-## 📄 第17页 - 开闭原则分析 (第1部分)
+## 第18页 - 定义
 
-### 页面内容
-**历史背景**:
-- 开闭原则由**Bertrand Meyer**于**1988年**提出
-- 它是面向对象设计中**最重要的原则之一**
+### 📋 开闭原则定义
 
-**软件实体的范围**:
-在开闭原则的定义中，软件实体可以指：
-- 一个**软件模块** (如一个包)
-- 一个由多个类组成的**局部结构** (如一个子系统)
+**定义**：
+- 一个软件实体应当**对扩展开放，对修改关闭**。
+- 也就是说在设计一个模块的时候，应当使这个模块可以在**不被修改的前提下被扩展**。
+- 即实现在**不修改源代码**的情况下**改变**这个模块的行为。
+
+**英文定义**：
+> Software entities should be open for extension, but closed for modification.
+
+### 💡 理解要点
+
+**两个关键词**：
+
+1. **对扩展开放（Open for Extension）**
+   - 模块的行为可以被扩展
+   - 可以添加新功能以满足新需求
+   - 不需要修改现有代码
+
+2. **对修改关闭（Closed for Modification）**
+   - 模块的源代码不应该被修改
+   - 已有的代码应该保持稳定
+   - 通过扩展而非修改来适应变化
+
+**看似矛盾的统一**：
+```
+如何在"不修改"的前提下"扩展"？
+         ↓
+    抽象化是关键
+         ↓
+依赖抽象（接口/抽象类）而非具体类
+         ↓
+新增功能 = 新增子类（不修改原有代码）
+```
+
+**举例理解**：
+```java
+// ❌ 违反OCP：每次添加新形状都要修改代码
+class GraphicEditor {
+    void drawShape(Shape shape) {
+        if (shape.type == 1) {
+            drawCircle(shape);
+        } else if (shape.type == 2) {
+            drawRectangle(shape);
+        }
+        // 添加新形状 → 需要修改这里
+    }
+}
+
+// ✅ 符合OCP：添加新形状不需要修改原有代码
+abstract class Shape {
+    abstract void draw();
+}
+
+class Circle extends Shape {
+    void draw() { /* 画圆 */ }
+}
+
+class Rectangle extends Shape {
+    void draw() { /* 画矩形 */ }
+}
+
+class GraphicEditor {
+    void drawShape(Shape shape) {
+        shape.draw();  // 多态调用
+        // 添加新形状 → 无需修改这里
+    }
+}
+```
+
+### ⚠️ 考点
+
+- 能够背诵OCP的定义（中英文）
+- 理解"开放"和"关闭"的含义
+- 理解抽象化是实现OCP的关键
+
+---
+
+## 第19页 - 历史背景与分析
+
+### 📋 开闭原则的提出
+
+**历史背景**（第19页图片内容）：
+
+开闭原则由**Bertrand Meyer**于**1988年**提出，它是面向对象设计中**最重要的原则之一**。
+
+在开闭原则的定义中，**软件实体**可以指：
+- 一个**软件模块**
+- 一个由多个类组成的**局部结构**
 - 一个**独立的类**
 
-### 重点解析
+**Bertrand Meyer的经典著作**：
+- 《Object-Oriented Software Construction》（面向对象软件构造）
 
-#### Bertrand Meyer的贡献
-**Bertrand Meyer**:
-- 面向对象设计的先驱
-- Eiffel编程语言的设计者
-- 《Object-Oriented Software Construction》作者
-- 在1988年就提出了OCP，远见卓识！
+### 💡 理解软件实体
 
-#### OCP的适用范围
-OCP可以应用在不同的粒度级别:
-
-| 粒度 | 软件实体 | OCP应用示例 |
-|-----|---------|------------|
-| 大 | 模块/子系统 | 添加新的支付模块，不修改订单模块 |
-| 中 | 类 | 添加新的图形类，不修改绘图引擎类 |
-| 小 | 方法 | 通过策略模式，不修改算法调用方法 |
-
-💡 **精髓**: 无论什么粒度，都要做到"对扩展开放，对修改关闭"
-
-### 设计视角
+**软件实体的层次**：
 ```
-模块级OCP: 新需求 → 新模块 (不改旧模块)
-类级OCP:   新需求 → 新类   (不改旧类)
-方法级OCP: 新需求 → 新策略 (不改调用方法)
+┌─────────────────────────────┐
+│  系统（System）              │  ← 可以应用OCP
+│  ├─ 模块（Module）           │  ← 可以应用OCP
+│  │  ├─ 包（Package）         │  ← 可以应用OCP
+│  │  │  ├─ 类（Class）        │  ← 可以应用OCP
+│  │  │  │  ├─ 方法（Method）  │  ← 可以应用OCP
+│  │  │  │  └─ ...             │
+│  │  │  └─ ...                │
+│  │  └─ ...                   │
+│  └─ ...                      │
+└─────────────────────────────┘
 ```
 
-### 考点提示
-⚠️ **注意**:
-- OCP是1988年提出的，不是最近才有的"时髦"概念
-- 说明好的设计原则是经得起时间考验的
+**OCP可以应用在不同粒度**：
+- **方法级**：通过策略模式使算法可扩展
+- **类级**：通过继承/实现使类可扩展
+- **模块级**：通过插件机制使模块可扩展
 
 ---
 
-## 📄 第18页 - 开闭原则分析 (第2部分)
+## 第20页 - 抽象化是关键
 
-### 页面内容
-**抽象化是开闭原则的关键**
+### 📋 内容要点（根据第20页图片）
 
-**可变性封装原则**:
-- 开闭原则还可以通过一个更加具体的**"对可变性封装原则"**来描述
-- **Principle of Encapsulation of Variation (EVP)**
-- EVP要求找到系统的**可变因素**并将其**封装起来**
+**抽象化是开闭原则的关键**。
 
-### 重点解析
+开闭原则还可以通过一个更加具体的**"对可变性封装原则"**来描述：
 
-#### 为什么抽象化是关键？
-**问题**: 如何做到"不修改代码就能改变行为"？
-**答案**: 通过**抽象 + 多态**！
+**可变性封装原则（EVP）**：
+- **Encapsulation of Variation Principle, EVP**
+- 要求找到系统的**可变因素**并将其**封装**起来
 
-#### 原理解释
-```java
-// 抽象层 (不会变)
-interface Shape {
-    void draw();
-}
+**核心思想**（红色标注）：
+> "抽象化是开闭原则的关键。"
+> "对可变性封装原则(Principle of Encapsulation of Variation, EVP)要求找到系统的可变因素并将其封装起来。"
 
-// 具体实现 (可以扩展)
-class Circle implements Shape {
-    public void draw() { /* 画圆 */ }
-}
+### 💡 理解EVP与OCP的关系
 
-class Rectangle implements Shape {
-    public void draw() { /* 画矩形 */ }
-}
-
-// 客户端代码 (不需要修改)
-class GraphicsEditor {
-    public void drawShape(Shape shape) {
-        shape.draw();  // 多态调用
-    }
-}
+```
+    OCP（目标）
+      ↓
+"对扩展开放，对修改关闭"
+      ↓
+   如何实现？
+      ↓
+    EVP（手段）
+      ↓
+"封装可变因素"
+      ↓
+   具体做法
+      ↓
+1. 识别可变点（哪里会变化？）
+2. 抽象化（定义接口/抽象类）
+3. 配置化（用配置文件指定具体类）
 ```
 
-**扩展时**:
-```java
-// 添加新形状 (扩展)
-class Triangle implements Shape {
-    public void draw() { /* 画三角形 */ }
-}
+**可变因素的识别**：
 
-// GraphicsEditor的代码不需要修改 (关闭)
-```
+| 场景 | 可变因素 | 封装方式 |
+|-----|---------|---------|
+| 图形系统 | 图形类型（圆形、矩形、三角形...） | Shape接口 |
+| 按钮系统 | 按钮样式（圆形、矩形...） | AbstractButton |
+| 支付系统 | 支付方式（支付宝、微信、银联...） | PaymentMethod接口 |
+| 日志系统 | 日志输出方式（文件、数据库、控制台...） | Logger接口 |
 
-#### 可变性封装原则 (EVP)
-**核心思想**: "找变化，封装它"
+**封装可变因素的步骤**：
 
-**操作步骤**:
-1. **识别可变点**: 系统中哪些地方会变化？
-   - 例如: 支付方式、日志格式、数据库类型
+1. **识别可变点**
+   ```java
+   // 问自己：这里将来会变化吗？
+   if (type == "circle") { ... }
+   else if (type == "rectangle") { ... }
+   // → 类型会变化，需要封装
+   ```
 
-2. **封装可变性**: 将可变部分提取为抽象
-   - 例如: 定义PaymentMethod接口
+2. **定义抽象**
+   ```java
+   abstract class Shape {
+       abstract void draw();
+   }
+   ```
 
-3. **稳定调用**: 客户端针对抽象编程
-   - 例如: 使用PaymentMethod接口，而不是具体的WeChatPay类
+3. **具体实现**
+   ```java
+   class Circle extends Shape {
+       void draw() { /* ... */ }
+   }
+   class Rectangle extends Shape {
+       void draw() { /* ... */ }
+   }
+   ```
 
-#### 抽象化的层次
-```
-抽象层 (Abstract Layer)
-  ↑
-  | 依赖抽象 (不变)
-  |
-客户端代码
-  ↓
-  | 多态调用 (不变)
-  ↓
-具体实现层 (Concrete Layer)
-  - 实现A (可扩展)
-  - 实现B (可扩展)
-  - 实现C (可扩展)
-```
+4. **依赖抽象**
+   ```java
+   class GraphicEditor {
+       void drawShape(Shape shape) {  // 依赖抽象
+           shape.draw();
+       }
+   }
+   ```
 
-### 设计模式关联
-💡 OCP是几乎所有设计模式的理论基础:
-- **策略模式**: 封装算法的可变性
-- **工厂模式**: 封装对象创建的可变性
-- **模板方法**: 封装步骤的可变性
+### ⚠️ EVP的重要性
 
-### 考点提示
-⚠️ **重点理解**:
-- 抽象化是如何实现OCP的
-- EVP (可变性封装原则) 的含义
-- 能够识别系统中的可变点
+**为什么EVP很重要？**
+- OCP是目标，EVP是实现手段
+- EVP提供了可操作的指导：找到可变因素
+- 许多设计模式都是EVP的具体应用
 
-### 易混淆点
-💡 **抽象不是为了抽象而抽象**:
-- 只对**会变化**的部分进行抽象
-- 对于不会变化的部分，不需要过度设计
-- 关键是**识别变化点**
+**与设计模式的关系**：
+- **策略模式**：封装算法的变化
+- **工厂模式**：封装对象创建的变化
+- **观察者模式**：封装事件响应的变化
+- **状态模式**：封装状态转换的变化
 
 ---
 
-## 📄 第19页 - 开闭原则实例说明
+## 第21页 - 实例说明（原始设计）
 
-### 页面内容
-**实例背景**:
+### 📋 问题场景（根据第21页图片）
+
 某图形界面系统提供了各种不同形状的按钮，客户端代码可针对这些按钮进行编程，用户可能会改变需求要求使用不同的按钮。
 
-**原始设计方案** (违反OCP) - UML类图展示:
+**原始设计方案如图所示**：
 
 ```
-场景1: 使用圆形按钮
-┌─────────────────────────┐         ┌─────────────────┐
-│      LoginForm          │────────→│  CircleButton   │
-├─────────────────────────┤         ├─────────────────┤
-│- button: CircleButton   │         │+ view(): void   │
-│+ display(): void        │         └─────────────────┘
-└─────────────────────────┘
+场景1：使用圆形按钮
+┌──────────────────┐
+│   LoginForm      │
+├──────────────────┤
+│ - button:        │
+│   CircleButton   │ ← 具体类型
+├──────────────────┤
+│ + display(): void│
+└──────────────────┘
+         │
+         └─→ CircleButton
+             ├─ view(): void
 
-场景2: 使用矩形按钮
-┌─────────────────────────┐         ┌─────────────────┐
-│      LoginForm          │────────→│ RectangleButton │
-├─────────────────────────┤         ├─────────────────┤
-│- button: RectangleButton│         │+ view(): void   │
-│+ display(): void        │         └─────────────────┘
-└─────────────────────────┘
+场景2：改用矩形按钮（需要修改LoginForm源代码）
+┌──────────────────┐
+│   LoginForm      │
+├──────────────────┤
+│ - button:        │
+│   RectangleButton│ ← 具体类型（修改了这里）
+├──────────────────┤
+│ + display(): void│
+└──────────────────┘
+         │
+         └─→ RectangleButton
+             ├─ view(): void
 ```
 
-**问题**: 现对该系统进行重构，使之满足开闭原则的要求。
+**问题描述**：
+- 某图形界面系统提供了各种不同形状的按钮
+- 客户端代码可针对这些按钮进行编程
+- 用户可能会**改变需求**要求使用**不同的按钮**
+- 现对该系统进行重构，使之满足开闭原则的要求
 
-### 原始设计分析
+### 💡 问题分析
 
-#### UML图的关键信息
-从类图可以看出：
-- `LoginForm` 有一个成员变量 `button`
-- 这个成员变量的**类型是具体的按钮类** (`CircleButton` 或 `RectangleButton`)
-- LoginForm 与具体按钮类之间是**关联关系** (实线箭头)
+**违反OCP的表现**：
 
-#### 违反OCP的核心问题
+1. **依赖具体类**
+   ```java
+   class LoginForm {
+       private CircleButton button;  // ❌ 依赖具体类
+   }
+   ```
+
+2. **修改源代码**
+   - 要改用RectangleButton
+   - 必须修改LoginForm的源代码
+   - 重新编译、测试、部署
+
+3. **扩展困难**
+   - 每次添加新按钮类型
+   - 都要修改所有使用按钮的表单类
+
+**变化原因**：
+- 按钮样式的变化（圆形 → 矩形 → 椭圆形 → ...）
+- 这是一个**可变因素**，需要封装
+
+### 🔴 代码坏味道
+
 ```java
-// 场景1: 使用圆形按钮
-class LoginForm {
-    private CircleButton button;  // 具体类型 ❌
+// ❌ 违反OCP的设计
+public class LoginForm {
+    private CircleButton button;  // 写死了具体类型
 
     public LoginForm() {
-        this.button = new CircleButton();
+        button = new CircleButton();  // 写死了创建方式
     }
 
     public void display() {
-        button.view();
+        // 显示表单
+        button.view();  // 调用按钮的view方法
     }
 }
 
-// 场景2: 需要换成矩形按钮
-class LoginForm {
-    private RectangleButton button;  // 必须修改类型声明 ❌
-
-    public LoginForm() {
-        this.button = new RectangleButton();  // 必须修改创建语句 ❌
-    }
-
-    public void display() {
-        button.view();
-    }
-}
-```
-
-❌ **严重违反OCP**:
-1. **成员变量类型是具体类**: `button: CircleButton` → 强绑定
-2. **需要修改源代码**: 每次换按钮类型，都要修改LoginForm的字段声明
-3. **需要重新编译**: 修改了类定义，必须重新编译
-4. **影响已有功能**: 修改可能引入bug，需要重新测试
-
-#### 具体问题场景
-**需求变化**: 用户说"我不想要圆形按钮了，换成方形按钮"
-
-**传统做法** (违反OCP):
-```java
-// 步骤1: 打开LoginForm.java
-// 步骤2: 找到字段声明
-private CircleButton button;  // ← 改这里
-
-// 步骤3: 修改为
-private SquareButton button;  // ← 改成SquareButton
-
-// 步骤4: 找到构造函数
-this.button = new CircleButton();  // ← 改这里
-
-// 步骤5: 修改为
-this.button = new SquareButton();  // ← 改成SquareButton
-
-// 步骤6: 重新编译
-// 步骤7: 重新测试所有使用LoginForm的功能
-```
-
-**后果**:
-- 修改了**已有的、已测试通过的**代码 → 风险高
-- LoginForm与具体按钮类**紧耦合** → 难以扩展
-- 每次换按钮都要**改代码、编译、测试** → 效率低
-
-### 这个设计为什么违反OCP？
-
-#### 对比OCP的两个要求
-| OCP要求 | 原始设计 | 是否满足 |
-|---------|---------|---------|
-| 对扩展开放 | 新增按钮类型需要修改LoginForm | ❌ 不满足 |
-| 对修改关闭 | 必须修改LoginForm的字段类型 | ❌ 不满足 |
-
-#### 根本原因
-💡 **违反了"依赖抽象"原则**:
-- LoginForm依赖的是**具体类** (`CircleButton`)
-- 而不是**抽象** (`Button` 接口)
-
-### 设计改进思路
-💡 **OCP解决方案**:
-1. 定义抽象 `Button` 接口
-2. 所有具体按钮实现该接口
-3. **LoginForm的字段类型改为抽象类型** `button: Button`
-4. 新增按钮时，不修改LoginForm
-
-### 考点提示
-⚠️ **经典案例**:
-- 这是**组合关系违反OCP**的典型例子
-- 关键问题：成员变量使用了具体类型
-- 解决方法：成员变量使用抽象类型
-
-### 易混淆点
-💡 **注意**:
-- 不是"Client调用按钮"的关系
-- 而是"LoginForm包含按钮"的关系
-- 这是**关联/组合**，不是简单的方法调用
-
----
-
-## 📄 第20页 - 开闭原则实例解析
-
-### 页面内容
-给出了按钮系统重构后的设计方案 (应该包含UML类图)。
-
-### 重构方案 (符合OCP)
-
-#### 重构后的类图
-```
-         ┌──────────────┐
-         │  <<interface>>
-         │    Button    │
-         │ + display()  │
-         └──────┬───────┘
-                △
-                │ implements
-      ┌─────────┼─────────┬─────────┐
-      │         │         │         │
-┌─────┴─────┐ ┌┴─────────┐ ┌───────┴───┐
-│CircleButton│ │Rectangle │ │SquareButton
-│           │ │Button     │ │           │
-│+ display()│ │+ display()│ │+ display()│
-└───────────┘ └───────────┘ └───────────┘
-
-         ┌──────────────┐
-         │    Client    │
-         │              │
-         └──────┬───────┘
-                │ uses
-                ↓
-         ┌──────────────┐
-         │    Button    │  (依赖抽象)
-         └──────────────┘
-```
-
-#### 重构后的代码
-```java
-// 1. 定义抽象接口 (稳定的抽象层)
-interface Button {
-    void display();
-}
-
-// 2. 具体实现 (可扩展)
-class CircleButton implements Button {
-    public void display() {
+public class CircleButton {
+    public void view() {
         System.out.println("显示圆形按钮");
     }
 }
 
-class RectangleButton implements Button {
+// 需求变更：改用矩形按钮
+// → 必须修改LoginForm的源代码 ❌
+public class LoginForm {
+    private RectangleButton button;  // 修改了这里
+
+    public LoginForm() {
+        button = new RectangleButton();  // 修改了这里
+    }
+
     public void display() {
+        button.view();
+    }
+}
+```
+
+**问题总结**：
+- ❌ 对扩展不开放：添加新按钮需要修改现有代码
+- ❌ 对修改不关闭：需求变化导致源代码被修改
+- ❌ 可变因素未封装：按钮类型的变化暴露给了LoginForm
+
+---
+
+## 第22页 - 实例解析（重构后设计）
+
+### 🖼️ UML图（符合OCP）
+
+```
+┌──────────────────────────────────────┐
+│          config.xml                  │
+│  ......                              │
+│  <className>CircleButton</className> │ ← 配置文件
+│  ......                              │
+└──────────────────────────────────────┘
+         │ (运行时读取)
+         ↓
+┌──────────────────┐
+│   LoginForm      │
+├──────────────────┤
+│ - button:        │
+│   AbstractButton │ ← 抽象类型 ✅
+├──────────────────┤
+│ + display(): void│
+│ ...              │
+└──────────────────┘
+         │ (依赖)
+         ↓
+┌──────────────────┐
+│  AbstractButton  │
+│   {abstract}     │
+├──────────────────┤
+│ + view(): void   │
+│ ...              │
+└──────────────────┘
+         △
+         │ (继承)
+    ┌────┴────┐
+    │         │
+┌───────────┐ ┌─────────────────┐
+│CircleButton│ │RectangleButton  │
+├───────────┤ ├─────────────────┤
+│+ view():  │ │+ view():        │
+│  void     │ │  void           │
+└───────────┘ └─────────────────┘
+```
+
+### 💡 重构要点
+
+**三个关键改进**：
+
+1. **引入抽象类AbstractButton**
+   ```java
+   abstract class AbstractButton {
+       abstract void view();
+   }
+   ```
+
+2. **LoginForm依赖抽象而非具体**
+   ```java
+   class LoginForm {
+       private AbstractButton button;  // ✅ 依赖抽象
+   }
+   ```
+
+3. **使用配置文件指定具体类型**
+   ```xml
+   <!-- config.xml -->
+   <className>CircleButton</className>
+   ```
+
+### ✅ 重构后的完整代码
+
+```java
+// 1. 定义抽象按钮类
+public abstract class AbstractButton {
+    public abstract void view();
+}
+
+// 2. 具体按钮类
+public class CircleButton extends AbstractButton {
+    @Override
+    public void view() {
+        System.out.println("显示圆形按钮");
+    }
+}
+
+public class RectangleButton extends AbstractButton {
+    @Override
+    public void view() {
         System.out.println("显示矩形按钮");
     }
 }
 
-class SquareButton implements Button {
+// 3. 配置文件读取工具
+public class XMLUtil {
+    public static String getClassName() {
+        try {
+            // 读取config.xml
+            DocumentBuilderFactory factory =
+                DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse("config.xml");
+
+            NodeList nodeList = doc.getElementsByTagName("className");
+            String className = nodeList.item(0).getFirstChild().getNodeValue();
+            return className;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+}
+
+// 4. LoginForm（对修改关闭，对扩展开放）
+public class LoginForm {
+    private AbstractButton button;  // ✅ 依赖抽象
+
+    public LoginForm() {
+        // 通过配置文件和反射创建按钮对象
+        String className = XMLUtil.getClassName();
+        try {
+            button = (AbstractButton) Class.forName(className).newInstance();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     public void display() {
-        System.out.println("显示方形按钮");
+        System.out.println("显示登录表单");
+        button.view();  // 多态调用
     }
 }
 
-// 3. 客户端 (针对接口编程，对修改关闭)
-class Client {
-    // 使用抽象类型
-    public void displayButton(Button button) {
-        button.display();  // 多态
+// 5. 客户端代码
+public class Client {
+    public static void main(String[] args) {
+        LoginForm form = new LoginForm();
+        form.display();
     }
 }
 ```
 
-### OCP的威力 - 扩展新按钮
-
-#### 添加新的按钮类型 (如三角形按钮)
-```java
-// 1. 只需添加新类 (扩展 - Open)
-class TriangleButton implements Button {
-    public void display() {
-        System.out.println("显示三角形按钮");
-    }
-}
-
-// 2. Client类不需要修改！(修改 - Closed)
-// 原有的displayButton()方法完全不动
-
-// 3. 使用新按钮
-Button btn = new TriangleButton();  // 创建新对象
-client.displayButton(btn);           // 调用原有方法
-```
-
-### 重构效果对比
-
-| 对比维度 | 重构前 (违反OCP) | 重构后 (符合OCP) |
-|---------|----------------|-----------------|
-| 添加新按钮 | 修改Client类的if-else | 添加新类，Client不变 ✅ |
-| Client依赖 | 依赖所有具体按钮类 | 只依赖Button接口 ✅ |
-| 编译影响 | 修改Client → 重新编译 | 只编译新类 ✅ |
-| 测试影响 | 需要重新测试Client | 只测试新类 ✅ |
-| 风险 | 可能破坏已有功能 | 已有功能不受影响 ✅ |
-
-### 技术实现手段
-
-#### 1. 抽象化
-- 定义抽象类或接口 (Button接口)
-- 提取共同行为 (display方法)
-
-#### 2. 多态
-- 客户端使用抽象类型 (Button button)
-- 运行时动态绑定 (button.display()根据实际类型调用对应方法)
-
-#### 3. 工厂模式 (可选)
-```java
-class ButtonFactory {
-    public static Button createButton(String type) {
-        if (type.equals("circle")) return new CircleButton();
-        if (type.equals("rectangle")) return new RectangleButton();
-        if (type.equals("square")) return new SquareButton();
-        return null;
-    }
-}
-
-// 使用
-Button btn = ButtonFactory.createButton("circle");
-client.displayButton(btn);
-```
-
-💡 **注意**: 工厂类会有if-else，但这是**集中管理**，比分散在各处好得多。
-
-### 配置文件方案 (更彻底的OCP)
+**配置文件（config.xml）**：
 ```xml
-<!-- config.xml -->
-<button type="com.example.CircleButton" />
-
-<!-- 添加新按钮，只需改配置文件，不改代码 -->
-<button type="com.example.TriangleButton" />
+<?xml version="1.0"?>
+<config>
+    <className>CircleButton</className>
+</config>
 ```
 
+**使用不同按钮**：
+```xml
+<!-- 改用矩形按钮：只需修改配置文件 -->
+<config>
+    <className>RectangleButton</className>
+</config>
+```
+
+### 🎯 OCP的体现
+
+**对扩展开放**：
 ```java
-// 通过反射创建对象
-String className = config.getString("button.type");
-Button btn = (Button) Class.forName(className).newInstance();
+// 添加新的按钮类型：椭圆按钮
+public class EllipseButton extends AbstractButton {
+    @Override
+    public void view() {
+        System.out.println("显示椭圆形按钮");
+    }
+}
+
+// 使用新按钮：修改配置文件
+<config>
+    <className>EllipseButton</className>
+</config>
+
+// ✅ LoginForm的源代码完全不需要修改
 ```
 
-### 设计权衡
-⚠️ **OCP的代价**:
-- 需要预先设计抽象层 → 增加设计复杂度
-- 需要使用多态 → 增加代码量
-- 可能过度设计 → 如果需求根本不会变
+**对修改关闭**：
+- LoginForm的源代码保持不变
+- 所有依赖LoginForm的代码也不需要修改
+- 无需重新编译、测试、部署LoginForm
 
-💡 **权衡原则**:
-- 对于**明确会变化**的部分 → 应用OCP
-- 对于**不太可能变化**的部分 → 简单实现即可
-- **不要过度设计**，但也**不要欠设计**
+### 📊 重构效果对比
 
-### 考点提示
-⚠️ **必考**:
-- 按钮系统重构是OCP的经典案例
-- 能够画出重构前后的类图
-- 理解抽象化 + 多态如何实现OCP
+| 维度 | 重构前 | 重构后 |
+|-----|-------|-------|
+| **添加新按钮** | ❌ 修改LoginForm源代码 | ✅ 只需添加新子类 |
+| **切换按钮** | ❌ 修改LoginForm源代码 | ✅ 只需修改配置文件 |
+| **编译部署** | ❌ 需要重新编译部署 | ✅ 无需重新编译 |
+| **影响范围** | ❌ 影响所有依赖LoginForm的代码 | ✅ 零影响 |
+| **可扩展性** | ❌ 低 | ✅ 高 |
+| **可维护性** | ❌ 低 | ✅ 高 |
+| **符合OCP** | ❌ 否 | ✅ 是 |
 
-### 真实应用场景
-OCP在实际开发中的应用：
-- **支付系统**: 新增支付方式 (微信、支付宝、PayPal...)
-- **日志系统**: 新增日志输出方式 (文件、数据库、消息队列...)
-- **报表系统**: 新增报表格式 (PDF、Excel、HTML...)
-- **插件系统**: 新增插件功能
+### 💡 设计模式体现
+
+这个重构案例综合应用了多个设计模式：
+
+1. **策略模式（Strategy Pattern）**
+   - AbstractButton定义了按钮显示的策略接口
+   - 不同的具体按钮类是不同的策略实现
+
+2. **简单工厂模式（Simple Factory）**
+   - XMLUtil + 反射机制充当工厂
+   - 根据配置文件创建具体按钮对象
+
+3. **依赖倒转原则（DIP）**
+   - LoginForm依赖抽象的AbstractButton
+   - 而不依赖具体的CircleButton或RectangleButton
+
+### 🎯 OCP的实现技术
+
+**实现OCP的常用技术**：
+
+1. **抽象化（Abstraction）**
+   - 定义接口或抽象类
+   - 客户端依赖抽象而非具体
+
+2. **多态（Polymorphism）**
+   - 通过继承或实现接口
+   - 运行时动态绑定
+
+3. **配置化（Configuration）**
+   - 使用配置文件（XML、properties、YAML等）
+   - 外部化可变因素
+
+4. **反射（Reflection）**
+   - 根据类名字符串动态创建对象
+   - Java: `Class.forName().newInstance()`
+
+5. **依赖注入（Dependency Injection）**
+   - Spring框架的核心机制
+   - 通过容器注入依赖
+
+### ⚠️ OCP的局限性
+
+**不是所有地方都能做到OCP**：
+- 完全的OCP是不现实的（会导致过度设计）
+- 需要在灵活性和复杂性之间平衡
+- 只对**频繁变化**的部分应用OCP
+
+**如何判断是否需要OCP？**
+```
+问自己三个问题：
+1. 这里经常变化吗？ → 是 → 考虑OCP
+2. 变化的成本高吗？ → 是 → 考虑OCP
+3. 抽象化的收益大于成本吗？ → 是 → 应用OCP
+```
 
 ---
 
-## 🎯 开闭原则 (第16-20页) 知识点总结
+## 🎯 本章总结
 
 ### 核心要点
-1. ✅ **定义**: 对扩展开放，对修改关闭
-2. ✅ **地位**: 面向对象设计中最重要的原则 (★★★★★)
-3. ✅ **关键**: 抽象化是实现OCP的关键
-4. ✅ **手段**: 通过接口/抽象类 + 多态实现
-5. ✅ **经典案例**: 按钮系统重构 (if-else → 接口 + 多态)
-6. ✅ **相关原则**: EVP (可变性封装原则)
 
-### 必背内容
-- [ ] OCP的定义 (中英文)
-- [ ] "对扩展开放，对修改关闭"的含义
-- [ ] 抽象化是OCP的关键
-- [ ] 按钮重构案例的设计思路
+1. **OCP定义**
+   - 对扩展开放，对修改关闭
+   - 面向对象设计的**终极目标**
 
-### 设计检验清单
-在设计系统时，问自己：
-1. ✅ 如果需求变化，我需要修改哪些类？
-2. ✅ 能否通过添加新类来扩展功能？
-3. ✅ 哪些部分会变化？我有没有将它们抽象化？
-4. ✅ 客户端是依赖抽象还是依赖具体实现？
+2. **实现OCP的关键**
+   - 抽象化（定义接口/抽象类）
+   - 封装可变因素（EVP）
+   - 依赖抽象而非具体（DIP）
 
-### 实现OCP的技巧
-1. **识别变化点**: 哪些需求会变？
-2. **抽象变化点**: 定义接口或抽象类
-3. **面向抽象**: 客户端使用抽象类型
-4. **具体实现**: 扩展时添加新的实现类
+3. **实现技术**
+   - 抽象 + 多态 + 配置 + 反射
 
-### 常见错误
-❌ **过度使用if-else/switch**:
-```java
-// 这是违反OCP的典型信号！
-if (type == "A") { ... }
-else if (type == "B") { ... }
-else if (type == "C") { ... }
-// 每次新增类型都要改这里
+4. **重构步骤**
+   - 识别可变因素
+   - 定义抽象
+   - 具体实现继承抽象
+   - 客户端依赖抽象
+   - 用配置文件指定具体类
+
+### 记忆技巧
+
+**OCP口诀**：
+> **"开扩闭改，抽象是关键"**
+> （对扩展开放，对修改关闭，抽象化是关键）
+
+**实现口诀**：
+> **"找变化，抽象化，配置化"**
+
+**判断方法**：
+> 问自己："添加新功能需要修改原有代码吗？"
+> - 需要修改 → 违反OCP ❌
+> - 不需要修改 → 符合OCP ✅
+
+### 与其他原则的关系
+
+```
+       OCP（目标）
+         ↓
+   ┌─────┼─────┐
+   ↓     ↓     ↓
+  DIP   LSP   EVP
+(手段) (方式) (描述)
 ```
 
-❌ **直接依赖具体类**:
-```java
-// 违反OCP
-CircleButton btn = new CircleButton();  // 依赖具体类
-btn.display();
-```
+- **DIP**：依赖抽象是实现OCP的主要手段
+- **LSP**：子类可替换父类是实现OCP的重要方式
+- **EVP**：封装可变因素是OCP的具体描述
 
-✅ **正确做法**:
-```java
-// 符合OCP
-Button btn = ButtonFactory.create();  // 依赖抽象
-btn.display();
-```
+### ⚠️ 考点汇总
 
-### OCP与其他原则的关系
-- **SRP是基础**: 职责单一才能清晰地抽象
-- **DIP是手段**: 依赖倒转实现OCP
-- **LSP是保证**: 子类正确替换保证扩展不出错
-- **策略模式是应用**: 策略模式是OCP的典型实现
+1. **定义题**：默写OCP定义（中英文）
+2. **识别题**：判断代码/设计是否符合OCP
+3. **重构题**：将违反OCP的代码重构为符合OCP
+4. **论述题**：
+   - 为什么说OCP是最重要的原则？
+   - 如何实现OCP？
+   - OCP与DIP/LSP的关系？
+5. **综合题**：按钮系统的完整设计和实现
 
-### 金句
-> "Software entities should be open for extension, but closed for modification."
-> — Bertrand Meyer, 1988
+### 实践建议
 
-💡 **理解**: 好的设计应该是"**可生长的**"，而不是"**可改动的**"。
+1. **不要过度设计**
+   - 只对频繁变化的部分应用OCP
+   - 避免为了OCP而OCP
 
-### 下一步
-学习**里氏代换原则 (LSP)** - 理解如何正确使用继承来实现OCP。
+2. **渐进式重构**
+   - 先写简单的代码
+   - 当发现变化频繁时再重构为OCP
+
+3. **结合配置文件**
+   - 将可变因素外部化
+   - 使系统更加灵活
+
+### 下一章预告
+
+[04-里氏代换原则-LSP.md](./04-里氏代换原则-LSP.md) 将介绍：
+- 什么是"子类可替换父类"？
+- LSP与OCP的关系
+- 加密系统的设计案例（第27页UML图）
 
 ---
 
-**提示**: OCP是整个课程的核心，后续的设计模式都是为了实现OCP！
+**返回**: [README.md](./README.md) | **导航**: [00-导航.md](./00-导航.md) | **上一章**: [02-单一职责原则-SRP.md](./02-单一职责原则-SRP.md) | **下一章**: [04-里氏代换原则-LSP.md](./04-里氏代换原则-LSP.md)
