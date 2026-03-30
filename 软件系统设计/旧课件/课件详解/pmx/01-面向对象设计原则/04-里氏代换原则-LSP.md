@@ -291,6 +291,83 @@ class DataOperator {
 
 ## 📄 第25-27页 - 里氏代换原则实例解析
 
+### 页面内容
+**第25-26页**: 讨论如何重构
+**第27页**: 展示**原始设计方案** (违反LSP)
+
+### 原始设计的UML类图 (第27页)
+
+```
+                 config.xml
+                     │
+                     ↓ configures
+         ┌────────────────────┐
+         │   DataOperator     │
+         ├────────────────────┤
+         │- cipherA: CipherA  │ ← 具体类型！❌
+         │+ setCipherA(       │
+         │    CipherA): void  │ ← 参数是具体类型！❌
+         │+ encrypt(String    │
+         │    plainText): String
+         └──────────┬─────────┘
+                    │ uses
+                    ↓
+              ┌──────────┐       ┌──────────┐
+              │ CipherA  │       │ CipherB  │
+              ├──────────┤       ├──────────┤
+              │+ encrypt(│       │+ encrypt(│
+              │  String  │       │  String  │
+              │  ): String       │  ): String
+              └──────────┘       └──────────┘
+```
+
+### 原始设计的核心问题
+
+#### 违反LSP的关键点
+从UML类图可以看出：
+1. **成员变量类型是具体类**: `cipherA: CipherA` (不是接口)
+2. **方法参数是具体类**: `setCipherA(CipherA cipherA)`
+3. **无法替换**: 想用CipherB必须修改DataOperator的代码
+
+#### 原始设计代码
+```java
+// 违反LSP的设计
+class DataOperator {
+    private CipherA cipherA;  // ❌ 依赖具体类
+
+    // ❌ setter参数也是具体类
+    public void setCipherA(CipherA cipherA) {
+        this.cipherA = cipherA;
+    }
+
+    public String encrypt(String plainText) {
+        return cipherA.encrypt(plainText);
+    }
+}
+
+// 具体加密类
+class CipherA {
+    public String encrypt(String plainText) {
+        // AES加密实现
+        return aesEncrypt(plainText);
+    }
+}
+
+class CipherB {
+    public String encrypt(String plainText) {
+        // DES加密实现
+        return desEncrypt(plainText);
+    }
+}
+```
+
+#### 问题分析
+❌ **严重违反LSP和DIP**:
+1. **无法替换**: DataOperator绑死在CipherA上，用CipherB必须修改代码
+2. **耦合度高**: 直接依赖具体实现类
+3. **违反OCP**: 新增加密算法要修改DataOperator
+4. **配置文件无效**: 虽然有config.xml，但代码层面没有抽象，无法真正实现配置化
+
 ### 重构方案 (符合LSP)
 
 #### 重构后的类图
@@ -311,7 +388,9 @@ class DataOperator {
 
          ┌──────────────┐
          │DataOperator  │
-         │- cipher      │
+         │- cipher: ICipher  │ ← 抽象类型！✅
+         │+ setCipher(  │
+         │    ICipher): void  │ ← 参数是接口！✅
          │+ encrypt()   │
          └──────┬───────┘
                 │ uses

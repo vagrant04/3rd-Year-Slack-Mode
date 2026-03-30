@@ -232,57 +232,129 @@ class Triangle implements Shape {
 **实例背景**:
 某图形界面系统提供了各种不同形状的按钮，客户端代码可针对这些按钮进行编程，用户可能会改变需求要求使用不同的按钮。
 
-**原始设计方案** (违反OCP):
+**原始设计方案** (违反OCP) - UML类图展示:
+
 ```
-Client → CircleButton
-      → RectangleButton
-      → SquareButton
+场景1: 使用圆形按钮
+┌─────────────────────────┐         ┌─────────────────┐
+│      LoginForm          │────────→│  CircleButton   │
+├─────────────────────────┤         ├─────────────────┤
+│- button: CircleButton   │         │+ view(): void   │
+│+ display(): void        │         └─────────────────┘
+└─────────────────────────┘
+
+场景2: 使用矩形按钮
+┌─────────────────────────┐         ┌─────────────────┐
+│      LoginForm          │────────→│ RectangleButton │
+├─────────────────────────┤         ├─────────────────┤
+│- button: RectangleButton│         │+ view(): void   │
+│+ display(): void        │         └─────────────────┘
+└─────────────────────────┘
 ```
 
 **问题**: 现对该系统进行重构，使之满足开闭原则的要求。
 
 ### 原始设计分析
 
-#### 违反OCP的设计
+#### UML图的关键信息
+从类图可以看出：
+- `LoginForm` 有一个成员变量 `button`
+- 这个成员变量的**类型是具体的按钮类** (`CircleButton` 或 `RectangleButton`)
+- LoginForm 与具体按钮类之间是**关联关系** (实线箭头)
+
+#### 违反OCP的核心问题
 ```java
-class Client {
-    public void displayButton(String type) {
-        if (type.equals("circle")) {
-            CircleButton btn = new CircleButton();
-            btn.display();
-        } else if (type.equals("rectangle")) {
-            RectangleButton btn = new RectangleButton();
-            btn.display();
-        } else if (type.equals("square")) {
-            SquareButton btn = new SquareButton();
-            btn.display();
-        }
+// 场景1: 使用圆形按钮
+class LoginForm {
+    private CircleButton button;  // 具体类型 ❌
+
+    public LoginForm() {
+        this.button = new CircleButton();
+    }
+
+    public void display() {
+        button.view();
+    }
+}
+
+// 场景2: 需要换成矩形按钮
+class LoginForm {
+    private RectangleButton button;  // 必须修改类型声明 ❌
+
+    public LoginForm() {
+        this.button = new RectangleButton();  // 必须修改创建语句 ❌
+    }
+
+    public void display() {
+        button.view();
     }
 }
 ```
 
-#### 问题分析
-❌ **违反OCP的表现**:
-1. **需要修改Client代码**: 每次添加新按钮类型，都要修改if-else
-2. **硬编码依赖**: Client直接依赖具体的按钮类
-3. **不符合OCP**: 扩展功能 (新按钮) 需要修改Client代码
+❌ **严重违反OCP**:
+1. **成员变量类型是具体类**: `button: CircleButton` → 强绑定
+2. **需要修改源代码**: 每次换按钮类型，都要修改LoginForm的字段声明
+3. **需要重新编译**: 修改了类定义，必须重新编译
+4. **影响已有功能**: 修改可能引入bug，需要重新测试
 
-#### 后果
-- 添加`TriangleButton` → 必须修改Client类 → 重新编译、测试
-- Client类会越来越臃肿 → 违反SRP
-- 难以维护 → 每次新增功能都要改老代码
+#### 具体问题场景
+**需求变化**: 用户说"我不想要圆形按钮了，换成方形按钮"
+
+**传统做法** (违反OCP):
+```java
+// 步骤1: 打开LoginForm.java
+// 步骤2: 找到字段声明
+private CircleButton button;  // ← 改这里
+
+// 步骤3: 修改为
+private SquareButton button;  // ← 改成SquareButton
+
+// 步骤4: 找到构造函数
+this.button = new CircleButton();  // ← 改这里
+
+// 步骤5: 修改为
+this.button = new SquareButton();  // ← 改成SquareButton
+
+// 步骤6: 重新编译
+// 步骤7: 重新测试所有使用LoginForm的功能
+```
+
+**后果**:
+- 修改了**已有的、已测试通过的**代码 → 风险高
+- LoginForm与具体按钮类**紧耦合** → 难以扩展
+- 每次换按钮都要**改代码、编译、测试** → 效率低
+
+### 这个设计为什么违反OCP？
+
+#### 对比OCP的两个要求
+| OCP要求 | 原始设计 | 是否满足 |
+|---------|---------|---------|
+| 对扩展开放 | 新增按钮类型需要修改LoginForm | ❌ 不满足 |
+| 对修改关闭 | 必须修改LoginForm的字段类型 | ❌ 不满足 |
+
+#### 根本原因
+💡 **违反了"依赖抽象"原则**:
+- LoginForm依赖的是**具体类** (`CircleButton`)
+- 而不是**抽象** (`Button` 接口)
 
 ### 设计改进思路
 💡 **OCP解决方案**:
-1. 定义抽象Button接口
+1. 定义抽象 `Button` 接口
 2. 所有具体按钮实现该接口
-3. Client针对接口编程
-4. 新增按钮时，不修改Client
+3. **LoginForm的字段类型改为抽象类型** `button: Button`
+4. 新增按钮时，不修改LoginForm
 
 ### 考点提示
 ⚠️ **经典案例**:
-- 按钮系统是OCP的经典教学案例
-- 理解"针对接口编程"的威力
+- 这是**组合关系违反OCP**的典型例子
+- 关键问题：成员变量使用了具体类型
+- 解决方法：成员变量使用抽象类型
+
+### 易混淆点
+💡 **注意**:
+- 不是"Client调用按钮"的关系
+- 而是"LoginForm包含按钮"的关系
+- 这是**关联/组合**，不是简单的方法调用
 
 ---
 
