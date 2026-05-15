@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>精益软件开发：从丰田到硅谷的工程哲学</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      /* ── 主色（亮色系，暖调） ── */
+      --primary: #4338ca;
+      --primary-dark: #3730a3;
+      --accent: #b45309;
+      --accent2: #047857;
+      --accent3: #b91c1c;
+
+      /* ── 背景层次 ── */
+      --page: #faf7ef;
+      --page2: #f4ecd8;
+      --page3: #ebe0c5;
+
+      /* ── 文字 ── */
+      --text: #1f1b14;
+      --text-muted: #6b6255;
+
+      /* ── 语义三色 ── */
+      --why: #c2185b;
+      --how: #6d28d9;
+      --what: #0e7490;
+
+      /* ── 卡片与分隔线 ── */
+      --card-bg: #ffffff;
+      --card-bg-soft: #fbf8f1;
+      --border: rgba(46, 36, 22, 0.10);
+      --border-strong: rgba(46, 36, 22, 0.18);
+      --rule: #d8d4cb;
+
+      --font-sans: 'Noto Sans SC', 'PingFang SC', sans-serif;
+      --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      background: #0a0c12; /* deck-stage letterbox */
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════════════
+       Slide 通用骨架（1920×1080 作者尺寸）
+       ═══════════════════════════════════════ */
+    .slide {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-size: 26px;
+      line-height: 1.55;
+    }
+
+    .s-footer {
+      position: absolute;
+      left: 120px;
+      right: 120px;
+      bottom: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .s-footer .mark { color: var(--primary); font-weight: 700; }
+    .s-pageno {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--primary);
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══════════════════════════════════════
+       01 · Cover（封面）
+       ═══════════════════════════════════════ */
+    .slide.cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 200px;
+    }
+    .slide.cover .eyebrow {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 40px;
+    }
+    .slide.cover h1 {
+      font-size: 136px;
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+    .slide.cover h1 .gradient-text {
+      background: linear-gradient(135deg, var(--how), var(--why), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .slide.cover .bar {
+      height: 4px;
+      width: 140px;
+      background: var(--primary);
+      margin: 40px 0 32px;
+    }
+    .slide.cover .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 46px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      max-width: 1400px;
+    }
+    .slide.cover .meta {
+      position: absolute;
+      right: 200px;
+      bottom: 200px;
+      text-align: right;
+      font-size: 22px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══════════════════════════════════════
+       02 · Chapter（章节分隔页）
+       ═══════════════════════════════════════ */
+    .slide.chapter {
+      display: flex;
+      align-items: center;
+      padding: 0 120px;
+    }
+    .slide.chapter .huge {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 480px;
+      line-height: 0.8;
+      color: transparent;
+      -webkit-text-stroke: 3px var(--primary);
+      letter-spacing: -0.04em;
+      margin-right: 80px;
+      flex-shrink: 0;
+    }
+    .slide.chapter .text { max-width: 900px; }
+    .slide.chapter .eye {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .slide.chapter h2 {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+    }
+    .slide.chapter .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 40px;
+      color: var(--text-muted);
+    }
+
+    /* 语义色变体：.chapter.why / .chapter.how / .chapter.what */
+    .slide.chapter.why .huge { -webkit-text-stroke-color: var(--why); }
+    .slide.chapter.why .eye  { color: var(--why); }
+    .slide.chapter.how .huge { -webkit-text-stroke-color: var(--how); }
+    .slide.chapter.how .eye  { color: var(--how); }
+    .slide.chapter.what .huge { -webkit-text-stroke-color: var(--what); }
+    .slide.chapter.what .eye  { color: var(--what); }
+
+    /* ═══════════════════════════════════════
+       03 · Content（常规内容页）
+       ═══════════════════════════════════════ */
+    .slide.content {
+      padding: 120px 120px 140px;
+    }
+    .slide.content .s-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+    .slide.content .s-eyebrow {
+      font-size: 18px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+    }
+    .slide.content h3 {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-top: 8px;
+      max-width: 1400px;
+    }
+    .slide.content .s-idx {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 44px;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+    .slide.content .s-lead {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 32px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--primary);
+      padding: 6px 0 6px 20px;
+      margin-bottom: 32px;
+      max-width: 1500px;
+    }
+    .slide.content .s-body { font-size: 26px; line-height: 1.6; }
+
+    /* 语义色变体 */
+    .slide.content.why .s-eyebrow, .slide.content.why .s-idx { color: var(--why); }
+    .slide.content.why .s-lead { border-left-color: var(--why); }
+    .slide.content.how .s-eyebrow, .slide.content.how .s-idx { color: var(--how); }
+    .slide.content.how .s-lead { border-left-color: var(--how); }
+    .slide.content.what .s-eyebrow, .slide.content.what .s-idx { color: var(--what); }
+    .slide.content.what .s-lead { border-left-color: var(--what); }
+
+    /* ═══════════════════════════════════════
+       组件清单（与 scroll 模式 DOM 词汇一致，字号放大）
+       ═══════════════════════════════════════ */
+
+    /* 要点列表 */
+    .points { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+    .points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 20px 24px;
+      background: var(--card-bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 26px;
+    }
+    .points li .icon { font-size: 28px; flex-shrink: 0; }
+    .points li strong { color: var(--text); font-weight: 700; }
+    .points li .sub { font-size: 22px; color: var(--text-muted); margin-top: 6px; }
+
+    /* 网格布局 */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+
+    .mini-card {
+      padding: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(46, 36, 22, 0.04);
+    }
+    .mini-card h4 { font-size: 24px; font-weight: 700; margin-bottom: 14px; }
+    .mini-card p, .mini-card li { font-size: 22px; color: var(--text-muted); line-height: 1.55; }
+    .mini-card ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .mini-card ul li::before { content: '→ '; color: var(--primary); }
+
+    /* 代码块（GitHub Light） */
+    .code-block {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      line-height: 1.65;
+      color: #24292f;
+      overflow: hidden;
+      white-space: pre-line;
+    }
+    .code-block .comment { color: #6e7781; }
+    .code-block .string  { color: #0550ae; }
+    .code-block .label   { color: #953800; }
+    .code-block .bad     { color: #cf222e; }
+    .code-block .good    { color: #116329; }
+
+    /* 对比表 */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 22px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .compare-table th {
+      background: rgba(67, 56, 202, 0.08);
+      color: var(--primary);
+      padding: 18px 22px;
+      text-align: left;
+      font-weight: 700;
+    }
+    .compare-table td {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-table tr:last-child td { border-bottom: none; }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+    .tag.bad  { background: rgba(194,24,91,0.12); color: var(--why); }
+    .tag.good { background: rgba(4,120,87,0.12);  color: var(--accent2); }
+    .tag.neutral { background: rgba(67,56,202,0.12); color: var(--primary); }
+
+    /* 阶梯图 */
+    .ladder { display: flex; flex-direction: column; gap: 14px; }
+    .ladder-step {
+      padding: 18px 24px;
+      border-radius: 12px;
+      border-left: 4px solid;
+      background: var(--card-bg-soft);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 24px;
+    }
+    .ladder-step .step-num {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .ladder-step .step-content strong { display: block; font-size: 26px; }
+    .ladder-step .step-content span { color: var(--text-muted); font-size: 20px; }
+
+    /* 醒目提示框 */
+    .callout {
+      padding: 22px 28px;
+      border-radius: 14px;
+      border-left: 4px solid;
+      font-size: 24px;
+    }
+    .callout.insight   { border-color: var(--accent); background: rgba(180,83,9,0.07); }
+    .callout.insight   strong { color: var(--accent); }
+    .callout.principle { border-color: var(--primary); background: rgba(67,56,202,0.06); }
+    .callout.principle strong { color: var(--primary); }
+    .callout.warning   { border-color: var(--accent3); background: rgba(185,28,28,0.07); }
+    .callout.warning   strong { color: var(--accent3); }
+
+    /* ═══════════════════════════════════════
+       04 · Summary（总结页）
+       ═══════════════════════════════════════ */
+    .slide.summary {
+      padding: 140px 160px;
+      background: linear-gradient(135deg, #f4ecd8, #faf7ef);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+    .slide.summary .eye {
+      font-size: 20px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .slide.summary h2 {
+      font-size: 84px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 48px;
+    }
+    .slide.summary .grid-3 { max-width: 1500px; margin: 0 auto; gap: 32px; }
+  </style>
+
+  <!-- ══════════════════════════════════════════════════
+       DECK_STAGE_SCRIPT_PLACEHOLDER
+       生成时把 templates/deck-stage.js 的完整内容
+       粘贴到这里（用 <script>...</script> 包起来）。
+       不要外链，必须内联。
+       ══════════════════════════════════════════════════ -->
+  <script>
+    /* ===== inlined from deck-stage.js ===== */
+/**
+ * <deck-stage> — reusable web component for HTML decks.
+ *
+ * Handles:
+ *  (a) speaker notes — reads <script type="application/json" id="speaker-notes">
+ *      and posts {slideIndexChanged: N} to the parent window on nav.
+ *  (b) keyboard navigation — ←/→, PgUp/PgDn, Space, Home/End, number keys.
+ *  (c) press R to reset to slide 0 (with a tasteful keyboard hint).
+ *  (d) bottom-center overlay showing slide count + hints, fades out on idle.
+ *  (e) auto-scaling — inner canvas is a fixed design size (default 1920×1080)
+ *      scaled with `transform: scale()` to fit the viewport, letterboxed.
+ *      Set the `noscale` attribute to render at authored size (1:1) — the
+ *      PPTX exporter sets this so its DOM capture sees unscaled geometry.
+ *  (f) print — `@media print` lays every slide out as its own page at the
+ *      design size, so the browser's Print → Save as PDF produces a clean
+ *      one-page-per-slide PDF with no extra setup.
+ *
+ * Slides are HIDDEN, not unmounted. Non-active slides stay in the DOM with
+ * `visibility: hidden` + `opacity: 0`, so their state (videos, iframes,
+ * form inputs, React trees) is preserved across navigation.
+ *
+ * Lifecycle event — the component dispatches a `slidechange` CustomEvent on
+ * itself whenever the active slide changes (including the initial mount).
+ * The event bubbles and composes out of shadow DOM, so you can listen on
+ * the <deck-stage> element or on document:
+ *
+ *   document.querySelector('deck-stage').addEventListener('slidechange', (e) => {
+ *     e.detail.index         // new 0-based index
+ *     e.detail.previousIndex // previous index, or -1 on init
+ *     e.detail.total         // total slide count
+ *     e.detail.slide         // the new active slide element
+ *     e.detail.previousSlide // the prior slide element, or null on init
+ *     e.detail.reason        // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+ *   });
+ *
+ * Persistence: current slide index is saved to localStorage keyed by the
+ * document path, so refresh returns you to the same place.
+ *
+ * Usage:
+ *   <deck-stage width="1920" height="1080">
+ *     <section data-label="Title">...</section>
+ *     <section data-label="Agenda">...</section>
+ *   </deck-stage>
+ *
+ * Slides are the direct element children of <deck-stage>. Each slide is
+ * automatically tagged with:
+ *   - data-screen-label="NN Label"   (1-indexed, for comment flow)
+ *   - data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text"
+ */
+
+(() => {
+  const DESIGN_W_DEFAULT = 1920;
+  const DESIGN_H_DEFAULT = 1080;
+  const STORAGE_PREFIX = 'deck-stage:slide:';
+  const OVERLAY_HIDE_MS = 1800;
+  const VALIDATE_ATTR = 'no_overflowing_text,no_overlapping_text,slide_sized_text';
+
+  const pad2 = (n) => String(n).padStart(2, '0');
+
+  const stylesheet = `
+    :host {
+      position: fixed;
+      inset: 0;
+      display: block;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas {
+      position: relative;
+      transform-origin: center center;
+      flex-shrink: 0;
+      background: #fff;
+      will-change: transform;
+    }
+
+    /* Slides live in light DOM (via <slot>) so authored CSS still applies.
+       We absolutely position each slotted child to stack them. */
+    ::slotted(*) {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    ::slotted([data-deck-active]) {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    /* Tap zones for mobile — back/forward thirds like Stories.
+       Transparent, no visible UI, don't block the overlay. */
+    .tapzones {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: 2147482000;
+      pointer-events: none;
+    }
+    .tapzone {
+      flex: 1;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Only activate tap zones on coarse pointers (touch devices). */
+    @media (hover: hover) and (pointer: fine) {
+      .tapzones { display: none; }
+    }
+
+    .overlay {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 6px) scale(0.92);
+      filter: blur(6px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      background: #000;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+      transform-origin: center bottom;
+      z-index: 2147483000;
+      user-select: none;
+    }
+    .overlay[data-visible] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
+    }
+
+    .btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.72);
+      transition: background 140ms ease, color 140ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .btn:active { background: rgba(255,255,255,0.18); }
+    .btn:focus { outline: none; }
+    .btn:focus-visible { outline: none; }
+    .btn::-moz-focus-inner { border: 0; }
+    .btn svg { width: 14px; height: 14px; display: block; }
+    .btn.reset {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 10px 0 12px;
+      gap: 6px;
+      color: rgba(255,255,255,0.72);
+    }
+    .btn.reset .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 10px;
+      line-height: 1;
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
+    }
+
+    .count {
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+      font-weight: 500;
+      padding: 0 8px;
+      min-width: 42px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; font-weight: 400; }
+    .count .total { color: rgba(255,255,255,0.55); }
+
+    .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255,255,255,0.18);
+      margin: 0 2px;
+    }
+
+    /* ── Print: one page per slide, no chrome ────────────────────────────
+       The screen layout stacks every slide at inset:0 inside a scaled
+       canvas; for print we want them in document flow at the authored
+       design size so the browser paginates one slide per sheet. The
+       @page size is set from the width/height attributes via the inline
+       <style id="deck-stage-print-page"> that connectedCallback injects
+       into <head> (the @page at-rule has no effect inside shadow DOM). */
+    @media print {
+      :host {
+        position: static;
+        inset: auto;
+        background: none;
+        overflow: visible;
+        color: inherit;
+      }
+      .stage { position: static; display: block; }
+      .canvas {
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+        background: none;
+        will-change: auto;
+      }
+      ::slotted(*) {
+        position: relative !important;
+        inset: auto !important;
+        width: var(--deck-design-w) !important;
+        height: var(--deck-design-h) !important;
+        box-sizing: border-box !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto;
+        break-after: page;
+        page-break-after: always;
+        break-inside: avoid;
+        overflow: hidden;
+      }
+      ::slotted(*:last-child) {
+        break-after: auto;
+        page-break-after: auto;
+      }
+      .overlay, .tapzones { display: none !important; }
+    }
+  `;
+
+  class DeckStage extends HTMLElement {
+    static get observedAttributes() { return ['width', 'height', 'noscale']; }
+
+    constructor() {
+      super();
+      this._root = this.attachShadow({ mode: 'open' });
+      this._index = 0;
+      this._slides = [];
+      this._notes = [];
+      this._hideTimer = null;
+      this._mouseIdleTimer = null;
+      this._storageKey = STORAGE_PREFIX + (location.pathname || '/');
+
+      this._onKey = this._onKey.bind(this);
+      this._onResize = this._onResize.bind(this);
+      this._onSlotChange = this._onSlotChange.bind(this);
+      this._onMouseMove = this._onMouseMove.bind(this);
+      this._onTapBack = this._onTapBack.bind(this);
+      this._onTapForward = this._onTapForward.bind(this);
+    }
+
+    get designWidth() {
+      return parseInt(this.getAttribute('width'), 10) || DESIGN_W_DEFAULT;
+    }
+    get designHeight() {
+      return parseInt(this.getAttribute('height'), 10) || DESIGN_H_DEFAULT;
+    }
+
+    connectedCallback() {
+      this._render();
+      this._loadNotes();
+      this._syncPrintPageRule();
+      window.addEventListener('keydown', this._onKey);
+      window.addEventListener('resize', this._onResize);
+      window.addEventListener('mousemove', this._onMouseMove, { passive: true });
+      // Initial collection + layout happens via slotchange, which fires on mount.
+    }
+
+    disconnectedCallback() {
+      window.removeEventListener('keydown', this._onKey);
+      window.removeEventListener('resize', this._onResize);
+      window.removeEventListener('mousemove', this._onMouseMove);
+      if (this._hideTimer) clearTimeout(this._hideTimer);
+      if (this._mouseIdleTimer) clearTimeout(this._mouseIdleTimer);
+    }
+
+    attributeChangedCallback() {
+      if (this._canvas) {
+        this._canvas.style.width = this.designWidth + 'px';
+        this._canvas.style.height = this.designHeight + 'px';
+        this._canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+        this._canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+        this._fit();
+        this._syncPrintPageRule();
+      }
+    }
+
+    _render() {
+      const style = document.createElement('style');
+      style.textContent = stylesheet;
+
+      const stage = document.createElement('div');
+      stage.className = 'stage';
+
+      const canvas = document.createElement('div');
+      canvas.className = 'canvas';
+      canvas.style.width = this.designWidth + 'px';
+      canvas.style.height = this.designHeight + 'px';
+      canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+      canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+
+      const slot = document.createElement('slot');
+      slot.addEventListener('slotchange', this._onSlotChange);
+      canvas.appendChild(slot);
+      stage.appendChild(canvas);
+
+      // Tap zones (mobile): left third = back, right third = forward.
+      const tapzones = document.createElement('div');
+      tapzones.className = 'tapzones export-hidden';
+      tapzones.setAttribute('aria-hidden', 'true');
+      const tzBack = document.createElement('div');
+      tzBack.className = 'tapzone tapzone--back';
+      const tzMid = document.createElement('div');
+      tzMid.className = 'tapzone tapzone--mid';
+      tzMid.style.pointerEvents = 'none';
+      const tzFwd = document.createElement('div');
+      tzFwd.className = 'tapzone tapzone--fwd';
+      tzBack.addEventListener('click', this._onTapBack);
+      tzFwd.addEventListener('click', this._onTapForward);
+      tapzones.append(tzBack, tzMid, tzFwd);
+
+      // Overlay: compact, solid black, with clickable controls.
+      const overlay = document.createElement('div');
+      overlay.className = 'overlay export-hidden';
+      overlay.setAttribute('role', 'toolbar');
+      overlay.setAttribute('aria-label', 'Deck controls');
+      overlay.innerHTML = `
+        <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+        </button>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <button class="btn next" type="button" aria-label="Next slide" title="Next (→)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+      `;
+
+      overlay.querySelector('.prev').addEventListener('click', () => this._go(this._index - 1, 'click'));
+      overlay.querySelector('.next').addEventListener('click', () => this._go(this._index + 1, 'click'));
+      overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+
+      this._root.append(style, stage, tapzones, overlay);
+      this._canvas = canvas;
+      this._slot = slot;
+      this._overlay = overlay;
+      this._countEl = overlay.querySelector('.current');
+      this._totalEl = overlay.querySelector('.total');
+    }
+
+    /** @page must live in the document stylesheet — it's a no-op inside
+     *  shadow DOM. Inject/update a single <head> style tag so the print
+     *  sheet matches the design size and Save-as-PDF yields one slide per
+     *  page with no margins. */
+    _syncPrintPageRule() {
+      const id = 'deck-stage-print-page';
+      let tag = document.getElementById(id);
+      if (!tag) {
+        tag = document.createElement('style');
+        tag.id = id;
+        document.head.appendChild(tag);
+      }
+      tag.textContent =
+        '@page { size: ' + this.designWidth + 'px ' + this.designHeight + 'px; margin: 0; } ' +
+        '@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; overflow: visible !important; height: auto !important; } ' +
+        '* { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+    }
+
+    _onSlotChange() {
+      this._collectSlides();
+      this._restoreIndex();
+      this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
+      this._fit();
+    }
+
+    _collectSlides() {
+      const assigned = this._slot.assignedElements({ flatten: true });
+      this._slides = assigned.filter((el) => {
+        // Skip template/style/script nodes even if someone slots them.
+        const tag = el.tagName;
+        return tag !== 'TEMPLATE' && tag !== 'SCRIPT' && tag !== 'STYLE';
+      });
+
+      this._slides.forEach((slide, i) => {
+        const n = i + 1;
+        // Determine a label for comment flow: prefer explicit data-label,
+        // then an existing data-screen-label, then first heading, else "Slide".
+        let label = slide.getAttribute('data-label');
+        if (!label) {
+          const existing = slide.getAttribute('data-screen-label');
+          if (existing) {
+            // Strip any leading number the author may have included.
+            label = existing.replace(/^\s*\d+\s*/, '').trim() || existing;
+          }
+        }
+        if (!label) {
+          const h = slide.querySelector('h1, h2, h3, [data-title]');
+          if (h) label = (h.textContent || '').trim().slice(0, 40);
+        }
+        if (!label) label = 'Slide';
+        slide.setAttribute('data-screen-label', `${pad2(n)} ${label}`);
+
+        // Validation attribute for comment flow / auto-checks.
+        if (!slide.hasAttribute('data-om-validate')) {
+          slide.setAttribute('data-om-validate', VALIDATE_ATTR);
+        }
+
+        slide.setAttribute('data-deck-slide', String(i));
+      });
+
+      if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
+      if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
+    }
+
+    _loadNotes() {
+      const tag = document.getElementById('speaker-notes');
+      if (!tag) { this._notes = []; return; }
+      try {
+        const parsed = JSON.parse(tag.textContent || '[]');
+        if (Array.isArray(parsed)) this._notes = parsed;
+      } catch (e) {
+        console.warn('[deck-stage] Failed to parse #speaker-notes JSON:', e);
+        this._notes = [];
+      }
+    }
+
+    _restoreIndex() {
+      try {
+        const raw = localStorage.getItem(this._storageKey);
+        if (raw != null) {
+          const n = parseInt(raw, 10);
+          if (Number.isFinite(n) && n >= 0 && n < this._slides.length) {
+            this._index = n;
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    _persistIndex() {
+      try { localStorage.setItem(this._storageKey, String(this._index)); }
+      catch (e) { /* ignore */ }
+    }
+
+    _applyIndex({ showOverlay = true, broadcast = true, reason = 'init' } = {}) {
+      if (!this._slides.length) return;
+      const prev = this._prevIndex == null ? -1 : this._prevIndex;
+      const curr = this._index;
+      this._slides.forEach((s, i) => {
+        if (i === curr) s.setAttribute('data-deck-active', '');
+        else s.removeAttribute('data-deck-active');
+      });
+      if (this._countEl) this._countEl.textContent = String(curr + 1);
+      this._persistIndex();
+
+      if (broadcast) {
+        // (1) Legacy: host-window postMessage for speaker-notes renderers.
+        try { window.postMessage({ slideIndexChanged: curr }, '*'); } catch (e) {}
+
+        // (2) In-page CustomEvent on the <deck-stage> element itself.
+        //     Bubbles and composes out of shadow DOM so slide code can listen:
+        //       document.querySelector('deck-stage').addEventListener('slidechange', e => {
+        //         e.detail.index, e.detail.previousIndex, e.detail.total, e.detail.slide, e.detail.reason
+        //       });
+        const detail = {
+          index: curr,
+          previousIndex: prev,
+          total: this._slides.length,
+          slide: this._slides[curr] || null,
+          previousSlide: prev >= 0 ? (this._slides[prev] || null) : null,
+          reason: reason, // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+        };
+        this.dispatchEvent(new CustomEvent('slidechange', {
+          detail,
+          bubbles: true,
+          composed: true,
+        }));
+      }
+
+      this._prevIndex = curr;
+      if (showOverlay) this._flashOverlay();
+    }
+
+    _flashOverlay() {
+      if (!this._overlay) return;
+      this._overlay.setAttribute('data-visible', '');
+      if (this._hideTimer) clearTimeout(this._hideTimer);
+      this._hideTimer = setTimeout(() => {
+        this._overlay.removeAttribute('data-visible');
+      }, OVERLAY_HIDE_MS);
+    }
+
+    _fit() {
+      if (!this._canvas) return;
+      // PPTX export sets noscale so the DOM capture sees authored-size
+      // geometry — the scaled canvas is in shadow DOM, so the exporter's
+      // resetTransformSelector can't reach .canvas.style.transform directly.
+      if (this.hasAttribute('noscale')) {
+        this._canvas.style.transform = 'none';
+        return;
+      }
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const s = Math.min(vw / this.designWidth, vh / this.designHeight);
+      this._canvas.style.transform = `scale(${s})`;
+    }
+
+    _onResize() { this._fit(); }
+
+    _onMouseMove() {
+      // Keep overlay visible while mouse moves; hide after idle.
+      this._flashOverlay();
+    }
+
+    _onTapBack(e) {
+      e.preventDefault();
+      this._go(this._index - 1, 'tap');
+    }
+
+    _onTapForward(e) {
+      e.preventDefault();
+      this._go(this._index + 1, 'tap');
+    }
+
+    _onKey(e) {
+      // Ignore when the user is typing.
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const key = e.key;
+      let handled = true;
+
+      if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+        this._go(this._index + 1, 'keyboard');
+      } else if (key === 'ArrowLeft' || key === 'PageUp') {
+        this._go(this._index - 1, 'keyboard');
+      } else if (key === 'Home') {
+        this._go(0, 'keyboard');
+      } else if (key === 'End') {
+        this._go(this._slides.length - 1, 'keyboard');
+      } else if (key === 'r' || key === 'R') {
+        this._go(0, 'keyboard');
+      } else if (/^[0-9]$/.test(key)) {
+        // 1..9 jump to that slide; 0 jumps to 10.
+        const n = key === '0' ? 9 : parseInt(key, 10) - 1;
+        if (n < this._slides.length) this._go(n, 'keyboard');
+      } else {
+        handled = false;
+      }
+
+      if (handled) {
+        e.preventDefault();
+        this._flashOverlay();
+      }
+    }
+
+    _go(i, reason = 'api') {
+      if (!this._slides.length) return;
+      const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
+      if (clamped === this._index) {
+        this._flashOverlay();
+        return;
+      }
+      this._index = clamped;
+      this._applyIndex({ showOverlay: true, broadcast: true, reason });
+    }
+
+    // Public API ------------------------------------------------------------
+
+    /** Current slide index (0-based). */
+    get index() { return this._index; }
+    /** Total slide count. */
+    get length() { return this._slides.length; }
+    /** Programmatically navigate. */
+    goTo(i) { this._go(i, 'api'); }
+    next() { this._go(this._index + 1, 'api'); }
+    prev() { this._go(this._index - 1, 'api'); }
+    reset() { this._go(0, 'api'); }
+  }
+
+  if (!customElements.get('deck-stage')) {
+    customElements.define('deck-stage', DeckStage);
+  }
+})();
+  </script>
+</head>
+
+<body>
+
+    <deck-stage width="1920" height="1080">
+
+    <section class="slide cover" data-label="Cover">
+      <div class="eyebrow">A LEAN PHILOSOPHY · 工程哲学</div>
+      <h1>精益软件开发<br><span class="gradient-text">从丰田到硅谷</span></h1>
+      <div class="bar"></div>
+      <div class="sub">一种识别浪费、优化系统、尊重人性的工程世界观。</div>
+      <div class="meta">
+        南京大学软件学院 · 邵栋<br>Lecture · 精益与敏捷
+      </div>
+      <div class="s-footer">
+        <span class="mark">LECTURE · 讲义</span>
+        <span class="s-pageno">01</span>
+      </div>
+    </section>
+
+
+    <section class="slide chapter why" data-label="Part 1">
+      <div class="huge">Ⅰ</div>
+      <div class="text">
+        <div class="eye">PART 1 · 顶层 · 精益哲学</div>
+        <h2>一种百年未变的<br>工程世界观</h2>
+        <div class="sub">From Ford to Toyota to Silicon Valley.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 哲学</span>
+        <span class="s-pageno">02</span>
+      </div>
+    </section>
+
+
+    <section class="slide content why" data-label="思想谱系">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 1 · 思想谱系</div>
+          <h3>百年演化之路：从流水线到代码仓库</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+
+      <div class="s-lead">精益不是丰田的发明，也不是软件行业的突发奇想；它是一条流过工厂、流过代码的连续思路。</div>
+
+      <div class="s-body">
+        <svg viewBox="0 0 1680 360" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto;">
+          <defs>
+            <linearGradient id="tl-grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0%" stop-color="var(--why)" stop-opacity="0.35"/>
+              <stop offset="50%" stop-color="var(--how)" stop-opacity="0.55"/>
+              <stop offset="100%" stop-color="var(--what)" stop-opacity="0.75"/>
+            </linearGradient>
+          </defs>
+          <path d="M 80 200 C 380 80, 700 320, 900 180 S 1380 60, 1600 200"
+                stroke="url(#tl-grad)" stroke-width="6" fill="none" stroke-linecap="round"/>
+          <!-- 节点 1 -->
+          <circle cx="220" cy="170" r="22" fill="var(--why)"/>
+          <text x="220" y="120" text-anchor="middle" font-size="26" font-weight="900" fill="var(--why)">1910s</text>
+          <text x="220" y="240" text-anchor="middle" font-size="22" font-weight="700" fill="var(--text)">亨利·福特</text>
+          <text x="220" y="270" text-anchor="middle" font-size="18" fill="var(--text-muted)">移动流水线 · 规模经济</text>
+          <text x="220" y="300" text-anchor="middle" font-size="18" fill="var(--text-muted)">代价：刚性 · 库存浪费</text>
+          <!-- 节点 2 -->
+          <circle cx="820" cy="190" r="26" fill="var(--how)"/>
+          <text x="820" y="135" text-anchor="middle" font-size="26" font-weight="900" fill="var(--how)">1950s</text>
+          <text x="820" y="260" text-anchor="middle" font-size="22" font-weight="700" fill="var(--text)">丰田生产系统</text>
+          <text x="820" y="290" text-anchor="middle" font-size="18" fill="var(--text-muted)">JIT 准时化 + Jidoka 自働化</text>
+          <text x="820" y="318" text-anchor="middle" font-size="18" fill="var(--text-muted)">资源匮乏下零容忍浪费</text>
+          <!-- 节点 3 -->
+          <circle cx="1420" cy="155" r="22" fill="var(--what)"/>
+          <text x="1420" y="105" text-anchor="middle" font-size="26" font-weight="900" fill="var(--what)">2003</text>
+          <text x="1420" y="225" text-anchor="middle" font-size="22" font-weight="700" fill="var(--text)">Poppendieck 夫妇</text>
+          <text x="1420" y="255" text-anchor="middle" font-size="18" fill="var(--text-muted)">同构映射：库存 → WIP</text>
+          <text x="1420" y="285" text-anchor="middle" font-size="18" fill="var(--text-muted)">《Lean Software Development》</text>
+        </svg>
+
+        <div class="callout insight" style="margin-top:24px;">
+          <strong>注：自働化 ≠ 自动化。</strong>"自<span style="color:var(--accent); font-weight:700;">働</span>化"是丰田造的和制汉字，比"自<span style="color:var(--text-muted);">動</span>化"多了一个"亻"（人）旁——大野耐一称之为 <em>autonomation</em>（带人智的自动化）。两者的根本差异：<b>自动化</b>追求"机器自己运转"，故障时仍会继续生产次品；<b>自働化</b>则把"判断异常并自停"的能力内建到机器里——源头是 1924 年丰田佐吉发明的自动织机：纬纱一断，织机立刻停车并亮灯呼叫工人。一台机器因此可以由一个工人看管多台，而不是反过来。它对应软件工程里的两层含义：①<b>内建质量</b>——CI 红灯即阻塞合并、type checker 失败即停手；②<b>停线权</b>（andon cord）——任何工程师发现异常都有权拉停发布流水线，不必先请示。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 1 · 思想谱系</span>
+        <span class="s-pageno">03</span>
+      </div>
+    </section>
+
+
+    <section class="slide content why" data-label="三大支柱">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 1 · 核心理念</div>
+          <h3>三大支柱：从工厂车间到代码仓库</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+
+      <div class="s-lead">理解精益软件开发，先理解它的三块基石——两根丰田原产，一根 Poppendieck 加上去。</div>
+
+      <div class="s-body">
+        <div class="grid-3">
+          <div class="mini-card" style="border-top:4px solid var(--why);">
+            <h4 style="color:var(--why);">JIT · 准时化</h4>
+            <p>建立"拉动式"系统，按下游需求触发上游生产，消除库存与等待。在软件里对应"按用户故事拉取，而非按容量推送"。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--how);">
+            <h4 style="color:var(--how);">Jidoka · 自働化</h4>
+            <p>内建质量：赋予机器与员工"停止生产线"的权力。在软件里对应 CI 红灯即停、单元测试失败即阻塞合并。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--what);">
+            <h4 style="color:var(--what);">同构映射</h4>
+            <p>把"库存"翻译成"在制品 (WIP)"——未合并的分支、待评审的 PR、堆积的工单都是隐形成本。</p>
+          </div>
+        </div>
+
+        <div class="callout principle" style="margin-top:28px;">
+          <strong>原则：</strong>同构映射是 Poppendieck 的核心贡献——精益从此不只是制造业方法，而是一切知识工作的通用语言。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 1 · 核心理念</span>
+        <span class="s-pageno">04</span>
+      </div>
+    </section>
+
+
+    <section class="slide chapter how" data-label="Part 2">
+      <div class="huge">Ⅱ</div>
+      <div class="text">
+        <div class="eye">PART 2 · 中层 · 七大原则</div>
+        <h2>相互咬合的<br>七条规律</h2>
+        <div class="sub">Seven principles, one self-balancing system.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 原则</span>
+        <span class="s-pageno">05</span>
+      </div>
+    </section>
+
+
+    <section class="slide content how" data-label="七原则全景">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 2 · 七原则全景</div>
+          <h3>一个动态平衡的系统，而非七条独立教条</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+
+      <div class="s-lead">这七条彼此咬合：每一条都在校准、制约其他六条，共同构成一个回路。</div>
+
+      <div class="s-body">
+        <svg viewBox="0 0 1680 440" xmlns="http://www.w3.org/2000/svg" style="width:100%; height:auto; max-height:440px;">
+          <!-- 连接线 -->
+          <g stroke="var(--how)" stroke-opacity="0.18" stroke-width="2">
+            <line x1="840" y1="220" x2="280" y2="90"/>
+            <line x1="840" y1="220" x2="560" y2="60"/>
+            <line x1="840" y1="220" x2="1120" y2="60"/>
+            <line x1="840" y1="220" x2="1400" y2="90"/>
+            <line x1="840" y1="220" x2="1500" y2="340"/>
+            <line x1="840" y1="220" x2="840" y2="390"/>
+            <line x1="840" y1="220" x2="180" y2="340"/>
+            <line x1="280" y1="90" x2="560" y2="60"/>
+            <line x1="560" y1="60" x2="1120" y2="60"/>
+            <line x1="1120" y1="60" x2="1400" y2="90"/>
+            <line x1="1400" y1="90" x2="1500" y2="340"/>
+            <line x1="1500" y1="340" x2="840" y2="390"/>
+            <line x1="840" y1="390" x2="180" y2="340"/>
+            <line x1="180" y1="340" x2="280" y2="90"/>
+          </g>
+          <!-- 中心节点 -->
+          <circle cx="840" cy="220" r="58" fill="var(--page2)" stroke="var(--primary)" stroke-width="3"/>
+          <text x="840" y="212" text-anchor="middle" font-size="20" font-weight="900" fill="var(--primary)">精益</text>
+          <text x="840" y="238" text-anchor="middle" font-size="16" fill="var(--text-muted)">LEAN</text>
+          <!-- 7 个外圈节点 -->
+          <g font-size="19" font-weight="700" text-anchor="middle">
+            <circle cx="560" cy="60" r="44" fill="rgba(194,24,91,0.10)" stroke="var(--why)" stroke-width="2"/>
+            <text x="560" y="56" fill="var(--why)">消除浪费</text>
+            <text x="560" y="78" fill="var(--text-muted)" font-size="13" font-weight="500">Eliminate Waste</text>
+
+            <circle cx="1120" cy="60" r="44" fill="rgba(109,40,217,0.10)" stroke="var(--how)" stroke-width="2"/>
+            <text x="1120" y="56" fill="var(--how)">内建质量</text>
+            <text x="1120" y="78" fill="var(--text-muted)" font-size="13" font-weight="500">Build Quality In</text>
+
+            <circle cx="1400" cy="90" r="44" fill="rgba(180,83,9,0.10)" stroke="var(--accent)" stroke-width="2"/>
+            <text x="1400" y="86" fill="var(--accent)">创建知识</text>
+            <text x="1400" y="108" fill="var(--text-muted)" font-size="13" font-weight="500">Create Knowledge</text>
+
+            <circle cx="1500" cy="340" r="44" fill="rgba(14,116,144,0.10)" stroke="var(--what)" stroke-width="2"/>
+            <text x="1500" y="336" fill="var(--what)">推迟决策</text>
+            <text x="1500" y="358" fill="var(--text-muted)" font-size="13" font-weight="500">Defer Commitment</text>
+
+            <circle cx="840" cy="390" r="44" fill="rgba(4,120,87,0.10)" stroke="var(--accent2)" stroke-width="2"/>
+            <text x="840" y="386" fill="var(--accent2)">快速交付</text>
+            <text x="840" y="408" fill="var(--text-muted)" font-size="13" font-weight="500">Deliver Fast</text>
+
+            <circle cx="180" cy="340" r="44" fill="rgba(185,28,28,0.10)" stroke="var(--accent3)" stroke-width="2"/>
+            <text x="180" y="336" fill="var(--accent3)">尊重人</text>
+            <text x="180" y="358" fill="var(--text-muted)" font-size="13" font-weight="500">Respect People</text>
+
+            <circle cx="280" cy="90" r="44" fill="rgba(67,56,202,0.10)" stroke="var(--primary)" stroke-width="2"/>
+            <text x="280" y="86" fill="var(--primary)">全局优化</text>
+            <text x="280" y="108" fill="var(--text-muted)" font-size="13" font-weight="500">Optimize the Whole</text>
+          </g>
+        </svg>
+
+        <div class="callout warning" style="margin-top:14px; padding:16px 24px; font-size:22px;">
+          <strong>提醒：</strong>任何一条单独拉满都会失衡——"快速交付"不带"尊重人"，等于压榨；"推迟决策"不带"创建知识"，等于躺平。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 2 · 全景</span>
+        <span class="s-pageno">06</span>
+      </div>
+    </section>
+
+
+    <section class="slide content how" data-label="消除浪费">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 2 · 原则一</div>
+          <h3>消除浪费：软件开发的七种浪费</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+
+      <div class="s-lead">在软件里，浪费不是节省纸张，而是任何"消耗资源却不为客户创造价值"的活动。</div>
+
+      <div class="s-body">
+        <table class="compare-table" style="font-size:21px;">
+          <tr>
+            <th style="width:30%; padding:12px 20px;">软件七种浪费</th>
+            <th style="width:70%; padding:12px 20px;">典型表现</th>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>部分完成的工作</strong></td>
+            <td style="padding:10px 20px;">未合并的分支、半成品 PR、写了一半就被搁置的功能</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>多余的功能</strong></td>
+            <td style="padding:10px 20px;">用户从不点的按钮、为"可能用到"而做的配置项</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>缺陷</strong></td>
+            <td style="padding:10px 20px;">Bug、回归错误、修复一个引出三个</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>任务切换</strong></td>
+            <td style="padding:10px 20px;">同时进行三个项目、上下文反复装载</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>等待</strong></td>
+            <td style="padding:10px 20px;">等评审、等环境、等审批、等他人的依赖</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>不必要的复杂性</strong></td>
+            <td style="padding:10px 20px;">过度设计、为未来留口子、抽象层堆叠</td>
+          </tr>
+          <tr>
+            <td style="padding:10px 20px;"><strong>重新学习</strong></td>
+            <td style="padding:10px 20px;">同一个坑反复踩、知识不沉淀</td>
+          </tr>
+        </table>
+
+        <div class="callout insight" style="margin-top:18px; padding:14px 24px; font-size:21px;">
+          <strong>解读：</strong>浪费不是"做得不够多"，而是"做了不该做的"。识别浪费的标尺只有一条——这一步是否为客户创造价值；若否，能消除就消除，不能消除就最小化。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 2 · 原则一</span>
+        <span class="s-pageno">07</span>
+      </div>
+    </section>
+
+
+    <section class="slide content how" data-label="内建质量+创建知识">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 2 · 原则二与三</div>
+          <h3>内建质量 + 创建知识：长在过程里，不在事后</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+
+      <div class="s-lead">质量不能在 QA 阶段"检查"出来，知识不能靠最终文档"归档"出来；二者都必须长在开发过程里。</div>
+
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--how);">
+            <h4 style="color:var(--how);">内建质量 · Build Quality In</h4>
+            <p style="margin-bottom:10px;">源头自 TPS 的"自働化"——任何工序都有权停线。</p>
+            <ul>
+              <li><strong>TDD</strong>：测试先行不只是防错，更是设计工具，从源头消除复杂性</li>
+              <li><strong>CI</strong>：自动化检测，红灯立即"停线"，防止缺陷累积</li>
+              <li><strong>Pair Programming</strong>：实时同行评审，显著降低缺陷率</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent);">
+            <h4 style="color:var(--accent);">创建知识 · Create Knowledge</h4>
+            <p style="margin-bottom:10px;">代码只是知识的快照，开发过程本身是学习。</p>
+            <ul>
+              <li><strong>PDCA 科学循环</strong>：每次迭代都是一次实验</li>
+              <li><strong>Code Review</strong>：知识在评审里横向流动</li>
+              <li><strong>Wiki 与实践社区</strong>：让隐性知识可被检索，防止"重新学习"</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 2 · 原则二+三</span>
+        <span class="s-pageno">08</span>
+      </div>
+    </section>
+
+
+    <section class="slide content how" data-label="推迟决策+快速交付">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 2 · 原则四与五</div>
+          <h3>推迟决策 + 快速交付：批次越小，决策越准</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+
+      <div class="s-lead">在信息最不充分的时候做决定，是软件项目最贵的浪费。</div>
+
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">推迟决策 · Defer Commitment</h4>
+            <p style="margin-bottom:10px;">把关键决策推到"最后责任时刻 (Last Responsible Moment)"。</p>
+            <ul>
+              <li>在信息最充分的时候做最优选择，不在最贫瘠的时候赌方向</li>
+              <li>其本意是为新信息留位置，并非拖延</li>
+              <li>架构上对应可逆决策优先，不可逆决策延后</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent2);">
+            <h4 style="color:var(--accent2);">快速交付 · Deliver Fast</h4>
+            <p style="margin-bottom:10px;">目标是缩短 Cycle Time——团队从需求到上线的端到端节拍。</p>
+            <ul>
+              <li>缩短交付时间最有效的手段：严格限制在制品 (WIP)</li>
+              <li>限制 WIP 才能暴露瓶颈，让流动加速</li>
+              <li>压榨个人产能只会制造更多任务切换，反而更慢</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout principle" style="margin-top:24px;">
+          <strong>原则：</strong>决策越晚，知识越多；批次越小，反馈越快——这两条互相强化。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 2 · 原则四+五</span>
+        <span class="s-pageno">09</span>
+      </div>
+    </section>
+
+
+    <section class="slide content how" data-label="尊重人+全局优化">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 2 · 原则六与七</div>
+          <h3>尊重人 + 全局优化：人不是螺丝钉，团队不是部门相加</h3>
+        </div>
+        <div class="s-idx">05</div>
+      </div>
+
+      <div class="s-lead">在知识工作里，局部优化常常导致全局受损；人是唯一真正产生价值的生产资产。</div>
+
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--accent3);">
+            <h4 style="color:var(--accent3);">尊重人 · Respect People</h4>
+            <p style="margin-bottom:10px;">让人有动机、有空间、有担保。</p>
+            <ul>
+              <li><strong>内在驱动力</strong>：自主 (Autonomy) · 专精 (Mastery) · 目的 (Purpose)</li>
+              <li><strong>心理安全</strong>：建立"无指责"文化，把错误视为系统学习的机会</li>
+              <li>在知识工作里，人是唯一的生产资产，不是可替换的资源单元</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--primary);">
+            <h4 style="color:var(--primary);">全局优化 · Optimize the Whole</h4>
+            <p style="margin-bottom:10px;">看交付价值的全链路，不看中间环节的局部 KPI。</p>
+            <ul>
+              <li>局部最优 ≠ 全局最优——开发快但测试堵，整体仍慢</li>
+              <li>打破部门壁垒，组建跨职能团队 (Cross-functional)</li>
+              <li>对最终客户价值负责，而非对工单完成数负责</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 2 · 原则六+七</span>
+        <span class="s-pageno">10</span>
+      </div>
+    </section>
+
+
+    <section class="slide chapter what" data-label="Part 3">
+      <div class="huge">Ⅲ</div>
+      <div class="text">
+        <div class="eye">PART 3 · 底层 · 实践与思维</div>
+        <h2>从原则到<br>日常工程动作</h2>
+        <div class="sub">How principles become daily practice.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 实践</span>
+        <span class="s-pageno">11</span>
+      </div>
+    </section>
+
+
+    <section class="slide content what" data-label="关键实践速查">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 3 · 关键实践</div>
+          <h3>关键实践速查表：把原则翻译成可执行动作</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+
+      <div class="s-lead">原则停在 PPT 里没用；要落到 PR 评审、每日站会、看板列里。</div>
+
+      <div class="s-body">
+        <table class="compare-table">
+          <tr>
+            <th style="width:18%;">实践</th>
+            <th style="width:22%;">对应原则</th>
+            <th style="width:22%;">消除的浪费</th>
+            <th style="width:38%;">落地动作</th>
+          </tr>
+          <tr>
+            <td><strong>TDD</strong></td>
+            <td>内建质量</td>
+            <td>缺陷 · 重新学习</td>
+            <td>测试先写，红绿重构，把设计意图固化在测试里</td>
+          </tr>
+          <tr>
+            <td><strong>CI / CD</strong></td>
+            <td>内建质量 · 快速交付</td>
+            <td>部分完成 · 缺陷累积</td>
+            <td>每次 push 触发流水线，失败即"停线"，主干常绿</td>
+          </tr>
+          <tr>
+            <td><strong>Pair</strong></td>
+            <td>内建质量 · 尊重人</td>
+            <td>缺陷 · 重新学习</td>
+            <td>双人或多人共写一份代码，实时评审与知识传递</td>
+          </tr>
+          <tr>
+            <td><strong>PDCA · Retro</strong></td>
+            <td>创建知识</td>
+            <td>重新学习</td>
+            <td>每次迭代结束做一次复盘，沉淀到团队 Wiki</td>
+          </tr>
+          <tr>
+            <td><strong>限制 WIP</strong></td>
+            <td>快速交付 · 推迟决策</td>
+            <td>任务切换 · 等待</td>
+            <td>看板每列设 WIP 上限，列满了不准拉新卡</td>
+          </tr>
+          <tr>
+            <td><strong>跨职能小队</strong></td>
+            <td>全局优化 · 尊重人</td>
+            <td>等待 · 移交</td>
+            <td>一支队伍覆盖需求 → 开发 → 测试 → 上线全链路</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 3 · 实践速查</span>
+        <span class="s-pageno">12</span>
+      </div>
+    </section>
+
+
+    <section class="slide content what" data-label="思维升级">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">PART 3 · 思维升级</div>
+          <h3>卓越工程师的视角：四层下潜</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+
+      <div class="s-lead">精益最终训练的是看待软件世界的视角——一层超出工具熟练度的工程意识。</div>
+
+      <div class="s-body">
+        <div class="ladder" style="gap:10px;">
+          <div class="ladder-step" style="border-color:#94a3b8; background:rgba(148,163,184,0.10); padding:14px 22px;">
+            <div class="step-num" style="background:rgba(148,163,184,0.25); color:#475569">1</div>
+            <div class="step-content">
+              <strong>看见代码行</strong>
+              <span>关注语法、循环、API 调用——这是入门必经，但停在这里，眼界只到函数边界。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:var(--why); background:rgba(194,24,91,0.08); padding:14px 22px;">
+            <div class="step-num" style="background:rgba(194,24,91,0.18); color:var(--why)">2</div>
+            <div class="step-content">
+              <strong>看见流动的价值</strong>
+              <span>视角从单元抬升到整条价值流：一个需求从想法到上线要经过哪些手、停在哪些列。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:var(--how); background:rgba(109,40,217,0.08); padding:14px 22px;">
+            <div class="step-num" style="background:rgba(109,40,217,0.18); color:var(--how)">3</div>
+            <div class="step-content">
+              <strong>看见关联的系统</strong>
+              <span>团队、客户、运维、市场构成一个反馈环；局部改动如何在环里放大或衰减，是这一层的功课。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:var(--what); background:rgba(14,116,144,0.08); padding:14px 22px;">
+            <div class="step-num" style="background:rgba(14,116,144,0.18); color:var(--what)">4</div>
+            <div class="step-content">
+              <strong>看见富有创造力的人</strong>
+              <span>系统的真正引擎是人；如何让动机、专精、目的得到尊重，是组织设计而非代码问题。</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout insight" style="margin-top:16px; padding:14px 24px; font-size:21px;">
+          <strong>解读：</strong>区分卓越工程师与普通程序员的，不是会用多少框架，而是他能爬到哪一层去思考问题。
+        </div>
+      </div>
+
+      <div class="s-footer">
+        <span class="mark">PART 3 · 思维升级</span>
+        <span class="s-pageno">13</span>
+      </div>
+    </section>
+
+
+    <section class="slide summary" data-label="Summary">
+      <div class="eye">SUMMARY · 收束</div>
+      <h2>以最少的浪费，<br>创造最大的价值</h2>
+      <div class="grid-3">
+        <div class="mini-card" style="border-left:4px solid var(--why); text-align:left;">
+          <h4 style="color:var(--why);">PART 1 · 哲学</h4>
+          <p>精益是一条百年演化的工程脉络——从福特的流水线、丰田的 TPS，到 Poppendieck 的同构翻译。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--how); text-align:left;">
+          <h4 style="color:var(--how);">PART 2 · 原则</h4>
+          <p>七条原则相互咬合：消除浪费、内建质量、创建知识、推迟决策、快速交付、尊重人、全局优化。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--what); text-align:left;">
+          <h4 style="color:var(--what);">PART 3 · 实践</h4>
+          <p>原则落到 TDD、CI、限 WIP、跨职能小队，最终凝结为一种识别浪费、看见价值流的工程视角。</p>
+        </div>
+      </div>
+      <div style="margin-top:48px; font-family:var(--font-display); font-style:italic; font-size:30px; color:var(--text-muted);">
+        Through continuous learning and improvement, deliver maximum value with minimum waste.
+      </div>
+      <div class="s-footer">
+        <span class="mark">THANK YOU · 谢谢</span>
+        <span class="s-pageno">14</span>
+      </div>
+    </section>
+
+  </deck-stage>
+
+  <!-- 可选：speaker notes（deck-stage.js 会自动读取并 postMessage）-->
+  <script type="application/json" id="speaker-notes">[]</script>
+
+</body>
+
+</html>

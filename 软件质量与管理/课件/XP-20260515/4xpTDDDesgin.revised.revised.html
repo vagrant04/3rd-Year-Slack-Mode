@@ -1,0 +1,2212 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>TDD 与演进式设计 · XP 课堂讲义</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      /* ── 主色（亮色系，暖调） ── */
+      --primary: #4338ca;
+      --primary-dark: #3730a3;
+      --accent: #b45309;
+      --accent2: #047857;
+      --accent3: #b91c1c;
+
+      /* ── 背景层次 ── */
+      --page: #faf7ef;
+      --page2: #f4ecd8;
+      --page3: #ebe0c5;
+
+      /* ── 文字 ── */
+      --text: #1f1b14;
+      --text-muted: #6b6255;
+
+      /* ── 语义三色 ── */
+      --why: #c2185b;
+      --how: #6d28d9;
+      --what: #0e7490;
+
+      /* ── 卡片与分隔线 ── */
+      --card-bg: #ffffff;
+      --card-bg-soft: #fbf8f1;
+      --border: rgba(46, 36, 22, 0.10);
+      --border-strong: rgba(46, 36, 22, 0.18);
+      --rule: #d8d4cb;
+
+      --font-sans: 'Noto Sans SC', 'PingFang SC', sans-serif;
+      --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: #0a0c12;
+      /* deck-stage letterbox */
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+
+    /* ═══════════════════════════════════════
+       Slide 通用骨架（1920×1080 作者尺寸）
+       ═══════════════════════════════════════ */
+    .slide {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-size: 26px;
+      line-height: 1.55;
+    }
+
+    .s-footer {
+      position: absolute;
+      left: 120px;
+      right: 120px;
+      bottom: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .s-footer .mark {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .s-pageno {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--primary);
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══════════════════════════════════════
+       01 · Cover（封面）
+       ═══════════════════════════════════════ */
+    .slide.cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 200px;
+    }
+
+    .slide.cover .eyebrow {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 40px;
+    }
+
+    .slide.cover h1 {
+      font-size: 136px;
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+
+    .slide.cover h1 .gradient-text {
+      background: linear-gradient(135deg, var(--how), var(--why), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide.cover .bar {
+      height: 4px;
+      width: 140px;
+      background: var(--primary);
+      margin: 40px 0 32px;
+    }
+
+    .slide.cover .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 46px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      max-width: 1400px;
+    }
+
+    .slide.cover .meta {
+      position: absolute;
+      right: 200px;
+      bottom: 200px;
+      text-align: right;
+      font-size: 22px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ═══════════════════════════════════════
+       02 · Chapter（章节分隔页）
+       ═══════════════════════════════════════ */
+    .slide.chapter {
+      display: flex;
+      align-items: center;
+      padding: 0 120px;
+    }
+
+    .slide.chapter .huge {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 480px;
+      line-height: 0.8;
+      color: transparent;
+      -webkit-text-stroke: 3px var(--primary);
+      letter-spacing: -0.04em;
+      margin-right: 80px;
+      flex-shrink: 0;
+    }
+
+    .slide.chapter .text {
+      max-width: 900px;
+    }
+
+    .slide.chapter .eye {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .slide.chapter h2 {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+    }
+
+    .slide.chapter .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 40px;
+      color: var(--text-muted);
+    }
+
+    /* 语义色变体：.chapter.why / .chapter.how / .chapter.what */
+    .slide.chapter.why .huge {
+      -webkit-text-stroke-color: var(--why);
+    }
+
+    .slide.chapter.why .eye {
+      color: var(--why);
+    }
+
+    .slide.chapter.how .huge {
+      -webkit-text-stroke-color: var(--how);
+    }
+
+    .slide.chapter.how .eye {
+      color: var(--how);
+    }
+
+    .slide.chapter.what .huge {
+      -webkit-text-stroke-color: var(--what);
+    }
+
+    .slide.chapter.what .eye {
+      color: var(--what);
+    }
+
+    /* ═══════════════════════════════════════
+       03 · Content（常规内容页）
+       ═══════════════════════════════════════ */
+    .slide.content {
+      padding: 120px 120px 140px;
+    }
+
+    .slide.content .s-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 28px;
+      margin-bottom: 40px;
+    }
+
+    .slide.content .s-eyebrow {
+      font-size: 18px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .slide.content h3 {
+      font-size: 56px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-top: 8px;
+      max-width: 1400px;
+    }
+
+    .slide.content .s-idx {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 44px;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+
+    .slide.content .s-lead {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 32px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--primary);
+      padding: 6px 0 6px 20px;
+      margin-bottom: 32px;
+      max-width: 1500px;
+    }
+
+    .slide.content .s-body {
+      font-size: 26px;
+      line-height: 1.6;
+    }
+
+    /* 语义色变体 */
+    .slide.content.why .s-eyebrow,
+    .slide.content.why .s-idx {
+      color: var(--why);
+    }
+
+    .slide.content.why .s-lead {
+      border-left-color: var(--why);
+    }
+
+    .slide.content.how .s-eyebrow,
+    .slide.content.how .s-idx {
+      color: var(--how);
+    }
+
+    .slide.content.how .s-lead {
+      border-left-color: var(--how);
+    }
+
+    .slide.content.what .s-eyebrow,
+    .slide.content.what .s-idx {
+      color: var(--what);
+    }
+
+    .slide.content.what .s-lead {
+      border-left-color: var(--what);
+    }
+
+    /* ═══════════════════════════════════════
+       组件清单（与 scroll 模式 DOM 词汇一致，字号放大）
+       ═══════════════════════════════════════ */
+
+    /* 要点列表 */
+    .points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 20px 24px;
+      background: var(--card-bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 26px;
+    }
+
+    .points li .icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+
+    .points li strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .points li .sub {
+      font-size: 22px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* 网格布局 */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .mini-card {
+      padding: 28px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(46, 36, 22, 0.04);
+    }
+
+    .mini-card h4 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 14px;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      font-size: 22px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .mini-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mini-card ul li::before {
+      content: '→ ';
+      color: var(--primary);
+    }
+
+    /* 代码块（GitHub Light） */
+    .code-block {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      padding: 24px 28px;
+      font-family: var(--font-mono);
+      font-size: 22px;
+      line-height: 1.65;
+      color: #24292f;
+      overflow: hidden;
+    }
+
+    .code-block .comment {
+      color: #6e7781;
+    }
+
+    .code-block .string {
+      color: #0550ae;
+    }
+
+    .code-block .label {
+      color: #953800;
+    }
+
+    .code-block .bad {
+      color: #cf222e;
+    }
+
+    .code-block .good {
+      color: #116329;
+    }
+
+    /* 对比表 */
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 22px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .compare-table th {
+      background: rgba(67, 56, 202, 0.08);
+      color: var(--primary);
+      padding: 18px 22px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .compare-table td {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .tag.bad {
+      background: rgba(194, 24, 91, 0.12);
+      color: var(--why);
+    }
+
+    .tag.good {
+      background: rgba(4, 120, 87, 0.12);
+      color: var(--accent2);
+    }
+
+    .tag.neutral {
+      background: rgba(67, 56, 202, 0.12);
+      color: var(--primary);
+    }
+
+    /* 阶梯图 */
+    .ladder {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ladder-step {
+      padding: 18px 24px;
+      border-radius: 12px;
+      border-left: 4px solid;
+      background: var(--card-bg-soft);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 24px;
+    }
+
+    .ladder-step .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .ladder-step .step-content strong {
+      display: block;
+      font-size: 26px;
+    }
+
+    .ladder-step .step-content span {
+      color: var(--text-muted);
+      font-size: 20px;
+    }
+
+    /* 醒目提示框 */
+    .callout {
+      padding: 22px 28px;
+      border-radius: 14px;
+      border-left: 4px solid;
+      font-size: 24px;
+    }
+
+    .callout.insight {
+      border-color: var(--accent);
+      background: rgba(180, 83, 9, 0.07);
+    }
+
+    .callout.insight strong {
+      color: var(--accent);
+    }
+
+    .callout.principle {
+      border-color: var(--primary);
+      background: rgba(67, 56, 202, 0.06);
+    }
+
+    .callout.principle strong {
+      color: var(--primary);
+    }
+
+    .callout.warning {
+      border-color: var(--accent3);
+      background: rgba(185, 28, 28, 0.07);
+    }
+
+    .callout.warning strong {
+      color: var(--accent3);
+    }
+
+    /* ═══════════════════════════════════════
+       04 · Summary（总结页）
+       ═══════════════════════════════════════ */
+    .slide.summary {
+      padding: 140px 160px;
+      background: linear-gradient(135deg, #f4ecd8, #faf7ef);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .slide.summary .eye {
+      font-size: 20px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .slide.summary h2 {
+      font-size: 84px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 48px;
+    }
+
+    .slide.summary .grid-3 {
+      max-width: 1500px;
+      margin: 0 auto;
+      gap: 32px;
+    }
+  </style>
+  <!-- ══════════════════════════════════════════════════
+       DECK_STAGE_SCRIPT_PLACEHOLDER
+       生成时把 templates/deck-stage.js 的完整内容
+       粘贴到这里（用 <script>...</script> 包起来）。
+       不要外链，必须内联。
+       ══════════════════════════════════════════════════ -->
+  <script>
+    /* ===== inlined from deck-stage.js ===== */
+    /**
+     * <deck-stage> — reusable web component for HTML decks.
+     *
+     * Handles:
+     *  (a) speaker notes — reads <script type="application/json" id="speaker-notes">
+     *      and posts {slideIndexChanged: N} to the parent window on nav.
+     *  (b) keyboard navigation — ←/→, PgUp/PgDn, Space, Home/End, number keys.
+     *  (c) press R to reset to slide 0 (with a tasteful keyboard hint).
+     *  (d) bottom-center overlay showing slide count + hints, fades out on idle.
+     *  (e) auto-scaling — inner canvas is a fixed design size (default 1920×1080)
+     *      scaled with `transform: scale()` to fit the viewport, letterboxed.
+     *      Set the `noscale` attribute to render at authored size (1:1) — the
+     *      PPTX exporter sets this so its DOM capture sees unscaled geometry.
+     *  (f) print — `@media print` lays every slide out as its own page at the
+     *      design size, so the browser's Print → Save as PDF produces a clean
+     *      one-page-per-slide PDF with no extra setup.
+     *
+     * Slides are HIDDEN, not unmounted. Non-active slides stay in the DOM with
+     * `visibility: hidden` + `opacity: 0`, so their state (videos, iframes,
+     * form inputs, React trees) is preserved across navigation.
+     *
+     * Lifecycle event — the component dispatches a `slidechange` CustomEvent on
+     * itself whenever the active slide changes (including the initial mount).
+     * The event bubbles and composes out of shadow DOM, so you can listen on
+     * the <deck-stage> element or on document:
+     *
+     *   document.querySelector('deck-stage').addEventListener('slidechange', (e) => {
+     *     e.detail.index         // new 0-based index
+     *     e.detail.previousIndex // previous index, or -1 on init
+     *     e.detail.total         // total slide count
+     *     e.detail.slide         // the new active slide element
+     *     e.detail.previousSlide // the prior slide element, or null on init
+     *     e.detail.reason        // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+     *   });
+     *
+     * Persistence: current slide index is saved to localStorage keyed by the
+     * document path, so refresh returns you to the same place.
+     *
+     * Usage:
+     *   <deck-stage width="1920" height="1080">
+     *     <section data-label="Title">...</section>
+     *     <section data-label="Agenda">...</section>
+     *   </deck-stage>
+     *
+     * Slides are the direct element children of <deck-stage>. Each slide is
+     * automatically tagged with:
+     *   - data-screen-label="NN Label"   (1-indexed, for comment flow)
+     *   - data-om-validate="no_overflowing_text,no_overlapping_text,slide_sized_text"
+     */
+
+    (() => {
+      const DESIGN_W_DEFAULT = 1920;
+      const DESIGN_H_DEFAULT = 1080;
+      const STORAGE_PREFIX = 'deck-stage:slide:';
+      const OVERLAY_HIDE_MS = 1800;
+      const VALIDATE_ATTR = 'no_overflowing_text,no_overlapping_text,slide_sized_text';
+
+      const pad2 = (n) => String(n).padStart(2, '0');
+
+      const stylesheet = `
+    :host {
+      position: fixed;
+      inset: 0;
+      display: block;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas {
+      position: relative;
+      transform-origin: center center;
+      flex-shrink: 0;
+      background: #fff;
+      will-change: transform;
+    }
+
+    /* Slides live in light DOM (via <slot>) so authored CSS still applies.
+       We absolutely position each slotted child to stack them. */
+    ::slotted(*) {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    ::slotted([data-deck-active]) {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    /* Tap zones for mobile — back/forward thirds like Stories.
+       Transparent, no visible UI, don't block the overlay. */
+    .tapzones {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: 2147482000;
+      pointer-events: none;
+    }
+    .tapzone {
+      flex: 1;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    /* Only activate tap zones on coarse pointers (touch devices). */
+    @media (hover: hover) and (pointer: fine) {
+      .tapzones { display: none; }
+    }
+
+    .overlay {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 6px) scale(0.92);
+      filter: blur(6px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      background: #000;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+      transform-origin: center bottom;
+      z-index: 2147483000;
+      user-select: none;
+    }
+    .overlay[data-visible] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
+    }
+
+    .btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.72);
+      transition: background 140ms ease, color 140ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .btn:active { background: rgba(255,255,255,0.18); }
+    .btn:focus { outline: none; }
+    .btn:focus-visible { outline: none; }
+    .btn::-moz-focus-inner { border: 0; }
+    .btn svg { width: 14px; height: 14px; display: block; }
+    .btn.reset {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 10px 0 12px;
+      gap: 6px;
+      color: rgba(255,255,255,0.72);
+    }
+    .btn.reset .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 10px;
+      line-height: 1;
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
+    }
+
+    .count {
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+      font-weight: 500;
+      padding: 0 8px;
+      min-width: 42px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; font-weight: 400; }
+    .count .total { color: rgba(255,255,255,0.55); }
+
+    .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255,255,255,0.18);
+      margin: 0 2px;
+    }
+
+    /* ── Print: one page per slide, no chrome ────────────────────────────
+       The screen layout stacks every slide at inset:0 inside a scaled
+       canvas; for print we want them in document flow at the authored
+       design size so the browser paginates one slide per sheet. The
+       @page size is set from the width/height attributes via the inline
+       <style id="deck-stage-print-page"> that connectedCallback injects
+       into <head> (the @page at-rule has no effect inside shadow DOM). */
+    @media print {
+      :host {
+        position: static;
+        inset: auto;
+        background: none;
+        overflow: visible;
+        color: inherit;
+      }
+      .stage { position: static; display: block; }
+      .canvas {
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+        background: none;
+        will-change: auto;
+      }
+      ::slotted(*) {
+        position: relative !important;
+        inset: auto !important;
+        width: var(--deck-design-w) !important;
+        height: var(--deck-design-h) !important;
+        box-sizing: border-box !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto;
+        break-after: page;
+        page-break-after: always;
+        break-inside: avoid;
+        overflow: hidden;
+      }
+      ::slotted(*:last-child) {
+        break-after: auto;
+        page-break-after: auto;
+      }
+      .overlay, .tapzones { display: none !important; }
+    }
+  `;
+
+      class DeckStage extends HTMLElement {
+        static get observedAttributes() { return ['width', 'height', 'noscale']; }
+
+        constructor() {
+          super();
+          this._root = this.attachShadow({ mode: 'open' });
+          this._index = 0;
+          this._slides = [];
+          this._notes = [];
+          this._hideTimer = null;
+          this._mouseIdleTimer = null;
+          this._storageKey = STORAGE_PREFIX + (location.pathname || '/');
+
+          this._onKey = this._onKey.bind(this);
+          this._onResize = this._onResize.bind(this);
+          this._onSlotChange = this._onSlotChange.bind(this);
+          this._onMouseMove = this._onMouseMove.bind(this);
+          this._onTapBack = this._onTapBack.bind(this);
+          this._onTapForward = this._onTapForward.bind(this);
+        }
+
+        get designWidth() {
+          return parseInt(this.getAttribute('width'), 10) || DESIGN_W_DEFAULT;
+        }
+        get designHeight() {
+          return parseInt(this.getAttribute('height'), 10) || DESIGN_H_DEFAULT;
+        }
+
+        connectedCallback() {
+          this._render();
+          this._loadNotes();
+          this._syncPrintPageRule();
+          window.addEventListener('keydown', this._onKey);
+          window.addEventListener('resize', this._onResize);
+          window.addEventListener('mousemove', this._onMouseMove, { passive: true });
+          // Initial collection + layout happens via slotchange, which fires on mount.
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener('keydown', this._onKey);
+          window.removeEventListener('resize', this._onResize);
+          window.removeEventListener('mousemove', this._onMouseMove);
+          if (this._hideTimer) clearTimeout(this._hideTimer);
+          if (this._mouseIdleTimer) clearTimeout(this._mouseIdleTimer);
+        }
+
+        attributeChangedCallback() {
+          if (this._canvas) {
+            this._canvas.style.width = this.designWidth + 'px';
+            this._canvas.style.height = this.designHeight + 'px';
+            this._canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+            this._canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+            this._fit();
+            this._syncPrintPageRule();
+          }
+        }
+
+        _render() {
+          const style = document.createElement('style');
+          style.textContent = stylesheet;
+
+          const stage = document.createElement('div');
+          stage.className = 'stage';
+
+          const canvas = document.createElement('div');
+          canvas.className = 'canvas';
+          canvas.style.width = this.designWidth + 'px';
+          canvas.style.height = this.designHeight + 'px';
+          canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+          canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+
+          const slot = document.createElement('slot');
+          slot.addEventListener('slotchange', this._onSlotChange);
+          canvas.appendChild(slot);
+          stage.appendChild(canvas);
+
+          // Tap zones (mobile): left third = back, right third = forward.
+          const tapzones = document.createElement('div');
+          tapzones.className = 'tapzones export-hidden';
+          tapzones.setAttribute('aria-hidden', 'true');
+          const tzBack = document.createElement('div');
+          tzBack.className = 'tapzone tapzone--back';
+          const tzMid = document.createElement('div');
+          tzMid.className = 'tapzone tapzone--mid';
+          tzMid.style.pointerEvents = 'none';
+          const tzFwd = document.createElement('div');
+          tzFwd.className = 'tapzone tapzone--fwd';
+          tzBack.addEventListener('click', this._onTapBack);
+          tzFwd.addEventListener('click', this._onTapForward);
+          tapzones.append(tzBack, tzMid, tzFwd);
+
+          // Overlay: compact, solid black, with clickable controls.
+          const overlay = document.createElement('div');
+          overlay.className = 'overlay export-hidden';
+          overlay.setAttribute('role', 'toolbar');
+          overlay.setAttribute('aria-label', 'Deck controls');
+          overlay.innerHTML = `
+        <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+        </button>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <button class="btn next" type="button" aria-label="Next slide" title="Next (→)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+      `;
+
+          overlay.querySelector('.prev').addEventListener('click', () => this._go(this._index - 1, 'click'));
+          overlay.querySelector('.next').addEventListener('click', () => this._go(this._index + 1, 'click'));
+          overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+
+          this._root.append(style, stage, tapzones, overlay);
+          this._canvas = canvas;
+          this._slot = slot;
+          this._overlay = overlay;
+          this._countEl = overlay.querySelector('.current');
+          this._totalEl = overlay.querySelector('.total');
+        }
+
+        /** @page must live in the document stylesheet — it's a no-op inside
+         *  shadow DOM. Inject/update a single <head> style tag so the print
+         *  sheet matches the design size and Save-as-PDF yields one slide per
+         *  page with no margins. */
+        _syncPrintPageRule() {
+          const id = 'deck-stage-print-page';
+          let tag = document.getElementById(id);
+          if (!tag) {
+            tag = document.createElement('style');
+            tag.id = id;
+            document.head.appendChild(tag);
+          }
+          tag.textContent =
+            '@page { size: ' + this.designWidth + 'px ' + this.designHeight + 'px; margin: 0; } ' +
+            '@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; overflow: visible !important; height: auto !important; } ' +
+            '* { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+        }
+
+        _onSlotChange() {
+          this._collectSlides();
+          this._restoreIndex();
+          this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
+          this._fit();
+        }
+
+        _collectSlides() {
+          const assigned = this._slot.assignedElements({ flatten: true });
+          this._slides = assigned.filter((el) => {
+            // Skip template/style/script nodes even if someone slots them.
+            const tag = el.tagName;
+            return tag !== 'TEMPLATE' && tag !== 'SCRIPT' && tag !== 'STYLE';
+          });
+
+          this._slides.forEach((slide, i) => {
+            const n = i + 1;
+            // Determine a label for comment flow: prefer explicit data-label,
+            // then an existing data-screen-label, then first heading, else "Slide".
+            let label = slide.getAttribute('data-label');
+            if (!label) {
+              const existing = slide.getAttribute('data-screen-label');
+              if (existing) {
+                // Strip any leading number the author may have included.
+                label = existing.replace(/^\s*\d+\s*/, '').trim() || existing;
+              }
+            }
+            if (!label) {
+              const h = slide.querySelector('h1, h2, h3, [data-title]');
+              if (h) label = (h.textContent || '').trim().slice(0, 40);
+            }
+            if (!label) label = 'Slide';
+            slide.setAttribute('data-screen-label', `${pad2(n)} ${label}`);
+
+            // Validation attribute for comment flow / auto-checks.
+            if (!slide.hasAttribute('data-om-validate')) {
+              slide.setAttribute('data-om-validate', VALIDATE_ATTR);
+            }
+
+            slide.setAttribute('data-deck-slide', String(i));
+          });
+
+          if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
+          if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
+        }
+
+        _loadNotes() {
+          const tag = document.getElementById('speaker-notes');
+          if (!tag) { this._notes = []; return; }
+          try {
+            const parsed = JSON.parse(tag.textContent || '[]');
+            if (Array.isArray(parsed)) this._notes = parsed;
+          } catch (e) {
+            console.warn('[deck-stage] Failed to parse #speaker-notes JSON:', e);
+            this._notes = [];
+          }
+        }
+
+        _restoreIndex() {
+          try {
+            const raw = localStorage.getItem(this._storageKey);
+            if (raw != null) {
+              const n = parseInt(raw, 10);
+              if (Number.isFinite(n) && n >= 0 && n < this._slides.length) {
+                this._index = n;
+              }
+            }
+          } catch (e) { /* ignore */ }
+        }
+
+        _persistIndex() {
+          try { localStorage.setItem(this._storageKey, String(this._index)); }
+          catch (e) { /* ignore */ }
+        }
+
+        _applyIndex({ showOverlay = true, broadcast = true, reason = 'init' } = {}) {
+          if (!this._slides.length) return;
+          const prev = this._prevIndex == null ? -1 : this._prevIndex;
+          const curr = this._index;
+          this._slides.forEach((s, i) => {
+            if (i === curr) s.setAttribute('data-deck-active', '');
+            else s.removeAttribute('data-deck-active');
+          });
+          if (this._countEl) this._countEl.textContent = String(curr + 1);
+          this._persistIndex();
+
+          if (broadcast) {
+            // (1) Legacy: host-window postMessage for speaker-notes renderers.
+            try { window.postMessage({ slideIndexChanged: curr }, '*'); } catch (e) { }
+
+            // (2) In-page CustomEvent on the <deck-stage> element itself.
+            //     Bubbles and composes out of shadow DOM so slide code can listen:
+            //       document.querySelector('deck-stage').addEventListener('slidechange', e => {
+            //         e.detail.index, e.detail.previousIndex, e.detail.total, e.detail.slide, e.detail.reason
+            //       });
+            const detail = {
+              index: curr,
+              previousIndex: prev,
+              total: this._slides.length,
+              slide: this._slides[curr] || null,
+              previousSlide: prev >= 0 ? (this._slides[prev] || null) : null,
+              reason: reason, // 'init' | 'keyboard' | 'click' | 'tap' | 'api'
+            };
+            this.dispatchEvent(new CustomEvent('slidechange', {
+              detail,
+              bubbles: true,
+              composed: true,
+            }));
+          }
+
+          this._prevIndex = curr;
+          if (showOverlay) this._flashOverlay();
+        }
+
+        _flashOverlay() {
+          if (!this._overlay) return;
+          this._overlay.setAttribute('data-visible', '');
+          if (this._hideTimer) clearTimeout(this._hideTimer);
+          this._hideTimer = setTimeout(() => {
+            this._overlay.removeAttribute('data-visible');
+          }, OVERLAY_HIDE_MS);
+        }
+
+        _fit() {
+          if (!this._canvas) return;
+          // PPTX export sets noscale so the DOM capture sees authored-size
+          // geometry — the scaled canvas is in shadow DOM, so the exporter's
+          // resetTransformSelector can't reach .canvas.style.transform directly.
+          if (this.hasAttribute('noscale')) {
+            this._canvas.style.transform = 'none';
+            return;
+          }
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const s = Math.min(vw / this.designWidth, vh / this.designHeight);
+          this._canvas.style.transform = `scale(${s})`;
+        }
+
+        _onResize() { this._fit(); }
+
+        _onMouseMove() {
+          // Keep overlay visible while mouse moves; hide after idle.
+          this._flashOverlay();
+        }
+
+        _onTapBack(e) {
+          e.preventDefault();
+          this._go(this._index - 1, 'tap');
+        }
+
+        _onTapForward(e) {
+          e.preventDefault();
+          this._go(this._index + 1, 'tap');
+        }
+
+        _onKey(e) {
+          // Ignore when the user is typing.
+          const t = e.target;
+          if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+          const key = e.key;
+          let handled = true;
+
+          if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+            this._go(this._index + 1, 'keyboard');
+          } else if (key === 'ArrowLeft' || key === 'PageUp') {
+            this._go(this._index - 1, 'keyboard');
+          } else if (key === 'Home') {
+            this._go(0, 'keyboard');
+          } else if (key === 'End') {
+            this._go(this._slides.length - 1, 'keyboard');
+          } else if (key === 'r' || key === 'R') {
+            this._go(0, 'keyboard');
+          } else if (/^[0-9]$/.test(key)) {
+            // 1..9 jump to that slide; 0 jumps to 10.
+            const n = key === '0' ? 9 : parseInt(key, 10) - 1;
+            if (n < this._slides.length) this._go(n, 'keyboard');
+          } else {
+            handled = false;
+          }
+
+          if (handled) {
+            e.preventDefault();
+            this._flashOverlay();
+          }
+        }
+
+        _go(i, reason = 'api') {
+          if (!this._slides.length) return;
+          const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
+          if (clamped === this._index) {
+            this._flashOverlay();
+            return;
+          }
+          this._index = clamped;
+          this._applyIndex({ showOverlay: true, broadcast: true, reason });
+        }
+
+        // Public API ------------------------------------------------------------
+
+        /** Current slide index (0-based). */
+        get index() { return this._index; }
+        /** Total slide count. */
+        get length() { return this._slides.length; }
+        /** Programmatically navigate. */
+        goTo(i) { this._go(i, 'api'); }
+        next() { this._go(this._index + 1, 'api'); }
+        prev() { this._go(this._index - 1, 'api'); }
+        reset() { this._go(0, 'api'); }
+      }
+
+      if (!customElements.get('deck-stage')) {
+        customElements.define('deck-stage', DeckStage);
+      }
+    })();
+
+  </script>
+</head>
+
+<body>
+  <deck-stage height="1080" width="1920">
+    <section class="slide cover" data-label="Cover">
+      <div class="eyebrow">XP · Extreme Programming · 课堂讲义</div>
+      <h1>TDD 与<br /><span class="gradient-text">演进式设计</span></h1>
+      <div class="bar"></div>
+      <div class="sub">测试先行，让设计在代码中生长。</div>
+      <div class="meta">
+        敏捷软件开发 · 第四讲<br />南京大学 · 2026 春
+      </div>
+      <div class="s-footer">
+        <span class="mark">LECTURE · 讲义</span>
+        <span class="s-pageno">00</span>
+      </div>
+    </section>
+    <section class="slide chapter why" data-label="Chapter I">
+      <div class="huge">Ⅰ</div>
+      <div class="text">
+        <div class="eye">Part 1 · 问题</div>
+        <h2>设计会被<br />敏捷杀死吗？</h2>
+        <div class="sub">From Big Up-Front Design to Evolutionary Design.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · PROBLEM</span>
+        <span class="s-pageno">I</span>
+      </div>
+    </section>
+    <section class="slide content why" data-label="Three Design Eras">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 问题</div>
+          <h3>软件设计的三次身份危机</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">设计的主导范式历经三次更替。</div>
+      <div class="s-body">
+        <svg style="width:100%; height:auto; margin-top:12px;" viewbox="0 0 1600 360">
+          <!-- baseline -->
+          <line stroke="#d8d4cb" stroke-width="2" x1="80" x2="1520" y1="220" y2="220"></line>
+          <!-- curve from high-ceremony to chaos to equilibrium -->
+          <path d="M 120 110 C 260 80, 380 230, 520 250 S 780 330, 900 260 S 1200 140, 1460 160" fill="none"
+            opacity="0.9" stroke="var(--why)" stroke-linecap="round" stroke-width="4"></path>
+          <!-- nodes -->
+          <g font-family="var(--font-sans)" font-size="22">
+            <!-- node 1 -->
+            <circle cx="220" cy="130" fill="var(--why)" r="10"></circle>
+            <text fill="var(--text)" font-weight="700" text-anchor="middle" x="220" y="90">大前期设计</text>
+            <text fill="var(--text-muted)" font-size="20" text-anchor="middle" x="220" y="270">1970s – 1990s</text>
+            <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="220" y="298">UML 蓝图 · 建筑师模型</text>
+            <!-- node 2 -->
+            <circle cx="780" cy="300" fill="var(--accent3)" r="10"></circle>
+            <text fill="var(--text)" font-weight="700" text-anchor="middle" x="780" y="340">Code-fix 反弹</text>
+            <text fill="var(--text-muted)" font-size="20" text-anchor="middle" x="780" y="264">1990s 中后期</text>
+            <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="780" y="240">随意编码 · 熵增 · 维护灾难</text>
+            <!-- node 3 -->
+            <circle cx="1380" cy="175" fill="var(--what)" r="10"></circle>
+            <text fill="var(--text)" font-weight="700" text-anchor="middle" x="1380" y="135">演进式设计</text>
+            <text fill="var(--text-muted)" font-size="20" text-anchor="middle" x="1380" y="315">XP 之后</text>
+            <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="1380" y="343">小步重构 · 测试托底</text>
+          </g>
+        </svg>
+        <div class="callout insight" style="margin-top:24px;">
+          <strong></strong>前两者走向极端，XP 寻第三条路。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 问题</span>
+        <span class="s-pageno">01</span>
+      </div>
+    </section>
+    <section class="slide content why" data-label="Plan vs Evolution">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 问题</div>
+          <h3>两种设计观，各自倒在不同的泥潭</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-lead">计划设计死于蓝图幻象，Code-fix设计死于纪律缺席。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--why);">
+            <h4>计划设计</h4>
+            <p style="color:var(--text); margin-bottom:10px;">设计师在代码之外画 UML，交另一团队构建。</p>
+            <ul style="list-style:none; padding:0; color:var(--text-muted); font-size:20px;">
+              <li>· 编码必遇盲点，临时修改</li>
+              <li>· 临时修改让架构熵增</li>
+              <li>· 设计师不写代码，失信任</li>
+              <li>· 两群人说不同语言</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent3);">
+            <h4>纯 Code-fix 演进</h4>
+            <p style="color:var(--text); margin-bottom:10px;">设计随实现自然生长，但无约束。</p>
+            <ul style="list-style:none; padding:0; color:var(--text-muted); font-size:20px;">
+              <li>· 持续埋雷</li>
+              <li>· 无测试，不敢重构</li>
+              <li>· 半年后无人敢于修改</li>
+              <li>· Kent Beck 说：狗屋能这么拼，摩天大楼不行</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout warning" style="margin-top:26px;">
+          <strong></strong>失败不在做不做设计，而在放任蓝图脱离代码或代码脱离设计。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 问题</span>
+        <span class="s-pageno">02</span>
+      </div>
+    </section>
+    <section class="slide content why" data-label="Change Cost Curve">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 问题</div>
+          <h3>变更曲线才是根本敌人</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-lead">变更成本平缓时，就不必提前过度设计。</div>
+      <div class="s-body">
+        <svg style="width:100%; height:auto;" viewbox="0 0 1600 460">
+          <!-- axes -->
+          <line stroke="#6b6255" stroke-width="2" x1="120" x2="1500" y1="380" y2="380"></line>
+          <line stroke="#6b6255" stroke-width="2" x1="120" x2="120" y1="60" y2="380"></line>
+          <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="120" y="45">变更成本</text>
+          <text fill="var(--text-muted)" font-size="18" text-anchor="end" x="1500" y="410">项目时间 →</text>
+          <!-- gridlines -->
+          <line stroke="#e5e1d4" stroke-dasharray="4,6" x1="120" x2="1500" y1="300" y2="300"></line>
+          <line stroke="#e5e1d4" stroke-dasharray="4,6" x1="120" x2="1500" y1="220" y2="220"></line>
+          <line stroke="#e5e1d4" stroke-dasharray="4,6" x1="120" x2="1500" y1="140" y2="140"></line>
+          <!-- Traditional: exponential -->
+          <defs>
+            <lineargradient id="gradWhy" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#c2185b" stop-opacity="0.35"></stop>
+              <stop offset="100%" stop-color="#c2185b" stop-opacity="0.02"></stop>
+            </lineargradient>
+            <lineargradient id="gradWhat" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stop-color="#0e7490" stop-opacity="0.35"></stop>
+              <stop offset="100%" stop-color="#0e7490" stop-opacity="0.02"></stop>
+            </lineargradient>
+          </defs>
+          <path d="M 120 370 C 400 360, 700 330, 900 240 S 1250 100, 1500 75 L 1500 380 L 120 380 Z"
+            fill="url(#gradWhy)"></path>
+          <path d="M 120 370 C 400 360, 700 330, 900 240 S 1250 100, 1500 75" fill="none" stroke="var(--why)"
+            stroke-width="4"></path>
+          <!-- XP: flat -->
+          <path d="M 120 375 C 400 370, 700 355, 900 345 S 1250 330, 1500 320 L 1500 380 L 120 380 Z"
+            fill="url(#gradWhat)"></path>
+          <path d="M 120 375 C 400 370, 700 355, 900 345 S 1250 330, 1500 320" fill="none" stroke="var(--what)"
+            stroke-width="4"></path>
+          <!-- labels -->
+          <g font-family="var(--font-sans)" font-size="22">
+            <text fill="var(--why)" font-weight="700" text-anchor="end" x="1490" y="70">传统项目 · 指数上升</text>
+            <text fill="var(--what)" font-weight="700" text-anchor="end" x="1490" y="305">XP 团队 · 压平曲线</text>
+            <text fill="var(--text-muted)" font-size="18" x="1370" y="100">一行改动 = 一次灾难</text>
+            <text fill="var(--text-muted)" font-size="18" x="1370" y="345">一行改动 ≈ 几分钟</text>
+          </g>
+        </svg>
+        <div class="callout principle" style="margin-top:18px;">
+          <strong>Kent Beck：</strong>变更成本平缓时，无需为未必用上的功能提前设计。Jim Highsmith 称之"重构端天平上升"。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 问题</span>
+        <span class="s-pageno">03</span>
+      </div>
+    </section>
+    <section class="slide content why" data-label="Fowler's Question">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 问题</div>
+          <h3>Fowler 之问：设计已死？</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead"><em>"Is Design Dead? Extreme Programming and the Evolution of Software Design"</em> —— Martin
+        Fowler</div>
+      <div class="s-body">
+        <ul class="points">
+          <li><span class="icon">①</span>
+            <div><strong>许多人以为 XP 意味着设计消亡</strong>
+              <div class="sub">测试优先、增量开发被误读为不做设计。</div>
+            </div>
+          </li>
+          <li><span class="icon">②</span>
+            <div><strong>设计活动被贬为"前期大设计"</strong>
+              <div class="sub">UML 和设计模式在 XP 讨论中被淡化。</div>
+            </div>
+          </li>
+          <li><span class="icon">③</span>
+            <div><strong>实际上 XP 包含大量设计</strong>
+              <div class="sub">只是把设计从提前一次做完变成持续做、随处做。</div>
+            </div>
+          </li>
+          <li><span class="icon">④</span>
+            <div><strong>新挑战：简单设计 + 演进式运用设计模式</strong>
+              <div class="sub">难点不在用不用模式，而在何时引入。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout insight" style="margin-top:20px;">
+          <strong></strong>XP 靠 Testing / CI / Refactoring 三件套让演进式设计不再崩溃。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 问题</span>
+        <span class="s-pageno">04</span>
+      </div>
+    </section>
+    <section class="slide chapter how" data-label="Chapter II">
+      <div class="huge">Ⅱ</div>
+      <div class="text">
+        <div class="eye">Part 2 · 尝试与支撑</div>
+        <h2>用测试和重构<br />托住演进</h2>
+        <div class="sub">Testing · Continuous Integration · Refactoring.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · ATTEMPTS</span>
+        <span class="s-pageno">II</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="Four Rules of Agile Test">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>敏捷测试的四条纪律</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">测试是设计工具，在判断力失效时给出判据。</div>
+      <div class="s-body">
+        <div class="ladder">
+          <div class="ladder-step" style="border-color:#64748b; background:rgba(100,116,139,0.08)">
+            <div class="step-num" style="background:rgba(100,116,139,0.2); color:#334155">1</div>
+            <div class="step-content">
+              <strong>独立 · Isolated</strong>
+              <span>互不影响，可打乱顺序。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#f59e0b; background:rgba(245,158,11,0.08)">
+            <div class="step-num" style="background:rgba(245,158,11,0.2); color:#b45309">2</div>
+            <div class="step-content">
+              <strong>自动 · Automated</strong>
+              <span>自动运行并判定，不依赖人工。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#10b981; background:rgba(16,185,129,0.08)">
+            <div class="step-num" style="background:rgba(16,185,129,0.2); color:#047857">3</div>
+            <div class="step-content">
+              <strong>即时 · Immediate</strong>
+              <span>编码前写，写测试即设计接口。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#6d28d9; background:rgba(109,40,217,0.08)">
+            <div class="step-num" style="background:rgba(109,40,217,0.2); color:#6d28d9">4</div>
+            <div class="step-content">
+              <strong>永存 · Persistent</strong>
+              <span>永久保留、反复运行；套件即活文档。</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout principle" style="margin-top:20px;">
+          <strong></strong>判断力失效时，自动测试给出通过/不通过，这是 XP 最强的安全网。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">01</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="Five Test Types">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>五种测试类型的覆盖画像</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-lead">每种测试回答不同问题，单一类型补不了盲区。</div>
+      <div class="s-body" style="display:grid; grid-template-columns: 640px 1fr; gap:40px; align-items:center;">
+        <div>
+          <svg style="width:100%; height:auto;" viewbox="0 0 520 520">
+            <!-- Pentagon rings -->
+            <g fill="none" stroke="#d8d4cb" stroke-width="1.5">
+              <polygon points="260,60 460,200 382,430 138,430 60,200"></polygon>
+              <polygon points="260,120 410,220 352,400 168,400 110,220"></polygon>
+              <polygon points="260,180 360,240 322,370 198,370 160,240"></polygon>
+              <polygon points="260,240 310,260 292,340 228,340 210,260"></polygon>
+            </g>
+            <!-- Spokes -->
+            <g stroke="#d8d4cb" stroke-width="1.5">
+              <line x1="260" x2="260" y1="300" y2="60"></line>
+              <line x1="260" x2="460" y1="300" y2="200"></line>
+              <line x1="260" x2="382" y1="300" y2="430"></line>
+              <line x1="260" x2="138" y1="300" y2="430"></line>
+              <line x1="260" x2="60" y1="300" y2="200"></line>
+            </g>
+            <!-- Data polygon -->
+            <polygon fill="rgba(109,40,217,0.22)" points="260,80 440,210 340,400 180,400 100,220" stroke="var(--how)"
+              stroke-width="3"></polygon>
+            <!-- Data dots -->
+            <g fill="var(--how)">
+              <circle cx="260" cy="80" r="7"></circle>
+              <circle cx="440" cy="210" r="7"></circle>
+              <circle cx="340" cy="400" r="7"></circle>
+              <circle cx="180" cy="400" r="7"></circle>
+              <circle cx="100" cy="220" r="7"></circle>
+            </g>
+            <!-- Labels -->
+            <g fill="var(--text)" font-family="var(--font-sans)" font-size="20" font-weight="700">
+              <text text-anchor="middle" x="260" y="40">单元测试</text>
+              <text text-anchor="start" x="488" y="200">功能测试</text>
+              <text text-anchor="middle" x="390" y="470">并行测试</text>
+              <text text-anchor="middle" x="130" y="470">压力测试</text>
+              <text text-anchor="end" x="32" y="200">随机测试</text>
+            </g>
+          </svg>
+        </div>
+        <ul class="points" style="font-size:22px;">
+          <li><span class="icon" style="color:var(--how);">●</span>
+            <div><strong>单元测试</strong>
+              <div class="sub">程序员逐方法写，始终 100% 通过。</div>
+            </div>
+          </li>
+          <li><span class="icon" style="color:var(--how);">●</span>
+            <div><strong>功能测试</strong>
+              <div class="sub">客户逐故事写场景，专职测试协助翻译自动化。</div>
+            </div>
+          </li>
+          <li><span class="icon" style="color:var(--how);">●</span>
+            <div><strong>并行测试</strong>
+              <div class="sub">证明新旧行为一致。</div>
+            </div>
+          </li>
+          <li><span class="icon" style="color:var(--how);">●</span>
+            <div><strong>压力测试</strong>
+              <div class="sub">模拟最恶劣负载。</div>
+            </div>
+          </li>
+          <li><span class="icon" style="color:var(--how);">●</span>
+            <div><strong>随机测试</strong>
+              <div class="sub">无意义输入下不崩、不泄露。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">02</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="TDD Flywheel">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>红 · 绿 · 重构：TDD 飞轮</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-lead">TDD 颠倒编码顺序：先定义完成，再让代码追上。</div>
+      <div class="s-body" style="display:grid; grid-template-columns: 620px 1fr; gap:40px; align-items:center;">
+        <div>
+          <svg style="width:100%; height:auto;" viewbox="0 0 520 520">
+            <!-- center circle -->
+            <circle cx="260" cy="260" fill="var(--page2)" r="70" stroke="var(--how)" stroke-width="3"></circle>
+            <text fill="var(--how)" font-size="26" font-weight="900" text-anchor="middle" x="260" y="252">TDD</text>
+            <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="260" y="282">循环</text>
+            <!-- arrows (four petals) -->
+            <defs>
+              <marker id="arr" markerheight="8" markerunits="strokeWidth" markerwidth="8" orient="auto" refx="9"
+                refy="5" viewbox="0 0 10 10">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="var(--how)"></path>
+              </marker>
+            </defs>
+            <g fill="none" marker-end="url(#arr)" stroke="var(--how)" stroke-width="3">
+              <path d="M 260 130 A 130 130 0 0 1 390 260"></path>
+              <path d="M 390 260 A 130 130 0 0 1 260 390"></path>
+              <path d="M 260 390 A 130 130 0 0 1 130 260"></path>
+              <path d="M 130 260 A 130 130 0 0 1 260 130"></path>
+            </g>
+            <!-- Step bubbles -->
+            <g font-family="var(--font-sans)">
+              <circle cx="260" cy="80" fill="var(--why)" r="42"></circle>
+              <text fill="#fff" font-size="22" font-weight="900" text-anchor="middle" x="260" y="75">① 红</text>
+              <text fill="#fff" font-size="16" text-anchor="middle" x="260" y="100">写失败测试</text>
+              <circle cx="440" cy="260" fill="var(--accent2)" r="42"></circle>
+              <text fill="#fff" font-size="22" font-weight="900" text-anchor="middle" x="440" y="255">② 绿</text>
+              <text fill="#fff" font-size="16" text-anchor="middle" x="440" y="280">硬编码过</text>
+              <circle cx="260" cy="440" fill="var(--accent)" r="42"></circle>
+              <text fill="#fff" font-size="22" font-weight="900" text-anchor="middle" x="260" y="435">③ 三角</text>
+              <text fill="#fff" font-size="16" text-anchor="middle" x="260" y="460">测量·补测试</text>
+              <circle cx="80" cy="260" fill="var(--primary)" r="42"></circle>
+              <text fill="#fff" font-size="22" font-weight="900" text-anchor="middle" x="80" y="255">④ 重构</text>
+              <text fill="#fff" font-size="16" text-anchor="middle" x="80" y="280">优化结构</text>
+            </g>
+          </svg>
+        </div>
+        <div>
+          <p style="font-size:24px; color:var(--text); margin-bottom:20px;">每轮循环仅做一件事，3 分钟可完成。</p>
+          <ul class="points" style="font-size:22px;">
+            <li><span class="icon">①</span>
+              <div><strong>红 · 写失败测试</strong>
+                <div class="sub">例：<code>assert add(2,3) == 5</code>。实现未写，测试先红。</div>
+              </div>
+            </li>
+            <li><span class="icon">②</span>
+              <div><strong>绿 · 最小代码过测</strong>
+                <div class="sub"><code>return 5</code> 即可，允许硬编码，目标仅让红变绿。</div>
+              </div>
+            </li>
+            <li><span class="icon">③</span>
+              <div><strong>三角测量 · 再补一条测试</strong>
+                <div class="sub">② 允许了 <code>return 5</code> 硬编码。加 <code>add(3,4)==7</code>，硬编码立刻红，被迫泛化成 <code>a+b</code>。</div>
+              </div>
+            </li>
+            <li><span class="icon">④</span>
+              <div><strong>重构 · 在测试保护下</strong>
+                <div class="sub">重命名、抽函数、加类型，测试是安全绳。</div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">03</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="TDD Walkthrough">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>add(2, 3) 的四步演进</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead">用最小示例走完一轮红绿重构。</div>
+      <div class="s-body">
+        <div class="code-block" style="font-size:20px; line-height:1.35;">
+          <div class="comment"># 第 ① 步 — 写失败测试（红）</div>
+          <div class="bad">def test_add_two_and_three():</div>
+          <div class="bad">&nbsp;&nbsp;&nbsp;&nbsp;assert add(2, 3) == 5  # NameError: 'add' is not defined</div>
+          <div class="comment" style="margin-top:6px;"># 第 ② 步 — 最小代码让它变绿（允许硬编码）</div>
+          <div class="good">def add(a, b):</div>
+          <div class="good">&nbsp;&nbsp;&nbsp;&nbsp;return 5  # 够让测试过就行</div>
+          <div class="comment" style="margin-top:6px;"># 第 ③ 步 — 再补一条测试，逼出硬编码</div>
+          <div class="bad">def test_add_three_and_four():</div>
+          <div class="bad">&nbsp;&nbsp;&nbsp;&nbsp;assert add(3, 4) == 7  # FAILS：硬编码被打脸</div>
+          <div class="good">def add(a, b):</div>
+          <div class="good">&nbsp;&nbsp;&nbsp;&nbsp;return a + b  # 被逼出真正的实现</div>
+          <div class="comment" style="margin-top:6px;"># 第 ④ 步 — 在测试保护下重构（加类型、加校验）</div>
+          <div class="good">def add(a: int, b: int) -&gt; int:</div>
+          <div class="good">&nbsp;&nbsp;&nbsp;&nbsp;return a + b  # 重命名、抽函数、加断言都安全</div>
+        </div>
+        <div class="callout insight" style="margin-top:14px;">
+          <strong></strong>绿步允许不优雅，仅为让红灯灭掉。下一条测试会逼出丑陋。重构只在全绿时做。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">04</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="TDD Economics">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>TDD 的经济账：短期多花，长期回本</h3>
+        </div>
+        <div class="s-idx">05</div>
+      </div>
+      <div class="s-lead">新手常问 TDD 是否更慢；拉长时间轴，账完全翻转。</div>
+      <div class="s-body" style="display:grid; grid-template-columns: 1fr 1fr; gap:48px; align-items:center;">
+        <svg style="width:100%; height:auto;" viewbox="0 0 700 500">
+          <!-- axes -->
+          <line stroke="#6b6255" stroke-width="2" x1="100" x2="680" y1="420" y2="420"></line>
+          <line stroke="#6b6255" stroke-width="2" x1="100" x2="100" y1="40" y2="420"></line>
+          <!-- gridlines -->
+          <g stroke="#e5e1d4" stroke-dasharray="4,6">
+            <line x1="100" x2="680" y1="340" y2="340"></line>
+            <line x1="100" x2="680" y1="260" y2="260"></line>
+            <line x1="100" x2="680" y1="180" y2="180"></line>
+            <line x1="100" x2="680" y1="100" y2="100"></line>
+          </g>
+          <g fill="var(--text-muted)" font-family="var(--font-sans)" font-size="16">
+            <text text-anchor="end" x="85" y="425">0</text>
+            <text text-anchor="end" x="85" y="345">25</text>
+            <text text-anchor="end" x="85" y="265">50</text>
+            <text text-anchor="end" x="85" y="185">75</text>
+            <text text-anchor="end" x="85" y="105">100%</text>
+          </g>
+          <!-- Group 1: 初期开发成本 -->
+          <rect fill="#d8d4cb" height="160" width="70" x="150" y="260"></rect>
+          <rect fill="var(--how)" height="240" width="70" x="230" y="180"></rect>
+          <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="185" y="450">无 TDD</text>
+          <text fill="var(--how)" font-size="18" text-anchor="middle" x="265" y="450">+ TDD</text>
+          <text fill="var(--text-muted)" font-size="16" text-anchor="middle" x="225" y="478">初期开发时间</text>
+          <text fill="var(--text)" font-size="18" font-weight="700" text-anchor="middle" x="185" y="250">100%</text>
+          <text fill="var(--how)" font-size="18" font-weight="700" text-anchor="middle" x="265" y="170">125%</text>
+          <!-- Group 2: 长期维护成本 -->
+          <rect fill="#d8d4cb" height="360" width="70" x="420" y="60"></rect>
+          <rect fill="var(--accent2)" height="180" width="70" x="500" y="240"></rect>
+          <text fill="var(--text-muted)" font-size="18" text-anchor="middle" x="455" y="450">无 TDD</text>
+          <text fill="var(--accent2)" font-size="18" text-anchor="middle" x="535" y="450">+ TDD</text>
+          <text fill="var(--text-muted)" font-size="16" text-anchor="middle" x="495" y="478">3 年维护成本</text>
+          <text fill="var(--text)" font-size="18" font-weight="700" text-anchor="middle" x="455" y="50">100%</text>
+          <text fill="var(--accent2)" font-size="18" font-weight="700" text-anchor="middle" x="535" y="230">~45%</text>
+        </svg>
+        <div>
+          <ul class="points" style="font-size:22px;">
+            <li><span class="icon" style="color:var(--how);">↑</span>
+              <div><strong>初期 +20–30%</strong>
+                <div class="sub">多花在写测试和思考接口。</div>
+              </div>
+            </li>
+            <li><span class="icon" style="color:var(--accent2);">↓</span>
+              <div><strong>长期 −50%+</strong>
+                <div class="sub">回归错误减少，重构敢于动手，文档内嵌测试。</div>
+              </div>
+            </li>
+            <li><span class="icon">◆</span>
+              <div><strong>四大核心价值</strong>
+                <div class="sub">缺陷预防、设计引导、降低耦合、活文档。</div>
+              </div>
+            </li>
+          </ul>
+          <div class="callout principle" style="margin-top:20px;">
+            <strong>Kent Beck：</strong>测试是设计工具，买的不是"对"，是"敢改"。
+          </div>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">05</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="Four Rules of Simple Design">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>简单设计的四重准则</h3>
+        </div>
+        <div class="s-idx">06</div>
+      </div>
+      <div class="s-lead">四准则按优先级叠加，交集即简单设计。</div>
+      <div class="s-body" style="display:grid; grid-template-columns: 680px 1fr; gap:40px; align-items:center;">
+        <svg style="width:100%; height:auto;" viewbox="0 0 560 500">
+          <!-- Four overlapping circles -->
+          <g fill-opacity="0.28" stroke-width="3">
+            <circle cx="230" cy="180" fill="var(--how)" r="150" stroke="var(--how)"></circle>
+            <circle cx="330" cy="180" fill="var(--why)" r="150" stroke="var(--why)"></circle>
+            <circle cx="230" cy="280" fill="var(--what)" r="150" stroke="var(--what)"></circle>
+            <circle cx="330" cy="280" fill="var(--accent)" r="150" stroke="var(--accent)"></circle>
+          </g>
+          <!-- Labels -->
+          <g fill="var(--text)" font-family="var(--font-sans)" font-size="18" font-weight="700">
+            <text text-anchor="middle" x="150" y="90">① 通过所有测试</text>
+            <text text-anchor="middle" x="410" y="90">② 消除重复</text>
+            <text text-anchor="middle" x="150" y="410">③ 表达意图</text>
+            <text text-anchor="middle" x="410" y="410">④ 最小元素</text>
+          </g>
+          <!-- Center label -->
+          <g font-family="var(--font-sans)" font-size="22" font-weight="900">
+            <text fill="#fff" text-anchor="middle" x="280" y="230">简单</text>
+            <text fill="#fff" text-anchor="middle" x="280" y="260">设计</text>
+          </g>
+        </svg>
+        <div>
+          <ul class="points" style="font-size:22px;">
+            <li><span class="icon">①</span>
+              <div><strong>通过所有测试</strong>
+                <div class="sub">功能真的管用。</div>
+              </div>
+            </li>
+            <li><span class="icon">②</span>
+              <div><strong>消除重复</strong>
+                <div class="sub">相同概念只表达一次。</div>
+              </div>
+            </li>
+            <li><span class="icon">③</span>
+              <div><strong>清晰表达意图</strong>
+                <div class="sub">名字和结构让下一个读者秒懂。</div>
+              </div>
+            </li>
+            <li><span class="icon">④</span>
+              <div><strong>最小化元素数量</strong>
+                <div class="sub">前三条满足后能删就删。</div>
+              </div>
+            </li>
+          </ul>
+          <div class="callout insight" style="margin-top:18px;">
+            <strong></strong>① &gt; ② &gt; ③ &gt; ④。冲突时先消除重复，重复是熵增温床。
+          </div>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">06</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="YAGNI Economics">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>YAGNI：You Aren't Gonna Need It</h3>
+        </div>
+        <div class="s-idx">07</div>
+      </div>
+      <div class="s-lead">"以后可能要"是软件里最贵的四个字。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-top:4px solid var(--why);">
+            <h4 style="color:var(--why);">数据 1 · 使用率</h4>
+            <p style="font-size:56px; font-weight:900; color:var(--why); line-height:1; margin:14px 0;">&lt; 20%</p>
+            <p style="color:var(--text); font-size:22px;">超前开发功能的真实使用率 &lt; 20%。</p>
+            <p style="color:var(--text-muted); font-size:19px; margin-top:10px;">剩余 80% 是维护负担。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--accent);">
+            <h4 style="color:var(--accent);">数据 2 · 养护成本</h4>
+            <p style="font-size:56px; font-weight:900; color:var(--accent); line-height:1; margin:14px 0;">≈ $4</p>
+            <p style="color:var(--text); font-size:22px;">每行预留代码年均维护成本。</p>
+            <p style="color:var(--text-muted); font-size:19px; margin-top:10px;">1 万行预留 = $40k/年。</p>
+          </div>
+        </div>
+        <div class="callout warning" style="margin-top:26px;">
+          <strong></strong>提前 N 周期开发，总成本 = C × (1+维护率)^N；实际需求到来时成本仅 C × 0.7。案例：某支付系统提前做加密货币接口，三年后需重构，总成本增加
+          <strong>230%</strong>。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">07</span>
+      </div>
+    </section>
+    <section class="slide content how" data-label="Refactoring Discipline">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 尝试</div>
+          <h3>重构的纪律：不改行为，只改结构</h3>
+        </div>
+        <div class="s-idx">08</div>
+      </div>
+      <div class="s-lead">重构与"临时修改"的区别：有测试守护。</div>
+      <div class="s-body">
+        <div class="grid-2" style="gap:32px;">
+          <ul class="points" style="font-size:22px;">
+            <li><span class="icon">🧼</span>
+              <div><strong>提升可读性</strong>
+                <div class="sub">重命名、拆分函数、合并重复。</div>
+              </div>
+            </li>
+            <li><span class="icon">🪛</span>
+              <div><strong>降低维护成本</strong>
+                <div class="sub">消除代码异味。</div>
+              </div>
+            </li>
+            <li><span class="icon">🌱</span>
+              <div><strong>支持演化设计</strong>
+                <div class="sub">小步响应变化，避免大爆炸。</div>
+              </div>
+            </li>
+            <li><span class="icon">🔒</span>
+              <div><strong>测试保护是前提</strong>
+                <div class="sub">无测试先补测试，否则黑夜拆引擎。</div>
+              </div>
+            </li>
+          </ul>
+          <div>
+            <h4 style="font-size:24px; margin-bottom:16px; color:var(--how);">配套工具链</h4>
+            <ul class="points" style="font-size:22px;">
+              <li><span class="icon">⚙️</span>
+                <div><strong>IDE 重构</strong>
+                  <div class="sub">IntelliJ / Eclipse / VS Code：提取方法、内联变量、重命名。</div>
+                </div>
+              </li>
+              <li><span class="icon">🧪</span>
+                <div><strong>测试框架</strong>
+                  <div class="sub">JUnit / pytest / Jest：守住外部行为。</div>
+                </div>
+              </li>
+              <li><span class="icon">🔍</span>
+                <div><strong>质量扫描</strong>
+                  <div class="sub">SonarQube：检测重复代码、圈复杂度。</div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout insight" style="margin-top:20px;">
+          <strong></strong>重构是保留行为的结构优化。改变可见行为的是功能变更，不是重构。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 尝试</span>
+        <span class="s-pageno">08</span>
+      </div>
+    </section>
+    <section class="slide chapter what" data-label="Chapter III">
+      <div class="huge">Ⅲ</div>
+      <div class="text">
+        <div class="eye">Part 3 · 解法</div>
+        <h2>让架构<br />随代码呼吸</h2>
+        <div class="sub">Architecture grows. UML sketches. Decisions defer.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · SOLUTION</span>
+        <span class="s-pageno">III</span>
+      </div>
+    </section>
+    <section class="slide content what" data-label="Grown Architecture">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 解法</div>
+          <h3>生长式架构：疼痛出现前不引入核心元素</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">架构是难以修改的核心元素。延迟决定哪些是核心，直到证据足够。</div>
+      <div class="s-body">
+        <div class="ladder">
+          <div class="ladder-step" style="border-color:#64748b; background:rgba(100,116,139,0.08)">
+            <div class="step-num" style="background:rgba(100,116,139,0.2); color:#334155">0</div>
+            <div class="step-content">
+              <strong>起步 · 什么都不上</strong>
+              <span>不设数据库、领域模型、缓存；内存结构跑最小闭环。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#f59e0b; background:rgba(245,158,11,0.08)">
+            <div class="step-num" style="background:rgba(245,158,11,0.2); color:#b45309">1</div>
+            <div class="step-content">
+              <strong>海量数据到来 → 引入数据库</strong>
+              <span>撑不住时才引入，不为"以后可能需要"。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#10b981; background:rgba(16,185,129,0.08)">
+            <div class="step-num" style="background:rgba(16,185,129,0.2); color:#047857">2</div>
+            <div class="step-content">
+              <strong>业务复杂度到来 → 引入领域模型</strong>
+              <span>if-else 嵌套到第三层，领域模型登场。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-color:#6d28d9; background:rgba(109,40,217,0.08)">
+            <div class="step-num" style="background:rgba(109,40,217,0.2); color:#6d28d9">3</div>
+            <div class="step-content">
+              <strong>存疑时 · 依 YAGNI</strong>
+              <span>没想清楚不做；架构拆出贵十倍。</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout principle" style="margin-top:22px;">
+          <strong>Kent Beck · Ron Jeffries · Bob Martin</strong> 三人一致：避免前期架构，需要时再引入。Fowler 补充：海量数据用数据库，复杂业务用领域模型，其余
+          YAGNI。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 解法</span>
+        <span class="s-pageno">01</span>
+      </div>
+    </section>
+    <section class="slide content what" data-label="UML Usage">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 解法</div>
+          <h3>UML 的两种用法：草图 vs 终稿</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-lead">"有用则用"是 Fowler 的标准：沟通为主，代码才是全面信息源。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-top:4px solid var(--accent2);">
+            <h4 style="color:var(--accent2);">✅ 草图用法（提倡）</h4>
+            <ul style="list-style:none; padding:0; font-size:22px; color:var(--text);">
+              <li style="margin:12px 0;">· 编码前用图表<strong>探索设计</strong></li>
+              <li style="margin:12px 0;">· <strong>保持简短</strong>，一两张白板就够</li>
+              <li style="margin:12px 0;">· 不解决所有细节，<strong>只画关键结构</strong></li>
+              <li style="margin:12px 0;">· 视设计为<strong>草图而非终稿</strong></li>
+              <li style="margin:12px 0;">· 讨论完即擦掉</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--accent3);">
+            <h4 style="color:var(--accent3);">❌ 终稿用法（抛弃）</h4>
+            <ul style="list-style:none; padding:0; font-size:22px; color:var(--text);">
+              <li style="margin:12px 0;">· 作为<strong>蓝图交给另一团队</strong>构建</li>
+              <li style="margin:12px 0;">· 需要长期<strong>与代码同步维护</strong></li>
+              <li style="margin:12px 0;">· 试图<strong>解决全部细节</strong>UML 做不到</li>
+              <li style="margin:12px 0;">· 代码改图也改，<strong>双倍工作量</strong></li>
+              <li style="margin:12px 0;">· 图比代码权威，认知倒置</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout insight" style="margin-top:22px;">
+          <strong></strong>若一张图三周后无人看，便是浪费。白板拍照存档，不进 Git。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 解法</span>
+        <span class="s-pageno">02</span>
+      </div>
+    </section>
+    <section class="slide content what" data-label="Reversibility">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 解法</div>
+          <h3>可逆性：把复杂性挤出系统</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-lead">不可逆决策是复杂性的主要来源；降低不可逆性是敏捷的策略。</div>
+      <div class="s-body">
+        <ul class="points" style="font-size:24px;">
+          <li><span class="icon">①</span>
+            <div><strong>如果决策可更改，就不必一次做对</strong>
+              <div class="sub">把"猜"的成本压到近零，错了就换。版本控制的哲学根据。</div>
+            </div>
+          </li>
+          <li><span class="icon">②</span>
+            <div><strong>推迟决策到信息最充分的时刻</strong>
+              <div class="sub">数据库选型、微服务拆分、状态管理，凡选后难改的都先拖。</div>
+            </div>
+          </li>
+          <li><span class="icon">③</span>
+            <div><strong>让决策可逆转</strong>
+              <div class="sub">接口抽象、feature flag、适配层，每增加一个就多留一扇门。</div>
+            </div>
+          </li>
+          <li><span class="icon">④</span>
+            <div><strong>版本控制是代码级的可逆保险</strong>
+              <div class="sub">敢 refactor 因为敢 revert；Git 是 XP 纪律的前提。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout principle" style="margin-top:24px;">
+          <strong></strong>问：三个月后后悔，多快能撤回？撤不回的决定再想想。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 解法</span>
+        <span class="s-pageno">03</span>
+      </div>
+    </section>
+    <section class="slide content what" data-label="Three Masters">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 解法</div>
+          <h3>三位大师的边界差异与共识</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead">三位同样反对前期大设计，对架构出场边界各有刻度。</div>
+      <div class="s-body">
+        <table class="compare-table">
+          <tr>
+            <th style="width:22%;">议题</th>
+            <th>Kent Beck</th>
+            <th>Ron Jeffries</th>
+            <th>Martin Fowler</th>
+          </tr>
+          <tr>
+            <td><strong>前期架构</strong></td>
+            <td><span class="tag bad">尽量避免</span></td>
+            <td><span class="tag bad">尽量避免</span></td>
+            <td><span class="tag neutral">大多数情况避免</span></td>
+          </tr>
+          <tr>
+            <td><strong>数据库引入</strong></td>
+            <td>需要时才引入</td>
+            <td>需要时才引入</td>
+            <td><strong>海量数据</strong>用数据库</td>
+          </tr>
+          <tr>
+            <td><strong>领域模型</strong></td>
+            <td>按需引入</td>
+            <td>按需引入</td>
+            <td><strong>复杂业务</strong>用领域模型</td>
+          </tr>
+          <tr>
+            <td><strong>存疑时的默认</strong></td>
+            <td><span class="tag good">YAGNI</span></td>
+            <td><span class="tag good">YAGNI</span></td>
+            <td><span class="tag good">YAGNI</span></td>
+          </tr>
+        </table>
+        <div class="callout insight" style="margin-top:22px;">
+          <strong></strong>三人最一致处是存疑默认 YAGNI；Fowler 多出"特定证据时提前引入"的例外。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 解法</span>
+        <span class="s-pageno">04</span>
+      </div>
+    </section>
+    <section class="slide content what" data-label="Design Reborn">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 解法</div>
+          <h3>设计未死——只是换了活法</h3>
+        </div>
+        <div class="s-idx">05</div>
+      </div>
+      <div class="s-lead" style="margin-bottom:20px;">设计未死，只是本质已变。XP 让演进式设计重获新生。</div>
+      <div class="s-body">
+        <ul class="points" style="font-size:22px; gap:8px;">
+          <li style="padding:12px 20px;"><span class="icon">①</span>
+            <div><strong>保持代码清晰简洁</strong>
+              <div class="sub" style="margin-top:2px;">可读性是后续一切行为的前提。</div>
+            </div>
+          </li>
+          <li style="padding:12px 20px;"><span class="icon">②</span>
+            <div><strong>通过重构改进代码</strong>
+              <div class="sub" style="margin-top:2px;">小步、持续、测试保护下。设计分散到每一天。</div>
+            </div>
+          </li>
+          <li style="padding:12px 20px;"><span class="icon">③</span>
+            <div><strong>精通设计模式：懂应用时机与演进路径</strong>
+              <div class="sub" style="margin-top:2px;">模式是识别代码何时该长成什么样的词汇表。</div>
+            </div>
+          </li>
+          <li style="padding:12px 20px;"><span class="icon">④</span>
+            <div><strong>预见变化</strong>
+              <div class="sub" style="margin-top:2px;">今日决策终将改变，须留接口、feature flag、版本控制。</div>
+            </div>
+          </li>
+          <li style="padding:12px 20px;"><span class="icon">⑤</span>
+            <div><strong>以代码、图表、对话传达设计</strong>
+              <div class="sub" style="margin-top:2px;">三者皆沟通，代码是唯一权威；图表是草图，对话是共识。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout principle" style="margin-top:14px; padding:14px 22px;">
+          <strong>Martin Fowler：</strong>优秀设计向来艰难。XP 把设计从一次性前期活动变为每天持续的活动。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 解法</span>
+        <span class="s-pageno">05</span>
+      </div>
+    </section>
+    <section class="slide summary" data-label="Summary">
+      <div class="eye">SUMMARY · 收束</div>
+      <h2>测试 · 重构 · YAGNI<br /><span
+          style="background:linear-gradient(135deg,var(--why),var(--how),var(--what)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">让设计活下去的三脚架</span>
+      </h2>
+      <div class="grid-3">
+        <div class="mini-card" style="border-left:4px solid var(--why); text-align:left;">
+          <h4 style="color:var(--why);">PART 1 · 问题</h4>
+          <p style="color:var(--text); font-size:22px;">大前期设计太僵，纯 Code-fix 太乱；<strong>变更曲线的指数上升</strong>才是真正的敌人。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--how); text-align:left;">
+          <h4 style="color:var(--how);">PART 2 · 尝试</h4>
+          <p style="color:var(--text); font-size:22px;">TDD 红绿重构循环 + 简单设计四准则 + YAGNI 经济学，<strong>把变更曲线压平</strong>。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--what); text-align:left;">
+          <h4 style="color:var(--what);">PART 3 · 解法</h4>
+          <p style="color:var(--text); font-size:22px;">生长式架构、UML 草图用法、可逆性原则让<strong>架构随代码呼吸</strong>，不一次锁死。</p>
+        </div>
+      </div>
+      <div
+        style="margin-top:56px; font-family:var(--font-display); font-style:italic; font-size:28px; color:var(--text-muted); max-width:1400px; margin-left:auto; margin-right:auto;">
+        "Good design has always been hard. XP makes evolutionary design possible again."<br />
+        <span style="font-size:20px; color:var(--primary); font-style:normal; letter-spacing:0.1em;">—— MARTIN FOWLER ·
+          IS DESIGN DEAD?</span>
+      </div>
+      <div class="s-footer">
+        <span class="mark">THANK YOU</span>
+        <span class="s-pageno">END</span>
+      </div>
+    </section>
+  </deck-stage>
+  <!-- 可选：speaker notes（deck-stage.js 会自动读取并 postMessage）-->
+  <script id="speaker-notes" type="application/json">
+    []
+  </script>
+</body>
+
+</html>

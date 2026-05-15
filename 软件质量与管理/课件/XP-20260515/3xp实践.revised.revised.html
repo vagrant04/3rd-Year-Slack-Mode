@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>极限编程的实践 | XP Practices</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=JetBrains+Mono:wght@400;700&display=swap');
+
+    :root {
+      --primary: #4338ca;
+      --primary-dark: #3730a3;
+      --accent: #b45309;
+      --accent2: #047857;
+      --accent3: #b91c1c;
+
+      --page: #faf7ef;
+      --page2: #f4ecd8;
+      --page3: #ebe0c5;
+
+      --text: #1f1b14;
+      --text-muted: #6b6255;
+
+      --why: #c2185b;
+      --how: #6d28d9;
+      --what: #0e7490;
+
+      --card-bg: #ffffff;
+      --card-bg-soft: #fbf8f1;
+      --border: rgba(46, 36, 22, 0.10);
+      --border-strong: rgba(46, 36, 22, 0.18);
+      --rule: #d8d4cb;
+
+      --font-sans: 'Noto Sans SC', 'PingFang SC', sans-serif;
+      --font-display: 'Playfair Display', 'Noto Serif SC', serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: #0a0c12;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      color: var(--text);
+    }
+
+    .slide {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background: var(--page);
+      color: var(--text);
+      font-size: 26px;
+      line-height: 1.55;
+    }
+
+    .s-footer {
+      position: absolute;
+      left: 120px;
+      right: 120px;
+      bottom: 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-sans);
+      font-size: 18px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .s-footer .mark {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .s-pageno {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 22px;
+      color: var(--primary);
+      letter-spacing: 0.1em;
+    }
+
+    /* Cover */
+    .slide.cover {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 200px;
+    }
+
+    .slide.cover .eyebrow {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 40px;
+    }
+
+    .slide.cover h1 {
+      font-size: 128px;
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: 0.02em;
+      margin-bottom: 32px;
+    }
+
+    .slide.cover h1 .gradient-text {
+      background: linear-gradient(135deg, var(--how), var(--why), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .slide.cover .bar {
+      height: 4px;
+      width: 140px;
+      background: var(--primary);
+      margin: 40px 0 32px;
+    }
+
+    .slide.cover .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 44px;
+      color: var(--text-muted);
+      line-height: 1.3;
+      max-width: 1400px;
+    }
+
+    .slide.cover .meta {
+      position: absolute;
+      right: 200px;
+      bottom: 200px;
+      text-align: right;
+      font-size: 22px;
+      color: var(--text-muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* Chapter */
+    .slide.chapter {
+      display: flex;
+      align-items: center;
+      padding: 0 120px;
+    }
+
+    .slide.chapter .huge {
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 480px;
+      line-height: 0.8;
+      color: transparent;
+      -webkit-text-stroke: 3px var(--primary);
+      letter-spacing: -0.04em;
+      margin-right: 80px;
+      flex-shrink: 0;
+    }
+
+    .slide.chapter .text {
+      max-width: 900px;
+    }
+
+    .slide.chapter .eye {
+      font-size: 22px;
+      letter-spacing: 0.42em;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    .slide.chapter h2 {
+      font-size: 96px;
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: 0.04em;
+      margin-bottom: 32px;
+    }
+
+    .slide.chapter .sub {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 36px;
+      color: var(--text-muted);
+    }
+
+    .slide.chapter.why .huge {
+      -webkit-text-stroke-color: var(--why);
+    }
+
+    .slide.chapter.why .eye {
+      color: var(--why);
+    }
+
+    .slide.chapter.how .huge {
+      -webkit-text-stroke-color: var(--how);
+    }
+
+    .slide.chapter.how .eye {
+      color: var(--how);
+    }
+
+    .slide.chapter.what .huge {
+      -webkit-text-stroke-color: var(--what);
+    }
+
+    .slide.chapter.what .eye {
+      color: var(--what);
+    }
+
+    /* Content */
+    .slide.content {
+      padding: 90px 120px 120px;
+    }
+
+    .slide.content .s-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid var(--rule);
+      padding-bottom: 22px;
+      margin-bottom: 32px;
+    }
+
+    .slide.content .s-eyebrow {
+      font-size: 18px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .slide.content h3 {
+      font-size: 52px;
+      font-weight: 900;
+      line-height: 1.15;
+      margin-top: 8px;
+      max-width: 1400px;
+    }
+
+    .slide.content .s-idx {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 44px;
+      color: var(--primary);
+      letter-spacing: 0.04em;
+    }
+
+    .slide.content .s-lead {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 28px;
+      color: var(--text-muted);
+      border-left: 3px solid var(--primary);
+      padding: 6px 0 6px 20px;
+      margin-bottom: 28px;
+      max-width: 1500px;
+    }
+
+    .slide.content .s-body {
+      font-size: 24px;
+      line-height: 1.6;
+    }
+
+    .slide.content.why .s-eyebrow,
+    .slide.content.why .s-idx {
+      color: var(--why);
+    }
+
+    .slide.content.why .s-lead {
+      border-left-color: var(--why);
+    }
+
+    .slide.content.how .s-eyebrow,
+    .slide.content.how .s-idx {
+      color: var(--how);
+    }
+
+    .slide.content.how .s-lead {
+      border-left-color: var(--how);
+    }
+
+    .slide.content.what .s-eyebrow,
+    .slide.content.what .s-idx {
+      color: var(--what);
+    }
+
+    .slide.content.what .s-lead {
+      border-left-color: var(--what);
+    }
+
+    /* Components */
+    .points {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .points li {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 18px 22px;
+      background: var(--card-bg-soft);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 24px;
+    }
+
+    .points li .icon {
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+
+    .points li strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .points li .sub {
+      font-size: 20px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+
+    .mini-card {
+      padding: 26px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      box-shadow: 0 1px 2px rgba(46, 36, 22, 0.04);
+    }
+
+    .mini-card h4 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .mini-card p,
+    .mini-card li {
+      font-size: 21px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .mini-card ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mini-card ul li::before {
+      content: '→ ';
+      color: var(--primary);
+    }
+
+    .code-block {
+      background: #f6f8fa;
+      border: 1px solid #d0d7de;
+      border-radius: 12px;
+      padding: 22px 26px;
+      font-family: var(--font-mono);
+      font-size: 20px;
+      line-height: 1.65;
+      color: #24292f;
+      overflow: auto;
+      white-space: pre;
+      margin: 0;
+    }
+
+    .code-block .comment {
+      color: #6e7781;
+    }
+
+    .code-block .string {
+      color: #0550ae;
+    }
+
+    .code-block .label {
+      color: #953800;
+    }
+
+    .code-block .bad {
+      color: #cf222e;
+    }
+
+    .code-block .good {
+      color: #116329;
+    }
+
+    .code-block .kw {
+      color: #cf222e;
+    }
+
+    .code-block .fn {
+      color: #8250df;
+    }
+
+    .compare-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 21px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .compare-table th {
+      background: rgba(67, 56, 202, 0.08);
+      color: var(--primary);
+      padding: 16px 20px;
+      text-align: left;
+      font-weight: 700;
+    }
+
+    .compare-table td {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .compare-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 19px;
+      font-weight: 600;
+    }
+
+    .tag.bad {
+      background: rgba(194, 24, 91, 0.12);
+      color: var(--why);
+    }
+
+    .tag.good {
+      background: rgba(4, 120, 87, 0.12);
+      color: var(--accent2);
+    }
+
+    .tag.neutral {
+      background: rgba(67, 56, 202, 0.12);
+      color: var(--primary);
+    }
+
+    .ladder {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ladder-step {
+      padding: 16px 22px;
+      border-radius: 12px;
+      border-left: 4px solid;
+      background: var(--card-bg-soft);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      font-size: 22px;
+    }
+
+    .ladder-step .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .ladder-step .step-content strong {
+      display: block;
+      font-size: 24px;
+    }
+
+    .ladder-step .step-content span {
+      color: var(--text-muted);
+      font-size: 19px;
+    }
+
+    .callout {
+      padding: 20px 26px;
+      border-radius: 14px;
+      border-left: 4px solid;
+      font-size: 22px;
+    }
+
+    .callout.insight {
+      border-color: var(--accent);
+      background: rgba(180, 83, 9, 0.07);
+    }
+
+    .callout.insight strong {
+      color: var(--accent);
+    }
+
+    .callout.principle {
+      border-color: var(--primary);
+      background: rgba(67, 56, 202, 0.06);
+    }
+
+    .callout.principle strong {
+      color: var(--primary);
+    }
+
+    .callout.warning {
+      border-color: var(--accent3);
+      background: rgba(185, 28, 28, 0.07);
+    }
+
+    .callout.warning strong {
+      color: var(--accent3);
+    }
+
+    .callout.why {
+      border-color: var(--why);
+      background: rgba(194, 24, 91, 0.07);
+    }
+
+    .callout.why strong {
+      color: var(--why);
+    }
+
+    .callout.how {
+      border-color: var(--how);
+      background: rgba(109, 40, 217, 0.07);
+    }
+
+    .callout.how strong {
+      color: var(--how);
+    }
+
+    .callout.what {
+      border-color: var(--what);
+      background: rgba(14, 116, 144, 0.07);
+    }
+
+    .callout.what strong {
+      color: var(--what);
+    }
+
+    /* Summary */
+    .slide.summary {
+      padding: 140px 160px;
+      background: linear-gradient(135deg, #f4ecd8, #faf7ef);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .slide.summary .eye {
+      font-size: 20px;
+      letter-spacing: 0.42em;
+      text-transform: uppercase;
+      color: var(--primary);
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .slide.summary h2 {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 48px;
+    }
+
+    .slide.summary .grid-3 {
+      max-width: 1500px;
+      margin: 0 auto;
+      gap: 32px;
+    }
+  </style>
+  <script>
+    /* ===== inlined from deck-stage.js ===== */
+    (() => {
+      const DESIGN_W_DEFAULT = 1920;
+      const DESIGN_H_DEFAULT = 1080;
+      const STORAGE_PREFIX = 'deck-stage:slide:';
+      const OVERLAY_HIDE_MS = 1800;
+      const VALIDATE_ATTR = 'no_overflowing_text,no_overlapping_text,slide_sized_text';
+
+      const pad2 = (n) => String(n).padStart(2, '0');
+
+      const stylesheet = `
+    :host {
+      position: fixed;
+      inset: 0;
+      display: block;
+      background: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .stage {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .canvas {
+      position: relative;
+      transform-origin: center center;
+      flex-shrink: 0;
+      background: #fff;
+      will-change: transform;
+    }
+
+    ::slotted(*) {
+      position: absolute !important;
+      inset: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      box-sizing: border-box !important;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      visibility: hidden;
+    }
+    ::slotted([data-deck-active]) {
+      opacity: 1;
+      pointer-events: auto;
+      visibility: visible;
+    }
+
+    .tapzones {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      z-index: 2147482000;
+      pointer-events: none;
+    }
+    .tapzone {
+      flex: 1;
+      pointer-events: auto;
+      -webkit-tap-highlight-color: transparent;
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .tapzones { display: none; }
+    }
+
+    .overlay {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      transform: translate(-50%, 6px) scale(0.92);
+      filter: blur(6px);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      background: #000;
+      color: #fff;
+      border-radius: 999px;
+      font-size: 12px;
+      font-feature-settings: "tnum" 1;
+      letter-spacing: 0.01em;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 260ms ease, transform 260ms cubic-bezier(.2,.8,.2,1), filter 260ms ease;
+      transform-origin: center bottom;
+      z-index: 2147483000;
+      user-select: none;
+    }
+    .overlay[data-visible] {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, 0) scale(1);
+      filter: blur(0);
+    }
+
+    .btn {
+      appearance: none;
+      -webkit-appearance: none;
+      background: transparent;
+      border: 0;
+      margin: 0;
+      padding: 0;
+      color: inherit;
+      font: inherit;
+      cursor: default;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 28px;
+      min-width: 28px;
+      border-radius: 999px;
+      color: rgba(255,255,255,0.72);
+      transition: background 140ms ease, color 140ms ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:hover { background: rgba(255,255,255,0.12); color: #fff; }
+    .btn:active { background: rgba(255,255,255,0.18); }
+    .btn:focus { outline: none; }
+    .btn:focus-visible { outline: none; }
+    .btn::-moz-focus-inner { border: 0; }
+    .btn svg { width: 14px; height: 14px; display: block; }
+    .btn.reset {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      padding: 0 10px 0 12px;
+      gap: 6px;
+      color: rgba(255,255,255,0.72);
+    }
+    .btn.reset .kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 16px;
+      height: 16px;
+      padding: 0 4px;
+      font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 10px;
+      line-height: 1;
+      color: rgba(255,255,255,0.88);
+      background: rgba(255,255,255,0.12);
+      border-radius: 4px;
+    }
+
+    .count {
+      font-variant-numeric: tabular-nums;
+      color: #fff;
+      font-weight: 500;
+      padding: 0 8px;
+      min-width: 42px;
+      text-align: center;
+      font-size: 12px;
+    }
+    .count .sep { color: rgba(255,255,255,0.45); margin: 0 3px; font-weight: 400; }
+    .count .total { color: rgba(255,255,255,0.55); }
+
+    .divider {
+      width: 1px;
+      height: 14px;
+      background: rgba(255,255,255,0.18);
+      margin: 0 2px;
+    }
+
+    @media print {
+      :host {
+        position: static;
+        inset: auto;
+        background: none;
+        overflow: visible;
+        color: inherit;
+      }
+      .stage { position: static; display: block; }
+      .canvas {
+        transform: none !important;
+        width: auto !important;
+        height: auto !important;
+        background: none;
+        will-change: auto;
+      }
+      ::slotted(*) {
+        position: relative !important;
+        inset: auto !important;
+        width: var(--deck-design-w) !important;
+        height: var(--deck-design-h) !important;
+        box-sizing: border-box !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto;
+        break-after: page;
+        page-break-after: always;
+        break-inside: avoid;
+        overflow: hidden;
+      }
+      ::slotted(*:last-child) {
+        break-after: auto;
+        page-break-after: auto;
+      }
+      .overlay, .tapzones { display: none !important; }
+    }
+  `;
+
+      class DeckStage extends HTMLElement {
+        static get observedAttributes() { return ['width', 'height', 'noscale']; }
+
+        constructor() {
+          super();
+          this._root = this.attachShadow({ mode: 'open' });
+          this._index = 0;
+          this._slides = [];
+          this._notes = [];
+          this._hideTimer = null;
+          this._mouseIdleTimer = null;
+          this._storageKey = STORAGE_PREFIX + (location.pathname || '/');
+
+          this._onKey = this._onKey.bind(this);
+          this._onResize = this._onResize.bind(this);
+          this._onSlotChange = this._onSlotChange.bind(this);
+          this._onMouseMove = this._onMouseMove.bind(this);
+          this._onTapBack = this._onTapBack.bind(this);
+          this._onTapForward = this._onTapForward.bind(this);
+        }
+
+        get designWidth() {
+          return parseInt(this.getAttribute('width'), 10) || DESIGN_W_DEFAULT;
+        }
+        get designHeight() {
+          return parseInt(this.getAttribute('height'), 10) || DESIGN_H_DEFAULT;
+        }
+
+        connectedCallback() {
+          this._render();
+          this._loadNotes();
+          this._syncPrintPageRule();
+          window.addEventListener('keydown', this._onKey);
+          window.addEventListener('resize', this._onResize);
+          window.addEventListener('mousemove', this._onMouseMove, { passive: true });
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener('keydown', this._onKey);
+          window.removeEventListener('resize', this._onResize);
+          window.removeEventListener('mousemove', this._onMouseMove);
+          if (this._hideTimer) clearTimeout(this._hideTimer);
+          if (this._mouseIdleTimer) clearTimeout(this._mouseIdleTimer);
+        }
+
+        attributeChangedCallback() {
+          if (this._canvas) {
+            this._canvas.style.width = this.designWidth + 'px';
+            this._canvas.style.height = this.designHeight + 'px';
+            this._canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+            this._canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+            this._fit();
+            this._syncPrintPageRule();
+          }
+        }
+
+        _render() {
+          const style = document.createElement('style');
+          style.textContent = stylesheet;
+
+          const stage = document.createElement('div');
+          stage.className = 'stage';
+
+          const canvas = document.createElement('div');
+          canvas.className = 'canvas';
+          canvas.style.width = this.designWidth + 'px';
+          canvas.style.height = this.designHeight + 'px';
+          canvas.style.setProperty('--deck-design-w', this.designWidth + 'px');
+          canvas.style.setProperty('--deck-design-h', this.designHeight + 'px');
+
+          const slot = document.createElement('slot');
+          slot.addEventListener('slotchange', this._onSlotChange);
+          canvas.appendChild(slot);
+          stage.appendChild(canvas);
+
+          const tapzones = document.createElement('div');
+          tapzones.className = 'tapzones export-hidden';
+          tapzones.setAttribute('aria-hidden', 'true');
+          const tzBack = document.createElement('div');
+          tzBack.className = 'tapzone tapzone--back';
+          const tzMid = document.createElement('div');
+          tzMid.className = 'tapzone tapzone--mid';
+          tzMid.style.pointerEvents = 'none';
+          const tzFwd = document.createElement('div');
+          tzFwd.className = 'tapzone tapzone--fwd';
+          tzBack.addEventListener('click', this._onTapBack);
+          tzFwd.addEventListener('click', this._onTapForward);
+          tapzones.append(tzBack, tzMid, tzFwd);
+
+          const overlay = document.createElement('div');
+          overlay.className = 'overlay export-hidden';
+          overlay.setAttribute('role', 'toolbar');
+          overlay.setAttribute('aria-label', 'Deck controls');
+          overlay.innerHTML = `
+        <button class="btn prev" type="button" aria-label="Previous slide" title="Previous (←)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 3L5 8l5 5"/></svg>
+        </button>
+        <span class="count" aria-live="polite"><span class="current">1</span><span class="sep">/</span><span class="total">1</span></span>
+        <button class="btn next" type="button" aria-label="Next slide" title="Next (→)">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3l5 5-5 5"/></svg>
+        </button>
+        <span class="divider"></span>
+        <button class="btn reset" type="button" aria-label="Reset to first slide" title="Reset (R)">Reset<span class="kbd">R</span></button>
+      `;
+
+          overlay.querySelector('.prev').addEventListener('click', () => this._go(this._index - 1, 'click'));
+          overlay.querySelector('.next').addEventListener('click', () => this._go(this._index + 1, 'click'));
+          overlay.querySelector('.reset').addEventListener('click', () => this._go(0, 'click'));
+
+          this._root.append(style, stage, tapzones, overlay);
+          this._canvas = canvas;
+          this._slot = slot;
+          this._overlay = overlay;
+          this._countEl = overlay.querySelector('.current');
+          this._totalEl = overlay.querySelector('.total');
+        }
+
+        _syncPrintPageRule() {
+          const id = 'deck-stage-print-page';
+          let tag = document.getElementById(id);
+          if (!tag) {
+            tag = document.createElement('style');
+            tag.id = id;
+            document.head.appendChild(tag);
+          }
+          tag.textContent =
+            '@page { size: ' + this.designWidth + 'px ' + this.designHeight + 'px; margin: 0; } ' +
+            '@media print { html, body { margin: 0 !important; padding: 0 !important; background: none !important; overflow: visible !important; height: auto !important; } ' +
+            '* { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }';
+        }
+
+        _onSlotChange() {
+          this._collectSlides();
+          this._restoreIndex();
+          this._applyIndex({ showOverlay: false, broadcast: true, reason: 'init' });
+          this._fit();
+        }
+
+        _collectSlides() {
+          const assigned = this._slot.assignedElements({ flatten: true });
+          this._slides = assigned.filter((el) => {
+            const tag = el.tagName;
+            return tag !== 'TEMPLATE' && tag !== 'SCRIPT' && tag !== 'STYLE';
+          });
+
+          this._slides.forEach((slide, i) => {
+            const n = i + 1;
+            let label = slide.getAttribute('data-label');
+            if (!label) {
+              const existing = slide.getAttribute('data-screen-label');
+              if (existing) {
+                label = existing.replace(/^\s*\d+\s*/, '').trim() || existing;
+              }
+            }
+            if (!label) {
+              const h = slide.querySelector('h1, h2, h3, [data-title]');
+              if (h) label = (h.textContent || '').trim().slice(0, 40);
+            }
+            if (!label) label = 'Slide';
+            slide.setAttribute('data-screen-label', `${pad2(n)} ${label}`);
+
+            if (!slide.hasAttribute('data-om-validate')) {
+              slide.setAttribute('data-om-validate', VALIDATE_ATTR);
+            }
+
+            slide.setAttribute('data-deck-slide', String(i));
+          });
+
+          if (this._totalEl) this._totalEl.textContent = String(this._slides.length || 1);
+          if (this._index >= this._slides.length) this._index = Math.max(0, this._slides.length - 1);
+        }
+
+        _loadNotes() {
+          const tag = document.getElementById('speaker-notes');
+          if (!tag) { this._notes = []; return; }
+          try {
+            const parsed = JSON.parse(tag.textContent || '[]');
+            if (Array.isArray(parsed)) this._notes = parsed;
+          } catch (e) {
+            console.warn('[deck-stage] Failed to parse #speaker-notes JSON:', e);
+            this._notes = [];
+          }
+        }
+
+        _restoreIndex() {
+          try {
+            const raw = localStorage.getItem(this._storageKey);
+            if (raw != null) {
+              const n = parseInt(raw, 10);
+              if (Number.isFinite(n) && n >= 0 && n < this._slides.length) {
+                this._index = n;
+              }
+            }
+          } catch (e) { }
+        }
+
+        _persistIndex() {
+          try { localStorage.setItem(this._storageKey, String(this._index)); }
+          catch (e) { }
+        }
+
+        _applyIndex({ showOverlay = true, broadcast = true, reason = 'init' } = {}) {
+          if (!this._slides.length) return;
+          const prev = this._prevIndex == null ? -1 : this._prevIndex;
+          const curr = this._index;
+          this._slides.forEach((s, i) => {
+            if (i === curr) s.setAttribute('data-deck-active', '');
+            else s.removeAttribute('data-deck-active');
+          });
+          if (this._countEl) this._countEl.textContent = String(curr + 1);
+          this._persistIndex();
+
+          if (broadcast) {
+            try { window.postMessage({ slideIndexChanged: curr }, '*'); } catch (e) { }
+
+            const detail = {
+              index: curr,
+              previousIndex: prev,
+              total: this._slides.length,
+              slide: this._slides[curr] || null,
+              previousSlide: prev >= 0 ? (this._slides[prev] || null) : null,
+              reason: reason,
+            };
+            this.dispatchEvent(new CustomEvent('slidechange', {
+              detail,
+              bubbles: true,
+              composed: true,
+            }));
+          }
+
+          this._prevIndex = curr;
+          if (showOverlay) this._flashOverlay();
+        }
+
+        _flashOverlay() {
+          if (!this._overlay) return;
+          this._overlay.setAttribute('data-visible', '');
+          if (this._hideTimer) clearTimeout(this._hideTimer);
+          this._hideTimer = setTimeout(() => {
+            this._overlay.removeAttribute('data-visible');
+          }, OVERLAY_HIDE_MS);
+        }
+
+        _fit() {
+          if (!this._canvas) return;
+          if (this.hasAttribute('noscale')) {
+            this._canvas.style.transform = 'none';
+            return;
+          }
+          const vw = window.innerWidth;
+          const vh = window.innerHeight;
+          const s = Math.min(vw / this.designWidth, vh / this.designHeight);
+          this._canvas.style.transform = `scale(${s})`;
+        }
+
+        _onResize() { this._fit(); }
+
+        _onMouseMove() {
+          this._flashOverlay();
+        }
+
+        _onTapBack(e) {
+          e.preventDefault();
+          this._go(this._index - 1, 'tap');
+        }
+
+        _onTapForward(e) {
+          e.preventDefault();
+          this._go(this._index + 1, 'tap');
+        }
+
+        _onKey(e) {
+          const t = e.target;
+          if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+          if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+          const key = e.key;
+          let handled = true;
+
+          if (key === 'ArrowRight' || key === 'PageDown' || key === ' ' || key === 'Spacebar') {
+            this._go(this._index + 1, 'keyboard');
+          } else if (key === 'ArrowLeft' || key === 'PageUp') {
+            this._go(this._index - 1, 'keyboard');
+          } else if (key === 'Home') {
+            this._go(0, 'keyboard');
+          } else if (key === 'End') {
+            this._go(this._slides.length - 1, 'keyboard');
+          } else if (key === 'r' || key === 'R') {
+            this._go(0, 'keyboard');
+          } else if (/^[0-9]$/.test(key)) {
+            const n = key === '0' ? 9 : parseInt(key, 10) - 1;
+            if (n < this._slides.length) this._go(n, 'keyboard');
+          } else {
+            handled = false;
+          }
+
+          if (handled) {
+            e.preventDefault();
+            this._flashOverlay();
+          }
+        }
+
+        _go(i, reason = 'api') {
+          if (!this._slides.length) return;
+          const clamped = Math.max(0, Math.min(this._slides.length - 1, i));
+          if (clamped === this._index) {
+            this._flashOverlay();
+            return;
+          }
+          this._index = clamped;
+          this._applyIndex({ showOverlay: true, broadcast: true, reason });
+        }
+
+        get index() { return this._index; }
+        get length() { return this._slides.length; }
+        goTo(i) { this._go(i, 'api'); }
+        next() { this._go(this._index + 1, 'api'); }
+        prev() { this._go(this._index - 1, 'api'); }
+        reset() { this._go(0, 'api'); }
+      }
+
+      if (!customElements.get('deck-stage')) {
+        customElements.define('deck-stage', DeckStage);
+      }
+    })();
+  </script>
+</head>
+
+<body>
+  <deck-stage height="1080" width="1920">
+    <!-- ═════════════════════ 01 · COVER ═════════════════════ -->
+    <section class="slide cover" data-label="Cover">
+      <div class="eyebrow">Extreme Programming · 敏捷软件开发</div>
+      <h1>极限编程<br /><span class="gradient-text">的十二项实践</span></h1>
+      <div class="bar"></div>
+      <div class="sub">从价值观到四项活动，再到 12 项实践：XP 如何把小调整做到底。</div>
+      <div class="meta">
+        软件工程课 · 第三讲<br />2026
+      </div>
+      <div class="s-footer">
+        <span class="mark">LECTURE · 讲义</span>
+        <span class="s-pageno">01</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 02 · CHAPTER I ═════════════════════ -->
+    <section class="slide chapter why" data-label="Chapter I · WHY">
+      <div class="huge">Ⅰ</div>
+      <div class="text">
+        <div class="eye">Part 1 · 价值观</div>
+        <h2>为什么<br />XP 要这样<br />做事</h2>
+        <div class="sub">Why XP — the four values and their foundation.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · VALUES</span>
+        <span class="s-pageno">02</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 03 · P1.1 驾驶比喻 ═════════════════════ -->
+    <section class="slide content why" data-label="驾驶比喻">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观</div>
+          <h3>软件开发像驾驶：频繁小调整而非少量大调整</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">打好方向盘后没人能撒手走神，软件开发也一样。</div>
+      <div class="s-body">
+        <div class="grid-2" style="margin-bottom:24px;">
+          <div class="mini-card" style="border-left:4px solid var(--why);">
+            <h4 style="color:var(--why);">❌ 瀑布式：大调整</h4>
+            <p>一次大计划、一次大发布，错了就整体失败，纠偏成本急剧上升。</p>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent2);">
+            <h4 style="color:var(--accent2);">✅ XP 式：小调整</h4>
+            <p>每隔几分钟到几天看一次路况（测试、反馈、集成），每次只微调。</p>
+          </div>
+        </div>
+        <div class="callout why">
+          <strong>关键 ·</strong> 掌控软件开发靠持续关注与连续微调，不靠前期预判。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">03</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 04 · P1.2 四大价值观 ═════════════════════ -->
+    <section class="slide content why" data-label="四大价值观">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观</div>
+          <h3>四大价值观：交流 · 简单 · 反馈 · 勇气</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-lead">XP 所有实践挂在这四根柱子上。缺一根，实践就是无根教条。</div>
+      <div class="s-body">
+        <div style="display:flex; gap:32px; align-items:center; justify-content:center; margin-top:8px;">
+          <!-- 四价值观菱形雷达 + 尊重底座 SVG -->
+          <svg style="width:560px; height:540px; flex-shrink:0; overflow:visible;" viewbox="-80 0 640 600">
+            <defs>
+              <radialgradient cx="50%" cy="50%" id="radarFill" r="50%">
+                <stop offset="0%" stop-color="#c2185b" stop-opacity="0.22"></stop>
+                <stop offset="100%" stop-color="#c2185b" stop-opacity="0.05"></stop>
+              </radialgradient>
+              <lineargradient id="baseFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#6d28d9" stop-opacity="0.22"></stop>
+                <stop offset="100%" stop-color="#6d28d9" stop-opacity="0.06"></stop>
+              </lineargradient>
+            </defs>
+            <!-- 四价值观雷达 -->
+            <g transform="translate(240,230)">
+              <!-- 网格（菱形四层） -->
+              <polygon fill="none" points="0,-180 180,0 0,180 -180,0" stroke="#d8d4cb" stroke-width="1"></polygon>
+              <polygon fill="none" points="0,-135 135,0 0,135 -135,0" stroke="#d8d4cb" stroke-width="1"></polygon>
+              <polygon fill="none" points="0,-90 90,0 0,90 -90,0" stroke="#d8d4cb" stroke-width="1"></polygon>
+              <polygon fill="none" points="0,-45 45,0 0,45 -45,0" stroke="#d8d4cb" stroke-width="1"></polygon>
+              <!-- 轴线 -->
+              <line stroke="#d8d4cb" stroke-width="1" x1="0" x2="0" y1="-180" y2="180"></line>
+              <line stroke="#d8d4cb" stroke-width="1" x1="-180" x2="180" y1="0" y2="0"></line>
+              <!-- 数据区 -->
+              <polygon fill="url(#radarFill)" points="0,-162 162,0 0,162 -162,0" stroke="#c2185b" stroke-width="2.5">
+              </polygon>
+              <!-- 数据点 -->
+              <circle cx="0" cy="-162" fill="#c2185b" r="7"></circle>
+              <circle cx="162" cy="0" fill="#c2185b" r="7"></circle>
+              <circle cx="0" cy="162" fill="#c2185b" r="7"></circle>
+              <circle cx="-162" cy="0" fill="#c2185b" r="7"></circle>
+              <!-- 标签 -->
+              <text fill="#1f1b14" font-size="24" font-weight="700" text-anchor="middle" x="0" y="-200">交流
+                Communication</text>
+              <text fill="#1f1b14" font-size="24" font-weight="700" text-anchor="start" x="195" y="8">简单
+                Simplicity</text>
+              <text fill="#1f1b14" font-size="24" font-weight="700" text-anchor="middle" x="0" y="210">反馈
+                Feedback</text>
+              <text fill="#1f1b14" font-size="24" font-weight="700" text-anchor="end" x="-195" y="8">勇气 Courage</text>
+            </g>
+            <!-- 尊重 · 底座 -->
+            <g transform="translate(240,470)">
+              <!-- 四根虚线暗示雷达坐落在底座上 -->
+              <line opacity="0.5" stroke="#6d28d9" stroke-dasharray="3,4" stroke-width="1.5" x1="-160" x2="-160"
+                y1="-30" y2="0"></line>
+              <line opacity="0.5" stroke="#6d28d9" stroke-dasharray="3,4" stroke-width="1.5" x1="-55" x2="-55" y1="-30"
+                y2="0"></line>
+              <line opacity="0.5" stroke="#6d28d9" stroke-dasharray="3,4" stroke-width="1.5" x1="55" x2="55" y1="-30"
+                y2="0"></line>
+              <line opacity="0.5" stroke="#6d28d9" stroke-dasharray="3,4" stroke-width="1.5" x1="160" x2="160" y1="-30"
+                y2="0"></line>
+              <!-- 梯形底座 -->
+              <polygon fill="url(#baseFill)" points="-240,0 240,0 218,62 -218,62" stroke="#6d28d9" stroke-width="2.5">
+              </polygon>
+              <!-- 底座文字 -->
+              <text fill="#6d28d9" font-size="24" font-weight="700" text-anchor="middle" x="0" y="30">尊重 Respect ·
+                底座</text>
+              <text fill="#6b6255" font-size="15" font-weight="500" text-anchor="middle" x="0"
+                y="52">团队互信是前提，四根柱子缺一不可</text>
+            </g>
+          </svg>
+          <div style="display:flex; flex-direction:column; gap:12px; max-width:480px;">
+            <div class="mini-card" style="border-left:4px solid var(--why); padding:16px 20px;">
+              <h4 style="color:var(--why); font-size:22px;">Communication 交流</h4>
+              <p style="font-size:19px;">让相关人处在同一条信息轨道上。</p>
+            </div>
+            <div class="mini-card" style="border-left:4px solid var(--why); padding:16px 20px;">
+              <h4 style="color:var(--why); font-size:22px;">Simplicity 简单</h4>
+              <p style="font-size:19px;">今日可运行优先于明日可能所需。</p>
+            </div>
+            <div class="mini-card" style="border-left:4px solid var(--why); padding:16px 20px;">
+              <h4 style="color:var(--why); font-size:22px;">Feedback 反馈</h4>
+              <p style="font-size:19px;">分钟/天/周/月四档都要有回路。</p>
+            </div>
+            <div class="mini-card" style="border-left:4px solid var(--why); padding:16px 20px;">
+              <h4 style="color:var(--why); font-size:22px;">Courage 勇气</h4>
+              <p style="font-size:19px;">敢大改、敢推倒重来，但前三者要托底。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">04</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 05 · P1.3 交流 ═════════════════════ -->
+    <section class="slide content why" data-label="交流 Communication">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观 · 01</div>
+          <h3>交流：让沟通变成必须做的事，不是可选的事</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-lead">多数项目不缺沟通，缺的是沟通发生在对的人之间。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--why);">
+            <h4 style="color:var(--why);">🔗 三类关系</h4>
+            <ul>
+              <li>开发者 — 开发者</li>
+              <li>开发者 — 客户</li>
+              <li>开发者 — 管理层</li>
+            </ul>
+            <p style="margin-top:12px;">任一条断掉，信息就在组织里变形。</p>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent2);">
+            <h4 style="color:var(--accent2);">⚙️ 三种强制机制</h4>
+            <ul>
+              <li>单元测试：代码对自己的表达</li>
+              <li>结对编程：同伴对方案的审问</li>
+              <li>任务估算：对管理层承诺</li>
+            </ul>
+            <p style="margin-top:12px;">XP 把沟通嵌进工作流，不靠多开会。</p>
+          </div>
+        </div>
+        <div class="callout why" style="margin-top:24px;">
+          <strong>协同 ·</strong> 沟通越充分需求越清晰；系统越简单沟通成本越低；简化系统也在减少需要同步的人。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">05</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 06 · P1.4 简单 ═════════════════════ -->
+    <section class="slide content why" data-label="简单 Simplicity">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观 · 02</div>
+          <h3>简单：当前可能奏效的最简方案是什么？</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead">"What is the simplest thing that could possibly work?" —— Kent Beck</div>
+      <div class="s-body">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:30%;">维度</th>
+              <th>传统做法</th>
+              <th>XP 的简单</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>设计范围</strong></td>
+              <td><span class="tag bad">为明天设计</span> 预判三年内的所有变化</td>
+              <td><span class="tag good">为今天实现</span> 只做本次迭代需要</td>
+            </tr>
+            <tr>
+              <td><strong>扩展点</strong></td>
+              <td>预留大量抽象层/接口/开关</td>
+              <td>不留。需要时再引入，由测试兜底</td>
+            </tr>
+            <tr>
+              <td><strong>代价</strong></td>
+              <td>80% 的复杂性永远用不上</td>
+              <td>偶尔返工，但代码整体更轻</td>
+            </tr>
+            <tr>
+              <td><strong>底气来源</strong></td>
+              <td>靠架构师经验预判</td>
+              <td>重构 + 测试套件随时可改</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout why" style="margin-top:22px;">
+          <strong>注意 ·</strong> 简单不等于粗糙。它以重构和测试为底气，否则会退化成懒惰。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">06</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 07 · P1.5 反馈 ═════════════════════ -->
+    <section class="slide content why" data-label="反馈 Feedback">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观 · 03</div>
+          <h3>反馈：分钟级到月级，四个频段都要有回路</h3>
+        </div>
+        <div class="s-idx">05</div>
+      </div>
+      <div class="s-lead">没有反馈，勇气是赌博；有反馈，激进改动才安全。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--why);">
+            <h4 style="color:var(--why);">⏱️ 即时反馈（分钟 / 天级）</h4>
+            <ul>
+              <li><strong>程序员：</strong>单元测试运行一次即可判定对错</li>
+              <li><strong>客户：</strong>实时估算一个故事点成本</li>
+              <li><strong>团队：</strong>每日进度与任务板</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--accent2);">
+            <h4 style="color:var(--accent2);">📅 中长期反馈（周 / 月级）</h4>
+            <ul>
+              <li><strong>客户：</strong>功能测试验证整体行为</li>
+              <li><strong>团队：</strong>真实用户在真实环境里用软件</li>
+              <li><strong>管理层：</strong>每次小发布兑现的业务价值</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout why" style="margin-top:22px;">
+          <strong>耦合 ·</strong> 反馈让沟通有据可查；系统越简单越好测试；测试也反推系统保持简单。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">07</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 08 · P1.6 勇气 + 尊重 ═════════════════════ -->
+    <section class="slide content why" data-label="勇气与尊重">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 1 · 价值观 · 04</div>
+          <h3>勇气与尊重：没有前三者，勇气只是蛮干</h3>
+        </div>
+        <div class="s-idx">06</div>
+      </div>
+      <div class="s-lead">典型剧本：30 周项目，第 25 周发现架构缺陷，重构让一半测试失效，敢不敢推倒重来？</div>
+      <div class="s-body">
+        <div class="ladder">
+          <div class="ladder-step" style="border-left-color:var(--why);">
+            <div class="step-num" style="background:var(--why);">1</div>
+            <div class="step-content">
+              <strong>沟通支持勇气</strong>
+              <span>充分沟通后，高风险高回报的实验才有人敢一起做</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--why);">
+            <div class="step-num" style="background:var(--why);">2</div>
+            <div class="step-content">
+              <strong>简洁支持勇气</strong>
+              <span>面对简单系统，你更敢于动手实施，牵连面小</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--why);">
+            <div class="step-num" style="background:var(--why);">3</div>
+            <div class="step-content">
+              <strong>反馈支持勇气</strong>
+              <span>按一下按钮就看到测试全绿，激进改动才让人安心</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--accent);">
+            <div class="step-num" style="background:var(--accent);">地基</div>
+            <div class="step-content">
+              <strong>尊重 Respect（底座）</strong>
+              <span>团队互信是 XP 的前提，成员投入决定成败</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout warning" style="margin-top:18px;">
+          <strong>警惕 ·</strong> 爬山式的"简单→复杂→再简化"易陷局部最优。勇气就是打破当前山头，去找更高的。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 1 · 价值观</span>
+        <span class="s-pageno">08</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 09 · CHAPTER II ═════════════════════ -->
+    <section class="slide chapter how" data-label="Chapter II · HOW">
+      <div class="huge">Ⅱ</div>
+      <div class="text">
+        <div class="eye">Part 2 · 基本活动</div>
+        <h2>四项<br />基本活动</h2>
+        <div class="sub">Coding · Testing · Listening · Designing</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · ACTIVITIES</span>
+        <span class="s-pageno">09</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 10 · P2.1 四项活动总览 ═════════════════════ -->
+    <section class="slide content how" data-label="四项活动总览">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 基本活动</div>
+          <h3>稳定的软件开发只做四件事</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">为了稳定、可预测的开发，XP 愿意做一切必要的事，而必要的事收敛到这四项。</div>
+      <div class="s-body">
+        <div class="grid-4">
+          <div class="mini-card" style="border-top:4px solid var(--how); text-align:center;">
+            <h4 style="color:var(--how); font-size:28px;">编码<br />Coding</h4>
+            <p>最终产出，其他活动都为它服务。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--how); text-align:center;">
+            <h4 style="color:var(--how); font-size:28px;">测试<br />Testing</h4>
+            <p>告诉你何时完成，也告诉后来者修改后是否会引入问题。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--how); text-align:center;">
+            <h4 style="color:var(--how); font-size:28px;">倾听<br />Listening</h4>
+            <p>决定该写什么、该测什么。</p>
+          </div>
+          <div class="mini-card" style="border-top:4px solid var(--how); text-align:center;">
+            <h4 style="color:var(--how); font-size:28px;">设计<br />Design</h4>
+            <p>让编码、测试、倾听能一直循环不崩。</p>
+          </div>
+        </div>
+        <div class="callout how" style="margin-top:28px;">
+          <strong>结构 ·</strong> 倾听决定编码什么；编码产生结果；测试验证结果；设计让循环持续跑下去。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 基本活动</span>
+        <span class="s-pageno">10</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 11 · P2.2 编码与测试 ═════════════════════ -->
+    <section class="slide content how" data-label="编码与测试">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 基本活动 · 01</div>
+          <h3>编码 × 测试：成果 × "无法测量即不存在"</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-body">
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div class="mini-card" style="border-left:4px solid var(--how);">
+            <h4 style="color:var(--how);">编码 Coding</h4>
+            <p style="margin-bottom:10px;">这是你的成果，不编码什么都没做。</p>
+            <ul>
+              <li>学习：编码把想法逼成语法</li>
+              <li>沟通：代码是最精确的表达</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--how);">
+            <h4 style="color:var(--how);">测试 Testing</h4>
+            <p style="margin-bottom:10px;">"无法测量即不存在"是科学哲学命题，对编程也成立。</p>
+            <ul>
+              <li>测试让你独立于实现去想"要什么"</li>
+              <li>测试告诉你何时完成：通过即视为完成</li>
+              <li>测试让程序寿命更长：能持续修改</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout how">
+          <strong>关键 ·</strong> 边写边测比只写不测更快：调试时间的下降大于写测试的投入。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 基本活动</span>
+        <span class="s-pageno">11</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 12 · P2.3 倾听与设计 ═════════════════════ -->
+    <section class="slide content how" data-label="倾听与设计">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 基本活动 · 02</div>
+          <h3>倾听 × 设计：定义做什么 × 让循环不崩</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-body">
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div class="mini-card" style="border-left:4px solid var(--how);">
+            <h4 style="color:var(--how);">倾听 Listening</h4>
+            <ul>
+              <li>程序员 → 业务：听清项目要解决什么</li>
+              <li>程序员 ← 业务：说清什么容易、什么难</li>
+              <li>程序员 ↔ 程序员：彼此讲清在做什么</li>
+              <li>程序员 ↔ 客户：对同一问题达成共识</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--how);">
+            <h4 style="color:var(--how);">设计 Design（为什么需要）</h4>
+            <p style="margin-bottom:10px;">仅依靠"听→写测试→通过→再听"是否可行？</p>
+            <p>不可行，很快会遇到两种情况：</p>
+            <ul>
+              <li>让下一个测试通过必须破坏另一个</li>
+              <li>让测试通过的代价远超其价值</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout how">
+          <strong>定位 ·</strong> 设计不是一次完工的蓝图，而是让编码-测试-倾听循环能持续跑的润滑剂。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 基本活动</span>
+        <span class="s-pageno">12</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 13 · P2.4 好设计判据 ═════════════════════ -->
+    <section class="slide content how" data-label="好设计四判据">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 2 · 基本活动 · 03</div>
+          <h3>好设计的四条判据</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead">判断设计好坏，不看优雅，看它能否扛住四项压力测试。</div>
+      <div class="s-body">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:30%;">判据</th>
+              <th>具体含义</th>
+              <th style="width:28%;">反面征兆</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>① 局部隔离</strong></td>
+              <td>某部分变化不牵动另一部分</td>
+              <td><span class="tag bad">牵一发动全身</span></td>
+            </tr>
+            <tr>
+              <td><strong>② 唯一实现位</strong></td>
+              <td>每段逻辑只有一个实现点</td>
+              <td><span class="tag bad">同一逻辑被复制到多处</span></td>
+            </tr>
+            <tr>
+              <td><strong>③ 逻辑近数据</strong></td>
+              <td>操作数据的逻辑放在数据附近</td>
+              <td><span class="tag bad">贫血模型 + 远端操纵</span></td>
+            </tr>
+            <tr>
+              <td><strong>④ 扩展单点</strong></td>
+              <td>扩展时只需修改一处</td>
+              <td><span class="tag bad">新功能须修改 N 个文件</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout how" style="margin-top:22px;">
+          <strong>结论 ·</strong> 编码、测试、倾听、设计缺一，另外三项都撑不久。这是 12 项实践的地基。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 2 · 基本活动</span>
+        <span class="s-pageno">13</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 14 · CHAPTER III ═════════════════════ -->
+    <section class="slide chapter what" data-label="Chapter III · WHAT">
+      <div class="huge">Ⅲ</div>
+      <div class="text">
+        <div class="eye">Part 3 · 12 项实践</div>
+        <h2>12 项<br />基本实践</h2>
+        <div class="sub">The twelve XP practices — and why they only work together.</div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · PRACTICES</span>
+        <span class="s-pageno">14</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 15 · P3.1 12 项实践飞轮 ═════════════════════ -->
+    <section class="slide content what" data-label="12 项实践全景">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 12 项实践</div>
+          <h3>12 项实践组成一个飞轮，单独抽出来都不成立</h3>
+        </div>
+        <div class="s-idx">01</div>
+      </div>
+      <div class="s-lead">这些实践没有一项原创。早就存在，各自因弱点被更复杂的做法取代。XP 的问题：弱点能否由别的实践补上？</div>
+      <div class="s-body">
+        <div style="display:flex; justify-content:center; align-items:center; margin-top:8px;">
+          <svg style="width:900px; height:460px;" viewbox="0 0 900 500">
+            <defs>
+              <radialgradient cx="50%" cy="50%" id="flywheelCenter" r="50%">
+                <stop offset="0%" stop-color="#0e7490" stop-opacity="0.2"></stop>
+                <stop offset="100%" stop-color="#0e7490" stop-opacity="0.02"></stop>
+              </radialgradient>
+            </defs>
+            <!-- 中心 -->
+            <circle cx="450" cy="250" fill="url(#flywheelCenter)" r="90" stroke="#0e7490" stroke-width="2"></circle>
+            <text fill="#0e7490" font-size="22" font-weight="900" text-anchor="middle" x="450" y="240">XP 实践</text>
+            <text fill="#0e7490" font-size="22" font-weight="900" text-anchor="middle" x="450" y="268">飞轮</text>
+            <!-- 12 个外圈节点，3行4列分布，便于阅读 -->
+            <g fill="#1f1b14" font-size="17" font-weight="600">
+              <!-- 左列 -->
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="40">
+              </rect>
+              <text text-anchor="middle" x="110" y="72">① 计划游戏</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="112">
+              </rect>
+              <text text-anchor="middle" x="110" y="144">② 小发布</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="184">
+              </rect>
+              <text text-anchor="middle" x="110" y="216">③ 隐喻</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="256">
+              </rect>
+              <text text-anchor="middle" x="110" y="288">④ 简单设计</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="328">
+              </rect>
+              <text text-anchor="middle" x="110" y="360">⑤ 测试 TDD</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="20" y="400">
+              </rect>
+              <text text-anchor="middle" x="110" y="432">⑥ 重构</text>
+              <!-- 右列 -->
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="40">
+              </rect>
+              <text text-anchor="middle" x="790" y="72">⑦ 结对编程</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="112">
+              </rect>
+              <text text-anchor="middle" x="790" y="144">⑧ 集体拥有代码</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="184">
+              </rect>
+              <text text-anchor="middle" x="790" y="216">⑨ 持续集成</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="256">
+              </rect>
+              <text text-anchor="middle" x="790" y="288">⑩ 40 小时工作制</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="328">
+              </rect>
+              <text text-anchor="middle" x="790" y="360">⑪ 现场客户</text>
+              <rect fill="#fbf8f1" height="52" rx="10" stroke="#0e7490" stroke-width="1.5" width="180" x="700" y="400">
+              </rect>
+              <text text-anchor="middle" x="790" y="432">⑫ 编码标准</text>
+            </g>
+            <!-- 连接线 -->
+            <g opacity="0.4" stroke="#0e7490" stroke-dasharray="4,3" stroke-width="1">
+              <line x1="200" x2="360" y1="66" y2="230"></line>
+              <line x1="200" x2="360" y1="138" y2="240"></line>
+              <line x1="200" x2="360" y1="210" y2="250"></line>
+              <line x1="200" x2="360" y1="282" y2="260"></line>
+              <line x1="200" x2="360" y1="354" y2="270"></line>
+              <line x1="200" x2="360" y1="426" y2="280"></line>
+              <line x1="700" x2="540" y1="66" y2="230"></line>
+              <line x1="700" x2="540" y1="138" y2="240"></line>
+              <line x1="700" x2="540" y1="210" y2="250"></line>
+              <line x1="700" x2="540" y1="282" y2="260"></line>
+              <line x1="700" x2="540" y1="354" y2="270"></line>
+              <line x1="700" x2="540" y1="426" y2="280"></line>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">15</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 16 · P3.2 计划游戏 ═════════════════════ -->
+    <section class="slide content what" data-label="1. 计划游戏">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 01</div>
+          <h3>1. 计划游戏：业务与技术各管一半</h3>
+        </div>
+        <div class="s-idx">02</div>
+      </div>
+      <div class="s-lead">业务和技术都不能单独说了算，两边必须拿着对方的信息一起决定。</div>
+      <div class="s-body">
+        <div class="grid-2">
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">👥 业务人员决定</h4>
+            <ul>
+              <li><strong>范围：</strong>为了有价值，必须解决多少问题？</li>
+              <li><strong>优先级：</strong>只能先有 A 或 B，选哪个？</li>
+              <li><strong>发布组成：</strong>投产前要完成多少？</li>
+              <li><strong>发布日期：</strong>哪些日期有关键业务影响？</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">🛠️ 技术人员决定</h4>
+            <ul>
+              <li><strong>估算：</strong>一个功能要多久？</li>
+              <li><strong>后果：</strong>这个技术决定的连锁反应是什么？</li>
+              <li><strong>流程：</strong>团队怎么组织？谁做什么？</li>
+              <li><strong>详细日程：</strong>版本内先做哪些故事？</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout what" style="margin-top:22px;">
+          <strong>关键 ·</strong> 业务决策要建在技术评估（成本、风险）之上，技术评估要服务业务价值。两者双向依赖。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">16</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 17 · P3.3 小发布 ═════════════════════ -->
+    <section class="slide content what" data-label="2. 小发布">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 02</div>
+          <h3>2. 小发布：一两个月一次 &gt;&gt; 一次半年或一年</h3>
+        </div>
+        <div class="s-idx">03</div>
+      </div>
+      <div class="s-lead">发布必须作为整体有意义，不是把没写完的功能凑成一个版本号。</div>
+      <div class="s-body">
+        <ul class="points">
+          <li><span class="icon">📦</span>
+            <div><strong>每次发布都要"尽可能小"</strong>
+              <div class="sub">只含最有业务价值的需求，其他推迟。</div>
+            </div>
+          </li>
+          <li><span class="icon">🧩</span>
+            <div><strong>但要作为整体有意义</strong>
+              <div class="sub">不是把大功能切两半分两次发。</div>
+            </div>
+          </li>
+          <li><span class="icon">⏳</span>
+            <div><strong>一次计划一两个月，远好于一次计划六个月</strong>
+              <div class="sub">因为计划会随代码与反馈快速过时。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout what" style="margin-top:22px;">
+          <strong>耦合 ·</strong> 小发布的前提：计划游戏挑最有价值的故事；测试把缺陷率压低；持续集成让打包接近零成本；简单设计只覆盖本次范围。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">17</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 18 · P3.4 隐喻 ═════════════════════ -->
+    <section class="slide content what" data-label="3. 隐喻">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 03</div>
+          <h3>3. 隐喻：用一个总隐喻取代"架构图"</h3>
+        </div>
+        <div class="s-idx">04</div>
+      </div>
+      <div class="s-lead">每个 XP 项目都由一个总体隐喻指导。这个隐喻取代了许多人说的"架构"。</div>
+      <div class="s-body">
+        <ul class="points">
+          <li><span class="icon">🏭</span>
+            <div><strong>克莱斯勒薪资系统 = 一条生产线</strong>
+              <div class="sub">工资数据像物料从一端进另一端出，中间经过各道工序。类和方法的命名都围绕这比喻。</div>
+            </div>
+          </li>
+          <li><span class="icon">🕷️</span>
+            <div><strong>搜索引擎 = 一群蜘蛛</strong>
+              <div class="sub">它们在网上"寻找猎物、带回巢穴"。爬虫、索引、回传都在这画面里。</div>
+            </div>
+          </li>
+          <li><span class="icon">🧭</span>
+            <div><strong>作用</strong>
+              <div class="sub">通过一致命名，让团队对"东西该叫什么、长什么样"保持同步。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout what" style="margin-top:18px;">
+          <strong>对比 ·</strong> 架构图给人看，隐喻给人用：它让新成员三句话就抓住系统骨架，不用啃文档。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">18</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 19 · P3.5 简单设计 ═════════════════════ -->
+    <section class="slide content what" data-label="4. 简单设计">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 04</div>
+          <h3>4. 简单设计：四条判据</h3>
+        </div>
+        <div class="s-idx">05</div>
+      </div>
+      <div class="s-lead">"为今天实现，不为明天设计"：不是不顾明天，而是信任明天的重构能力。</div>
+      <div class="s-body">
+        <ul class="points">
+          <li><span class="icon">✅</span>
+            <div><strong>① 运行所有测试</strong>
+              <div class="sub">最硬性的判据：是否可用，先看测试能否通过。</div>
+            </div>
+          </li>
+          <li><span class="icon">🔁</span>
+            <div><strong>② 没有重复的逻辑</strong>
+              <div class="sub">警惕"并行类层次结构"式隐藏重复：结构重复比代码重复更贵。</div>
+            </div>
+          </li>
+          <li><span class="icon">🎯</span>
+            <div><strong>③ 表明每一个对程序员重要的意图</strong>
+              <div class="sub">代码读起来，关键意图要一目了然。</div>
+            </div>
+          </li>
+          <li><span class="icon">✂️</span>
+            <div><strong>④ 尽可能少的类和方法</strong>
+              <div class="sub">能三个类讲清就不要五个。抽象不是越多越好。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout warning" style="margin-top:18px;">
+          <strong>要反对的 ·</strong> 反对"为今天实现，为明天设计"：听起来没毛病，但 90% 的"为明天"用不上，还拖累今天。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">19</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 20 · P3.6 测试 TDD ═════════════════════ -->
+    <section class="slide content what" data-label="5. 测试 TDD">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 05</div>
+          <h3>5. 测试 TDD：没测试的功能就不存在</h3>
+        </div>
+        <div class="s-idx">06</div>
+      </div>
+      <div class="s-lead">程序员写单元测试，让对程序的信心成为程序的一部分；客户写功能测试，让他们的信心也成为程序的一部分。</div>
+      <div class="s-body">
+<pre class="code-block"><span class="comment"># Red → Green → Refactor 的最小循环</span>
+<span class="comment"># 1. RED：先写一个会失败的测试，描述"我想要什么"</span>
+<span class="kw">def</span> <span class="fn">test_discount_for_vip</span>():
+    order = Order(total=<span class="string">1000</span>, customer=Customer(vip=<span class="kw">True</span>))
+    <span class="kw">assert</span> order.discount() == <span class="string">200</span>
+
+<span class="comment"># 2. GREEN：用最简单的方式让测试通过，不考虑"明天"</span>
+<span class="kw">def</span> <span class="fn">discount</span>(self):
+    <span class="kw">if</span> self.customer.vip:
+        <span class="kw">return</span> self.total * <span class="string">0.2</span>
+    <span class="kw">return</span> <span class="string">0</span>
+
+<span class="comment"># 3. REFACTOR：绿了再优化——测试兜底，重构没风险</span></pre>
+        <div class="grid-2" style="margin-top:20px;">
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">程序员：单元测试</h4>
+            <p>确信"我写的按我想的方式运行"。</p>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">客户：功能测试</h4>
+            <p>确信"系统按他们期望的方式运行"。</p>
+          </div>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">20</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 21 · P3.7 重构 ═════════════════════ -->
+    <section class="slide content what" data-label="6. 重构">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 06</div>
+          <h3>6. 重构：不猜测，系统要求时才动</h3>
+        </div>
+        <div class="s-idx">07</div>
+      </div>
+      <div class="s-lead">增加新功能时，程序员总在问：能否改造现有程序，让新功能更易于接入？</div>
+      <div class="s-body">
+        <div class="ladder">
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">1</div>
+            <div class="step-content">
+              <strong>触发：新功能进不去或很难进去</strong>
+              <span>不是看着不爽就改，而是代码正在阻碍我时才改。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">2</div>
+            <div class="step-content">
+              <strong>识别信号：系统在要求你重构</strong>
+              <span>需要复制粘贴一段代码时，它就是在喊"我该被抽象"。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">3</div>
+            <div class="step-content">
+              <strong>小步改</strong>
+              <span>每一步都让测试保持全绿，任一步失败就回退那一步。</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">4</div>
+            <div class="step-content">
+              <strong>修改完成后再增加新功能</strong>
+              <span>先让代码准备好接纳新功能，再增加新功能。</span>
+            </div>
+          </div>
+        </div>
+        <div class="callout warning" style="margin-top:18px;">
+          <strong>反模式 ·</strong> 凭直觉重构：没有测试兜底、没有触发信号，只凭"感觉这段该这样写"，这是破坏，不是重构。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">21</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 22 · P3.8 结对编程 ═════════════════════ -->
+    <section class="slide content what" data-label="7. 结对编程">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 07</div>
+          <h3>7. 结对编程：战术手 + 战略眼</h3>
+        </div>
+        <div class="s-idx">08</div>
+      </div>
+      <div class="s-lead">生产代码由两人共用一台机器、一套键鼠完成。不是互相监督，而是分工扮演不同视角。</div>
+      <div class="s-body">
+        <div class="grid-2" style="margin-bottom:22px;">
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">⌨️ 手握键鼠的人（Driver）</h4>
+            <ul>
+              <li>聚焦"此处方法怎么实现最好"</li>
+              <li>战术视角：语法、边界、命名、测试通过</li>
+              <li>把下一步落到代码</li>
+            </ul>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">👁️ 旁观者（Navigator）</h4>
+            <ul>
+              <li>整个方法方向对吗？</li>
+              <li>还有哪些测试没覆盖？</li>
+              <li>能否简化系统让问题自然消失？</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout what">
+          <strong>动态结对 ·</strong> 接手陌生领域时，主动找最有经验的人结对。结对是知识流动的机制，不是"两熟人永远绑一起"。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">22</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 23 · P3.9 代码集体所有制 ═════════════════════ -->
+    <section class="slide content what" data-label="8. 代码集体所有制">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 08</div>
+          <h3>8. 代码集体拥有制：三种所有权模式</h3>
+        </div>
+        <div class="s-idx">09</div>
+      </div>
+      <div class="s-lead">谁能改哪段代码？三种答案，只有一种可扩展。</div>
+      <div class="s-body">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:22%;">模式</th>
+              <th>规则</th>
+              <th style="width:28%;">问题 / 效果</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>无所有权</strong></td>
+              <td>谁想改就改，不管是否与现有代码契合</td>
+              <td><span class="tag bad">到处破坏，集成成本爆炸</span></td>
+            </tr>
+            <tr>
+              <td><strong>个人所有权</strong></td>
+              <td>只有所有者能改；别人先提请求</td>
+              <td><span class="tag bad">没人愿打扰所有者，修改堆积</span></td>
+            </tr>
+            <tr>
+              <td><strong>集体拥有（XP）</strong></td>
+              <td>谁发现能为代码增加价值，就随时去做</td>
+              <td><span class="tag good">前提是有测试、结对、集成兜底</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout what" style="margin-top:22px;">
+          <strong>关键 ·</strong> 集体拥有不是"无所有权"的别名。它靠测试、结对、持续集成、编码标准四条绳子一起拉住，缺一条就退化成无所有权的混乱。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">23</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 24 · P3.10 持续集成 ═════════════════════ -->
+    <section class="slide content what" data-label="9. 持续集成">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 09</div>
+          <h3>9. 持续集成：几小时内，最多一天</h3>
+        </div>
+        <div class="s-idx">10</div>
+      </div>
+      <div class="s-lead">代码在几小时内、最多一天完成集成与测试。拖过一天，冲突就会急剧变贵。</div>
+      <div class="s-body">
+        <div class="ladder">
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">1</div>
+            <div class="step-content">
+              <strong>专设一台集成机（或 CI 服务器）</strong>
+              <span>谁集成谁上这台机，避免"我本地能跑"</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">2</div>
+            <div class="step-content">
+              <strong>集成的两人一起坐下来</strong>
+              <span>加载当前版本，载入自己的改动，解冲突</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--what);">
+            <div class="step-num" style="background:var(--what);">3</div>
+            <div class="step-content">
+              <strong>运行全部测试直到 100% 通过</strong>
+              <span>没跑绿就不算集成完成，不留中间状态</span>
+            </div>
+          </div>
+          <div class="ladder-step" style="border-left-color:var(--accent2);">
+            <div class="step-num" style="background:var(--accent2);">✓</div>
+            <div class="step-content">
+              <strong>结果：责任明确可追溯</strong>
+              <span>若测试失败，责任归当前集成人员：因上轮集成时测试是绿的</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">24</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 25 · P3.11 40 小时工作制 ═════════════════════ -->
+    <section class="slide content what" data-label="10. 40 小时工作制">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 10</div>
+          <h3>10. 40 小时工作制：加班是征兆，不是解药</h3>
+        </div>
+        <div class="s-idx">11</div>
+      </div>
+      <div class="s-lead">每周是否正好 40 小时不重要。重要的是：有没有长期靠加班维持进度。</div>
+      <div class="s-body">
+        <div class="callout warning" style="margin-bottom:20px;">
+          <strong>核心 ·</strong> 加班不是救命稻草，而是项目出严重问题的信号。它告诉你：计划、范围、设计、测试里一定有东西坏了。
+        </div>
+        <ul class="points">
+          <li><span class="icon">📉</span>
+            <div><strong>加班掩盖问题</strong>
+              <div class="sub">用时间堆产出，本该在计划游戏讨论的范围问题被推后了。</div>
+            </div>
+          </li>
+          <li><span class="icon">😴</span>
+            <div><strong>疲劳推高 bug 率</strong>
+              <div class="sub">疲劳的程序员更易破坏测试、引入回归，整体速度反降。</div>
+            </div>
+          </li>
+          <li><span class="icon">🔁</span>
+            <div><strong>XP 的替代方案</strong>
+              <div class="sub">用计划游戏把范围砍到能做完，用测试与集成压低返工。休息好的人才能动脑子。</div>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">25</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 26 · P3.12 现场客户 + 编码标准 ═════════════════════ -->
+    <section class="slide content what" data-label="11-12. 现场客户 &amp; 编码标准">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 11–12</div>
+          <h3>11. 现场客户 &amp; 12. 编码标准</h3>
+        </div>
+        <div class="s-idx">12</div>
+      </div>
+      <div class="s-body">
+        <div class="grid-2" style="margin-bottom:20px;">
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">11. 现场客户 On-Site Customer</h4>
+            <ul>
+              <li>真实客户必须与团队同坐办公</li>
+              <li>随时解答问题、解决争议</li>
+              <li>定小规模优先级，不走一周一次的会</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>主要反对：</strong>"真正的用户太宝贵，派不出来。"</p>
+            <p><strong>回应：</strong>管理者必须决定：让软件更快更好地投产，和留住一两人的产出，哪个更值钱？</p>
+          </div>
+          <div class="mini-card" style="border-left:4px solid var(--what);">
+            <h4 style="color:var(--what);">12. 编码标准 Coding Standards</h4>
+            <ul>
+              <li>程序员要在系统各处切换</li>
+              <li>一天换几次搭档</li>
+              <li>还要互相重构对方代码</li>
+            </ul>
+            <p style="margin-top:12px;"><strong>结论：</strong>这种节奏下无法承受多套编码规范并存。统一标准不是洁癖，是协作前提。</p>
+          </div>
+        </div>
+        <div class="callout what">
+          <strong>共同点 ·</strong> 这两项看起来最不像技术，却是让其他 10 项实践得以运转的组织基础。缺少它们，再好的工程实践也会被流程和格式争论消磨殆尽。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">26</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 27 · P3.13 相互支撑 ═════════════════════ -->
+    <section class="slide content what" data-label="实践如何相互支撑">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 相互支撑</div>
+          <h3>每项实践的"不可能"，都由别的实践解决</h3>
+        </div>
+        <div class="s-idx">13</div>
+      </div>
+      <div class="s-lead">单独看每一项都觉得"不可能"；放在一起看，它们互为前提。</div>
+      <div class="s-body">
+        <table class="compare-table">
+          <thead>
+            <tr>
+              <th style="width:26%;">你说"不可能做到"</th>
+              <th>哪些别的实践在后面顶住它</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>小发布</strong></td>
+              <td>计划游戏选最有价值的故事 + 持续集成让打包零成本 + 测试把缺陷压低 + 简单设计只覆盖本次</td>
+            </tr>
+            <tr>
+              <td><strong>简单设计</strong></td>
+              <td>重构让你不怕今天设计不完美 + 测试让重构不破坏功能 + 结对让设计不愚蠢</td>
+            </tr>
+            <tr>
+              <td><strong>重构</strong></td>
+              <td>集体所有制可到处改 + 测试兜底 + 持续集成几小时内发现破坏 + 40 小时工作制让人不疲劳</td>
+            </tr>
+            <tr>
+              <td><strong>结对编程</strong></td>
+              <td>编码标准减少琐碎争论 + 40 小时工作制保证精力 + 测试和隐喻让两人先达成共识</td>
+            </tr>
+            <tr>
+              <td><strong>集体所有制</strong></td>
+              <td>持续集成 + 测试 + 结对 + 编码标准：四条绳子一起拉住</td>
+            </tr>
+            <tr>
+              <td><strong>持续集成</strong></td>
+              <td>测试快速运行 + 结对让变更流减半 + 重构让模块更小冲突更少</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout what" style="margin-top:20px;">
+          <strong>核心 ·</strong> 单独挑任何一项实施都会失败：你拿走的不是一块砖，而是承重墙。
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">27</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 28 · P3.14 总结：飞轮 ═════════════════════ -->
+    <section class="slide content what" data-label="总结：互相支持">
+      <div class="s-head">
+        <div>
+          <div class="s-eyebrow">Part 3 · 结束</div>
+          <h3>结论：XP 是一台系统，不是一个清单</h3>
+        </div>
+        <div class="s-idx">14</div>
+      </div>
+      <div class="s-lead">"所以你编写代码，不编写就什么都没做。你测试，不测试就不知道何时完成。你倾听，不倾听就不知道写什么。你设计，这样才能无限期地继续编码、测试、倾听。" —— Kent Beck</div>
+      <div class="s-body">
+        <ul class="points">
+          <li><span class="icon">🔁</span>
+            <div><strong>12 项实践是一个整体</strong>
+              <div class="sub">仅挑选三五项实施往往失败：并非实践本身存在问题，而是承重墙被抽离。</div>
+            </div>
+          </li>
+          <li><span class="icon">🧭</span>
+            <div><strong>四个价值观是骨架</strong>
+              <div class="sub">交流、简单、反馈、勇气四项，加上尊重作地基。所有实践都挂在这五根柱子上。</div>
+            </div>
+          </li>
+          <li><span class="icon">🚗</span>
+            <div><strong>回到开场比喻</strong>
+              <div class="sub">XP 是让你"随时能打方向盘"的驾驶训练：不靠天赋，靠持续看路况的机制。</div>
+            </div>
+          </li>
+        </ul>
+        <div class="callout principle" style="margin-top:22px;">
+          <strong>思考 ·</strong> 如果你的项目要引入 XP，你会先挑哪几项同时落地？为什么不能只选一项？
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">PART 3 · 12 项实践</span>
+        <span class="s-pageno">28</span>
+      </div>
+    </section>
+    <!-- ═════════════════════ 29 · SUMMARY ═════════════════════ -->
+    <section class="slide summary" data-label="Summary">
+      <div class="eye">SUMMARY · 三层收束</div>
+      <h2>价值观 → 活动 → 实践<br />一个系统，缺一不可</h2>
+      <div class="grid-3">
+        <div class="mini-card" style="border-left:4px solid var(--why); text-align:left;">
+          <h4 style="color:var(--why);">PART 1 · WHY</h4>
+          <p>四个价值观（交流/简单/反馈/勇气）加尊重作地基。它们是 XP 所有做法的"为什么"。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--how); text-align:left;">
+          <h4 style="color:var(--how);">PART 2 · HOW</h4>
+          <p>四项基本活动（编码/测试/倾听/设计）是价值观的具体动作。稳定开发只需这四件事。</p>
+        </div>
+        <div class="mini-card" style="border-left:4px solid var(--what); text-align:left;">
+          <h4 style="color:var(--what);">PART 3 · WHAT</h4>
+          <p>12 项实践把价值观和活动落到日常，相互支撑，构成飞轮系统。</p>
+        </div>
+      </div>
+      <div class="s-footer">
+        <span class="mark">THANK YOU · 极限编程的实践</span>
+        <span class="s-pageno">29</span>
+      </div>
+    </section>
+  </deck-stage>
+  <script id="speaker-notes" type="application/json">
+[]
+</script>
+</body>
+
+</html>
