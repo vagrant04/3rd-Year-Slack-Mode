@@ -1,0 +1,89 @@
+@startuml use-case-overview
+left to right direction
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 18
+skinparam ArrowColor #334155
+skinparam ArrowThickness 1.3
+skinparam defaultFontName Microsoft YaHei
+skinparam titleFontSize 22
+skinparam rectangleBorderColor #2563EB
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam usecaseBorderColor #64748B
+skinparam usecaseBackgroundColor #FFFFFF
+skinparam actorBorderColor #60A5FA
+skinparam actorBackgroundColor #EFF6FF
+skinparam nodesep 32
+skinparam ranksep 18
+
+title FIM 测评平台 UML 用例图
+caption 三类角色分别对应学生提交与查看、助教评测闭环、管理员运维治理；凭证和 OBS 细节见用例说明表。
+
+actor "学生" as Student
+actor "助教" as Teacher
+actor "管理员" as Admin
+
+rectangle "FIM 测评平台" as System {
+  usecase "提交模型权重" as UC_Submit
+  usecase "查看本人结果" as UC_MyResult
+  usecase "查看公开榜单" as UC_PublicBoard
+
+  usecase "拉取学生提交" as UC_Pull
+  usecase "校验模型目录" as UC_Validate
+  usecase "创建评测任务" as UC_Create
+  usecase "选择推理后端" as UC_Backend
+  usecase "运行 FIM 评测" as UC_Run
+  usecase "查看实时日志" as UC_Logs
+  usecase "生成内部报告" as UC_Report
+  usecase "发布公开榜单" as UC_Publish
+
+  usecase "管理平台部署" as UC_Deploy
+  usecase "维护后端适配" as UC_Adapter
+  usecase "配置权限与 Secret" as UC_Secret
+  usecase "处理故障与恢复" as UC_Recover
+}
+
+Student -right-> UC_Submit
+Student -right-> UC_MyResult
+Student -right-> UC_PublicBoard
+
+Teacher -right-> UC_Pull
+Teacher -right-> UC_Create
+Teacher -right-> UC_Logs
+Teacher -right-> UC_Report
+Teacher -right-> UC_Publish
+
+Admin -right-> UC_Deploy
+Admin -right-> UC_Adapter
+Admin -right-> UC_Secret
+Admin -right-> UC_Recover
+
+UC_Submit -[hidden]right- UC_MyResult
+UC_MyResult -[hidden]right- UC_PublicBoard
+
+UC_Pull -[hidden]right- UC_Validate
+UC_Validate -[hidden]right- UC_Create
+UC_Create -[hidden]right- UC_Backend
+UC_Backend -[hidden]right- UC_Run
+UC_Run -[hidden]right- UC_Logs
+UC_Logs -[hidden]right- UC_Report
+UC_Report -[hidden]right- UC_Publish
+
+UC_Deploy -[hidden]right- UC_Adapter
+UC_Adapter -[hidden]right- UC_Secret
+UC_Secret -[hidden]right- UC_Recover
+
+UC_Submit -[hidden]down- UC_Pull
+UC_Pull -[hidden]down- UC_Deploy
+
+UC_Pull .> UC_Validate : <<include>>
+UC_Create .> UC_Backend : <<include>>
+UC_Create .> UC_Run : <<include>>
+UC_Run .> UC_Logs : <<include>>
+UC_Run .> UC_Report : <<include>>
+UC_Publish .> UC_PublicBoard : <<publish>>
+UC_Deploy .> UC_Adapter : <<include>>
+UC_Deploy .> UC_Secret : <<include>>
+UC_Recover .> UC_Logs : <<inspect>>
+@enduml

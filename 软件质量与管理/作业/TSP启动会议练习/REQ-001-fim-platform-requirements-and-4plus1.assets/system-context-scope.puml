@@ -1,0 +1,85 @@
+@startuml system-context-scope
+top to bottom direction
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam roundcorner 16
+skinparam ArrowColor #334155
+skinparam ArrowThickness 1.5
+skinparam defaultFontName Microsoft YaHei
+skinparam titleFontSize 22
+skinparam packageBorderColor #2563EB
+skinparam packageBackgroundColor #F8FAFC
+skinparam rectangleBorderColor #2563EB
+skinparam rectangleBackgroundColor #F8FAFC
+skinparam componentBorderColor #94A3B8
+skinparam componentBackgroundColor #FFFFFF
+skinparam databaseBorderColor #22C55E
+skinparam databaseBackgroundColor #ECFDF5
+skinparam actorBorderColor #60A5FA
+skinparam actorBackgroundColor #EFF6FF
+skinparam nodesep 24
+skinparam ranksep 34
+
+title FIM 测评平台系统上下文范围图
+caption ta-client 位于本系统边界内；issuer-server 是外部 STS 签发服务。学生和助教都通过临时 STS 访问 OBS。
+
+actor "学生" as Student
+actor "助教" as Teacher
+actor "管理员" as Admin
+
+Student -[hidden]right- Teacher
+Teacher -[hidden]right- Admin
+
+rectangle "FIM 测评平台\n本系统边界" as Platform {
+  component "Web 控制台 / API\n任务、权限、进度、查询" as Web
+  component "ta-client\n申请助教只读 STS\n列举并下载 submissions" as TAClient #DBEAFE
+  component "模型根目录校验器\nconfig / tokenizer / 权重校验" as Validator
+  component "任务编排器\n队列、幂等、状态机" as Orchestrator
+  component "评测 Worker\nprompt 导出与指标计算" as Worker
+  component "后端适配器\n统一 generation JSONL" as Adapter
+  component "报告与榜单发布器\n内部报告 / 学生摘要 / 公开榜单 / 审计摘要" as Publisher #F0F9FF
+
+  Web -[hidden]down- TAClient
+  TAClient -[hidden]down- Validator
+  Validator -[hidden]down- Orchestrator
+  Orchestrator -[hidden]down- Worker
+  Worker -[hidden]down- Adapter
+  Adapter -[hidden]down- Publisher
+}
+
+rectangle "外部服务与运行环境" as External {
+  component "course-obs-sts\nissuer-server\n外部 STS 签发服务" as Issuer #FFF7ED
+  database "华为云 OBS\nsubmissions / artifacts / leaderboard" as OBS
+  cloud "推理后端与运行环境\nMindSpeed / vLLM / OpenAI-compatible\nDiffusion / fast_dllm" as Backends #F5F3FF
+  component "已发布榜单页面\n学生可访问公开视图" as Leaderboard #F0F9FF
+
+  Issuer -[hidden]down- OBS
+  OBS -[hidden]down- Backends
+  Backends -[hidden]down- Leaderboard
+}
+
+Student -[#2563EB]-> Issuer : 申请上传 STS
+Issuer ..> Student : 返回上传凭证
+Student -[#2563EB]-> OBS : 上传模型权重目录
+Student --> Web : 查看本人结果
+Student --> Leaderboard : 查看公开榜单
+
+Teacher -[#2563EB]-> Web : 创建同步 / 评测 / 发布任务
+Admin --> Web : 管理部署 / 后端 / Secret / 权限
+
+Web --> TAClient : 创建 submission sync
+TAClient -[#2563EB]-> Issuer : 申请助教只读 STS
+Issuer ..> TAClient : 返回只读凭证
+TAClient -[#2563EB]-> OBS : ListBucket / GetObject\n拉取 submissions
+TAClient --> Validator : 交付本地镜像目录
+Validator --> Orchestrator : 通过校验的模型清单
+Orchestrator --> Worker : 生成评测运行计划
+Worker --> Adapter : 调用后端适配器
+Adapter -[#2563EB]-> Backends : prompt / 参数 / 模型引用
+Backends ..> Adapter : generation / log / progress
+Worker --> Publisher : metrics / logs / reports
+Publisher --> OBS : 归档 artifacts
+Publisher -[#2563EB]-> Leaderboard : 发布公开榜单
+
+@enduml

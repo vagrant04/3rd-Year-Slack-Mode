@@ -1,0 +1,56 @@
+@startuml student-course-workflow
+!pragma layout smetana
+
+skinparam BackgroundColor #FFFFFF
+skinparam activity {
+  BackgroundColor #E8F0FF
+  BorderColor #4D7CFE
+  FontColor #1F2937
+  FontName Microsoft YaHei
+  FontSize 16
+  DiamondBackgroundColor #F8FAFC
+  DiamondBorderColor #64748B
+}
+skinparam ArrowColor #111827
+skinparam ArrowThickness 1.5
+skinparam NoteBackgroundColor #F8FAFC
+skinparam NoteBorderColor #CBD5E1
+skinparam NoteFontName Microsoft YaHei
+skinparam NoteFontSize 14
+skinparam defaultFontName Microsoft YaHei
+skinparam defaultFontSize 16
+
+title 学生课程项目训练与提交流程
+
+start
+:轻量算力节点用户登录;
+
+if (使用现成镜像?) then (是)
+  :从华为云 SWR 拉取镜像;
+else (否，自建镜像)
+  :编写 Dockerfile;
+  :构建 Docker 镜像;
+  if (是否推送 SWR 复用?) then (可选)
+    :推送镜像到华为云 SWR;
+  endif
+  :拉取或加载自建镜像;
+endif
+
+:从华为云 OBS 下载基础权重\n（仅首次）;
+:创建后训练 Docker 容器;
+
+repeat
+  :Docker 容器内模型后训练;
+  :Docker 容器内模型评估;
+repeat while (评估结果是否需要继续优化?) is (闭环反馈)
+
+:打榜模型权重上传到华为云 OBS;
+stop
+
+legend right
+  SWR：保存课程基础镜像或学生自建镜像
+  OBS：保存基础权重与最终打榜权重
+  后训练和本地评估均在容器内完成
+endlegend
+
+@enduml

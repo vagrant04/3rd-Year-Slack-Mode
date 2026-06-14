@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1680" height="620" viewBox="0 0 1680 620" role="img" aria-labelledby="title desc">
+  <title id="title">FIM 测评平台 UML 用例图</title>
+  <desc id="desc">横向展示学生、助教、管理员三类角色及其核心用例。</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#334155"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,3 L0,6 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title { font: 700 30px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #0f172a; }
+      .caption { font: 16px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #334155; }
+      .label { font: 16px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #0f172a; dominant-baseline: middle; text-anchor: middle; }
+      .small { font: 14px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #334155; dominant-baseline: middle; text-anchor: middle; }
+      .actor-label { font: 18px "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #0f172a; text-anchor: middle; }
+      .boundary { fill: #f8fafc; stroke: #2563eb; stroke-width: 2; rx: 12; }
+      .lane { fill: #eff6ff; stroke: #bfdbfe; stroke-width: 1.5; rx: 10; }
+      .usecase { fill: #ffffff; stroke: #64748b; stroke-width: 1.5; }
+      .actor { fill: none; stroke: #60a5fa; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      .assoc { fill: none; stroke: #334155; stroke-width: 1.7; marker-end: url(#arrow); }
+      .flow { fill: none; stroke: #334155; stroke-width: 1.6; marker-end: url(#arrow); }
+      .include { fill: none; stroke: #334155; stroke-width: 1.5; stroke-dasharray: 8 6; marker-end: url(#arrow); }
+      .publish { fill: none; stroke: #2563eb; stroke-width: 1.7; stroke-dasharray: 8 6; marker-end: url(#arrow-blue); }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="1680" height="620" fill="#ffffff"/>
+  <text class="title" x="840" y="44" text-anchor="middle">FIM 测评平台 UML 用例图</text>
+
+  <rect class="boundary" x="205" y="82" width="1418" height="442"/>
+  <text class="label" x="914" y="110">FIM 测评平台</text>
+
+  <rect class="lane" x="235" y="130" width="1358" height="100"/>
+  <rect class="lane" x="235" y="260" width="1358" height="112"/>
+  <rect class="lane" x="235" y="410" width="1358" height="84"/>
+  <text class="small" x="275" y="144">学生侧</text>
+  <text class="small" x="295" y="274">助教评测闭环</text>
+  <text class="small" x="295" y="424">管理员运维</text>
+
+  <g id="actors">
+    <g transform="translate(92 166)">
+      <circle class="actor" cx="0" cy="-28" r="12"/>
+      <path class="actor" d="M0,-16 L0,20 M-24,-2 L24,-2 M0,20 L-22,48 M0,20 L22,48"/>
+      <text class="actor-label" x="0" y="76">学生</text>
+    </g>
+    <g transform="translate(92 320)">
+      <circle class="actor" cx="0" cy="-28" r="12"/>
+      <path class="actor" d="M0,-16 L0,20 M-24,-2 L24,-2 M0,20 L-22,48 M0,20 L22,48"/>
+      <text class="actor-label" x="0" y="76">助教</text>
+    </g>
+    <g transform="translate(92 464)">
+      <circle class="actor" cx="0" cy="-28" r="12"/>
+      <path class="actor" d="M0,-16 L0,20 M-24,-2 L24,-2 M0,20 L-22,48 M0,20 L22,48"/>
+      <text class="actor-label" x="0" y="76">管理员</text>
+    </g>
+  </g>
+
+  <g id="student-usecases">
+    <ellipse class="usecase" cx="350" cy="180" rx="88" ry="27"/>
+    <text class="label" x="350" y="180">提交模型权重</text>
+    <ellipse class="usecase" cx="570" cy="180" rx="88" ry="27"/>
+    <text class="label" x="570" y="180">查看本人结果</text>
+    <ellipse class="usecase" cx="790" cy="180" rx="88" ry="27"/>
+    <text class="label" x="790" y="180">查看公开榜单</text>
+  </g>
+
+  <g id="teacher-usecases">
+    <ellipse class="usecase" cx="310" cy="316" rx="72" ry="27"/>
+    <text class="label" x="310" y="316">拉取学生提交</text>
+    <ellipse class="usecase" cx="460" cy="316" rx="72" ry="27"/>
+    <text class="label" x="460" y="316">校验模型目录</text>
+    <ellipse class="usecase" cx="610" cy="316" rx="72" ry="27"/>
+    <text class="label" x="610" y="316">创建评测任务</text>
+    <ellipse class="usecase" cx="760" cy="316" rx="72" ry="27"/>
+    <text class="label" x="760" y="316">选择推理后端</text>
+    <ellipse class="usecase" cx="910" cy="316" rx="78" ry="27"/>
+    <text class="label" x="910" y="316">运行 FIM 评测</text>
+    <ellipse class="usecase" cx="1068" cy="316" rx="72" ry="27"/>
+    <text class="label" x="1068" y="316">查看实时日志</text>
+    <ellipse class="usecase" cx="1220" cy="316" rx="72" ry="27"/>
+    <text class="label" x="1220" y="316">生成内部报告</text>
+    <ellipse class="usecase" cx="1375" cy="316" rx="72" ry="27"/>
+    <text class="label" x="1375" y="316">发布公开榜单</text>
+  </g>
+
+  <g id="admin-usecases">
+    <ellipse class="usecase" cx="360" cy="456" rx="88" ry="27"/>
+    <text class="label" x="360" y="456">管理平台部署</text>
+    <ellipse class="usecase" cx="580" cy="456" rx="88" ry="27"/>
+    <text class="label" x="580" y="456">维护后端适配</text>
+    <ellipse class="usecase" cx="825" cy="456" rx="110" ry="27"/>
+    <text class="label" x="825" y="456">配置权限与 Secret</text>
+    <ellipse class="usecase" cx="1090" cy="456" rx="95" ry="27"/>
+    <text class="label" x="1090" y="456">处理故障与恢复</text>
+  </g>
+
+  <g id="actor-links">
+    <path class="assoc" d="M118,164 C172,154 226,162 267,174"/>
+    <path class="assoc" d="M118,166 C250,180 382,180 478,180"/>
+    <path class="assoc" d="M118,168 C326,206 555,203 704,186"/>
+    <path class="assoc" d="M118,316 C164,316 190,316 226,316"/>
+    <path class="assoc" d="M118,326 C256,376 430,363 534,326"/>
+    <path class="assoc" d="M118,333 C397,411 822,396 1002,329"/>
+    <path class="assoc" d="M118,338 C472,446 989,424 1148,329"/>
+    <path class="assoc" d="M118,342 C520,475 1154,451 1297,326"/>
+    <path class="assoc" d="M118,462 C168,462 220,460 270,458"/>
+    <path class="assoc" d="M118,466 C263,498 401,492 493,465"/>
+    <path class="assoc" d="M118,469 C350,530 600,510 723,468"/>
+    <path class="assoc" d="M118,472 C438,552 860,540 996,468"/>
+  </g>
+
+  <g id="relationships">
+    <path class="include" d="M382,316 L388,316"/>
+    <text class="small" x="385" y="294">include</text>
+    <path class="include" d="M682,316 L688,316"/>
+    <text class="small" x="685" y="294">include</text>
+    <path class="include" d="M686,303 C745,265 823,265 871,303"/>
+    <text class="small" x="780" y="266">include</text>
+    <path class="include" d="M988,316 L996,316"/>
+    <text class="small" x="993" y="294">include</text>
+    <path class="include" d="M958,296 C1018,242 1156,246 1200,291"/>
+    <text class="small" x="1083" y="246">include</text>
+    <path class="publish" d="M1375,289 C1300,180 1018,150 879,174"/>
+    <text class="small" x="1200" y="164">publish</text>
+    <path class="include" d="M448,456 L492,456"/>
+    <text class="small" x="470" y="433">include</text>
+    <path class="include" d="M442,444 C532,390 695,393 769,441"/>
+    <text class="small" x="610" y="394">include</text>
+    <path class="include" d="M935,456 L994,456"/>
+    <text class="small" x="965" y="433">inspect</text>
+    <path class="include" d="M1090,429 C1090,385 1080,363 1068,343"/>
+  </g>
+
+  <text class="caption" x="840" y="574" text-anchor="middle">学生提交前由外部 issuer-server 签发上传 STS；助教侧由系统内 ta-client 申请只读 STS 并从 OBS 拉取 submissions。</text>
+  <text class="caption" x="840" y="598" text-anchor="middle">管理员负责平台部署、后端适配、权限与 Secret、故障恢复；华为云运行环境本身不在系统维护边界内。</text>
+</svg>
