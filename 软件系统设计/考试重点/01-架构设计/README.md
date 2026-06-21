@@ -51,9 +51,9 @@
 
 高频答案：
 
-1. NFRs / Quality Requirements：性能、可用性、可修改性、安全性等。
+1. NFRs（非功能需求） / Quality Requirements：性能、可用性、可修改性、安全性等。
 2. ASRs：对架构产生重大影响的需求。
-3. Stakeholders：客户、用户、架构师、开发者、测试者、运维、管理者等。
+3. Stakeholders（利益相关者）：客户、用户、架构师、开发者、测试者、运维、管理者等。
 4. Organisations：组织结构、团队划分、康威定律。
 5. Technical Environments：技术栈、平台、中间件、遗留系统、部署环境。
 6. Business Goals：商业目标、成本、上市时间、合规性。
@@ -158,7 +158,7 @@ Beyond 部分：
 
 ### 2.7 质量属性场景六要素
 
-年年高频，必须会画刺激-响应图。
+**年年高频，必须会画刺激-响应图。**
 
 六要素：
 
