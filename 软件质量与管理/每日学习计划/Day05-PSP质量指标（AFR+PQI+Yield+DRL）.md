@@ -247,11 +247,11 @@ A/FR = 评审成本 ÷ 故障成本
 
 ## 公式
 
-\[
+$$
 A/FR=
-\frac{Appraisal\ Time}
-{Failure\ Time}
-\]
+\frac{\text{Appraisal Time}}
+{\text{Failure Time}}
+$$
 
 ---
 
@@ -267,9 +267,9 @@ A/FR=
 
 Appraisal：
 
-[
-2+3=5h
-]
+$$
+2+3=5\mathrm{h}
+$$
 
 ---
 
@@ -279,17 +279,17 @@ Appraisal：
 
 Failure：
 
-[
-10h
-]
+$$
+10\mathrm{h}
+$$
 
 ---
 
 则：
 
-[
+$$
 A/FR=\frac{5}{10}=0.5
-]
+$$
 
 ---
 
@@ -331,21 +331,21 @@ PSP认为：
 
 ## 公式
 
-[
-Yield=
-\frac{Review发现缺陷}
-{Review发现缺陷+Test发现缺陷}
-]
+$$
+\mathrm{Yield}=
+\frac{\text{Review发现缺陷}}
+{\text{Review发现缺陷}+\text{Test发现缺陷}}
+$$
 
 ---
 
 更完整版本：
 
-[
-Yield=
-\frac{Phase\ Removed}
-{Total\ Defects}
-]
+$$
+\mathrm{Yield}=
+\frac{\text{Phase Removed}}
+{\text{Total Defects}}
+$$
 
 ---
 
@@ -367,12 +367,9 @@ Yield=
 
 Yield：
 
-[
-\frac{40}{50}
-=============
-
-80%
-]
+$$
+\frac{40}{50}=80\%
+$$
 
 ---
 
@@ -409,11 +406,11 @@ Bug越早被发现。
 
 ## 公式
 
-[
-Review\ Rate=
-\frac{LOC}
-{Review\ Time}
-]
+$$
+\text{Review Rate}=
+\frac{\mathrm{LOC}}
+{\text{Review Time}}
+$$
 
 单位：
 
@@ -435,13 +432,10 @@ LOC/hour
 
 则：
 
-[
-Review\ Rate=
-\frac{600}{2}
-=============
-
-300
-]
+$$
+\text{Review Rate}=
+\frac{600}{2}=300
+$$
 
 LOC/h
 
@@ -498,21 +492,21 @@ Defect Removal Leverage
 
 ## 公式
 
-[
-DRL=
+$$
+\mathrm{DRL}=
 \frac
-{Review\ Defect\ Density}
-{Test\ Defect\ Density}
-]
+{\text{Review Defect Density}}
+{\text{Test Defect Density}}
+$$
 
 也可写成：
 
-[
-DRL=
+$$
+\mathrm{DRL}=
 \frac
-{\frac{Review\ Defects}{Review\ Hours}}
-{\frac{Test\ Defects}{Test\ Hours}}
-]
+{\frac{\text{Review Defects}}{\text{Review Hours}}}
+{\frac{\text{Test Defects}}{\text{Test Hours}}}
+$$
 
 ---
 
@@ -524,9 +518,9 @@ DRL=
 
 耗时2h
 
-[
-20 Bug/h
-]
+$$
+20\ \mathrm{Bug/h}
+$$
 
 ---
 
@@ -536,21 +530,18 @@ DRL=
 
 耗时5h
 
-[
-2 Bug/h
-]
+$$
+2\ \mathrm{Bug/h}
+$$
 
 ---
 
 则：
 
-[
-DRL=
-\frac{20}{2}
-============
-
-10
-]
+$$
+\mathrm{DRL}=
+\frac{20}{2}=10
+$$
 
 ---
 
@@ -611,15 +602,15 @@ PQI通常由多个指标加权计算。
 
 很多学校采用：
 
-[
-PQI=
+$$
+\mathrm{PQI}=
 f(
-Yield,
+\mathrm{Yield},
 A/FR,
-Defect\ Density,
-Review\ Rate
+\text{Defect Density},
+\text{Review Rate}
 )
-]
+$$
 
 即：
 

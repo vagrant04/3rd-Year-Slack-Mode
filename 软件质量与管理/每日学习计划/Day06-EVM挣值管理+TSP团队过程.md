@@ -616,9 +616,9 @@ Planned Value
 
 则：
 
-[
-PV=50万
-]
+$$
+\mathrm{PV}=50\text{万}
+$$
 
 ---
 
@@ -640,9 +640,9 @@ Earned Value
 
 则：
 
-[
-EV=40万
-]
+$$
+\mathrm{EV}=40\text{万}
+$$
 
 ---
 
@@ -660,9 +660,9 @@ Actual Cost
 
 则：
 
-[
-AC=60万
-]
+$$
+\mathrm{AC}=60\text{万}
+$$
 
 ---
 
@@ -702,7 +702,9 @@ CV=EV-AC
 
 进度绩效指数
 
-SPI=\frac{EV}{PV}
+$$
+\mathrm{SPI}=\frac{\mathrm{EV}}{\mathrm{PV}}
+$$
 
 判断：
 
@@ -715,7 +717,9 @@ SPI=\frac{EV}{PV}
 
 成本绩效指数
 
-CPI=\frac{EV}{AC}
+$$
+\mathrm{CPI}=\frac{\mathrm{EV}}{\mathrm{AC}}
+$$
 
 判断：
 
@@ -764,9 +768,9 @@ AC = 600h
 
 SV
 
-[
+$$
 400-500=-100
-]
+$$
 
 进度落后。
 
@@ -774,9 +778,9 @@ SV
 
 CV
 
-[
+$$
 400-600=-200
-]
+$$
 
 成本超支。
 
@@ -784,9 +788,9 @@ CV
 
 SPI
 
-[
+$$
 0.8
-]
+$$
 
 进度落后。
 
@@ -794,9 +798,9 @@ SPI
 
 CPI
 
-[
+$$
 0.67
-]
+$$
 
 成本效率差。
 
